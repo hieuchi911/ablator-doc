@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.analysis.main &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.analysis.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.analysis.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Memory</span>
+
+<span class="kn">from</span> <span class="nn">ablator.analysis.plot.utils</span> <span class="kn">import</span> <span class="n">parse_name_remap</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="n">Optim</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Analysis"><a class="viewcode-back" href="../../../ablator.analysis.html#ablator.analysis.main.Analysis">[docs]</a><span class="k">class</span> <span class="nc">Analysis</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for analyzing experimental results.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    optim_metrics : dict[str, Optim]</span>
+<span class="sd">        A dictionary mapping metric names to optimization directions.</span>
+<span class="sd">    save_dir : str | None</span>
+<span class="sd">        The directory to save analysis results to.</span>
+<span class="sd">    cache : Memory | None</span>
+<span class="sd">        A joblib memory cache for saving results.</span>
+<span class="sd">    categorical_attributes : list[str]</span>
+<span class="sd">        The list of all the categorical hyperparameter names</span>
+<span class="sd">    numerical_attributes : list[str]</span>
+<span class="sd">        The list of all the numerical hyperparameter names</span>
+<span class="sd">    experiment_attributes : list[str]</span>
+<span class="sd">        The list of all the hyperparameter names</span>
+<span class="sd">    results : pd.DataFrame</span>
+<span class="sd">        The dataframe extracted from the results file based on given metrics names and hyperparameter names.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">categorical_attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">numerical_attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">optim_metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optim</span><span class="p">],</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Analysis class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        results : pd.DataFrame</span>
+<span class="sd">            The result dataframe.</span>
+<span class="sd">        categorical_attributes : list[str]</span>
+<span class="sd">            The list of all the categorical hyperparameter names</span>
+<span class="sd">        numerical_attributes : list[str]</span>
+<span class="sd">            The list of all the numerical hyperparameter names</span>
+<span class="sd">        optim_metrics : dict[str, Optim]</span>
+<span class="sd">            A dictionary mapping metric names to optimization directions.</span>
+<span class="sd">        save_dir : str | None</span>
+<span class="sd">            The directory to save analysis results to.</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Whether to cache results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span> <span class="o">=</span> <span class="n">optim_metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span> <span class="n">Memory</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Save directory does not exist. `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">`&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;.cache&quot;</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">categorical_attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">categorical_attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numerical_attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">numerical_attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">categorical_attributes</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">numerical_attributes</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">experiment_attributes</span>
+            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metric_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_best_results_by_metric</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">raw_results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">metric_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optim</span><span class="p">],</span>
+    <span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_best_perf</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj_fn</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">Optim</span><span class="p">(</span><span class="n">obj_fn</span><span class="p">)</span> <span class="o">==</span> <span class="n">Optim</span><span class="o">.</span><span class="n">min</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">row</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">na_position</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">row</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">na_position</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">_ress</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj_fn</span> <span class="ow">in</span> <span class="n">metric_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">raw_results</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">_best_perf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj_fn</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;best&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="n">_ress</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="n">report_results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">_ress</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">report_results</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_remap_results</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">attributes</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">metric_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optim</span><span class="p">],</span>
+        <span class="n">metric_name_remap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">attribute_name_remap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remaps attribute and metric names in `attributes` and `metrics` DataFrames</span>
+<span class="sd">        based on `attribute_name_remap` and `metric_name_remap`, and updates `metric_map`</span>
+<span class="sd">        accordingly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        attributes : pandas.DataFrame</span>
+<span class="sd">            The DataFrame containing attribute values for each experiment.</span>
+<span class="sd">        metrics : pandas.DataFrame</span>
+<span class="sd">            The DataFrame containing metric values for each experiment.</span>
+<span class="sd">        metric_map : dict of str to Optim</span>
+<span class="sd">            A dictionary mapping metric names to optimization objectives (minimization or maximization).</span>
+<span class="sd">        metric_name_remap : dict of str to str or None, optional</span>
+<span class="sd">            A dictionary mapping input metric names to output metric names.</span>
+<span class="sd">            If None, the output metric names will be the same as the input metric names.</span>
+<span class="sd">        attribute_name_remap : dict of str to str or None, optional</span>
+<span class="sd">            A dictionary mapping input attribute names to output attribute names.</span>
+<span class="sd">            If None, the output attribute names will be the same as the input attribute names.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pandas.DataFrame, pandas.DataFrame, dict of str to Optim</span>
+<span class="sd">            The remapped `attributes` DataFrame, the remapped `metrics` DataFrame,</span>
+<span class="sd">            and the updated `metric_map` dictionary.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">        &gt;&gt;&gt; from enum import Enum</span>
+<span class="sd">        &gt;&gt;&gt; class Optim(Enum):</span>
+<span class="sd">        ...     min = &quot;min&quot;</span>
+<span class="sd">        ...     max = &quot;max&quot;</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; attributes = pd.DataFrame({&quot;color&quot;: [&quot;red&quot;, &quot;blue&quot;], &quot;size&quot;: [10, 20]})</span>
+<span class="sd">        &gt;&gt;&gt; metrics = pd.DataFrame({&quot;loss&quot;: [0.5, 0.4], &quot;accuracy&quot;: [0.8, 0.9]})</span>
+<span class="sd">        &gt;&gt;&gt; metric_map = {&quot;loss&quot;: Optim.min, &quot;accuracy&quot;: Optim.max}</span>
+<span class="sd">        &gt;&gt;&gt; metric_name_remap = {&quot;loss&quot;: &quot;error&quot;, &quot;accuracy&quot;: &quot;acc&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; attribute_name_remap = {&quot;color&quot;: &quot;c&quot;, &quot;size&quot;: &quot;s&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; remapped_attrs, remapped_metrics, updated_map = Analysis._remap_results(</span>
+<span class="sd">        ...     attributes, metrics, metric_map,</span>
+<span class="sd">        ...     metric_name_remap=metric_name_remap,</span>
+<span class="sd">        ...     attribute_name_remap=attribute_name_remap</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; assert list(remapped_attrs.columns) == [&quot;c&quot;, &quot;s&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; assert list(remapped_metrics.columns) == [&quot;error&quot;, &quot;acc&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; assert updated_map == {&quot;error&quot;: Optim.min, &quot;acc&quot;: Optim.max}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metric_name_remap</span> <span class="o">=</span> <span class="n">parse_name_remap</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">metric_name_remap</span><span class="p">)</span>
+        <span class="n">attribute_name_remap</span> <span class="o">=</span> <span class="n">parse_name_remap</span><span class="p">(</span>
+            <span class="n">attributes</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">attribute_name_remap</span>
+        <span class="p">)</span>
+        <span class="n">metric_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">metric_name_remap</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]:</span> <span class="n">direction</span>
+            <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">metric_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">metric_name_remap</span>
+        <span class="p">}</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">attribute_name_remap</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">metric_name_remap</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        <span class="n">attributes</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">attribute_name_remap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+        <span class="n">metrics</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">metric_name_remap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">metric_map</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

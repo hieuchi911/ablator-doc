@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules.loggers package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.modules.metrics package" href="ablator.modules.metrics.html" />
+    <link rel="prev" title="ablator.modules package" href="ablator.modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ablator.modules.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ablator.modules.loggers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.loggers.file">ablator.modules.loggers.file module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.loggers.main">ablator.modules.loggers.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.loggers.tensor">ablator.modules.loggers.tensor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.loggers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html">ablator.modules.metrics package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.storage.html">ablator.modules.storage package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules.optimizer">ablator.modules.optimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules.scheduler">ablator.modules.scheduler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="ablator.modules.html">ablator.modules package</a> &raquo;</li>
+      <li>ablator.modules.loggers package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.modules.loggers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-modules-loggers-package">
+<h1>ablator.modules.loggers package<a class="headerlink" href="#ablator-modules-loggers-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.modules.loggers.file">
+<span id="ablator-modules-loggers-file-module"></span><h2>ablator.modules.loggers.file module<a class="headerlink" href="#module-ablator.modules.loggers.file" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.loggers.file.</span></span><span class="sig-name descname"><span class="pre">FileLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/file.html#FileLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A logger that writes messages to a file and prints them to the console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>WARNING</strong><span class="classifier">str</span></dt><dd><p>ANSI escape code for the warning text color.</p>
+</dd>
+<dt><strong>FAIL</strong><span class="classifier">str</span></dt><dd><p>ANSI escape code for the error text color.</p>
+</dd>
+<dt><strong>ENDC</strong><span class="classifier">str</span></dt><dd><p>ANSI escape code for resetting the text color.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.ENDC">
+<span class="sig-name descname"><span class="pre">ENDC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></em><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.ENDC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.FAIL">
+<span class="sig-name descname"><span class="pre">FAIL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[91m'</span></em><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.FAIL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[93m'</span></em><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.WARNING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/file.html#FileLogger.error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.error" title="Permalink to this definition"></a></dt>
+<dd><p>Log an error message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>msg</strong><span class="classifier">str</span></dt><dd><p>The message to log.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/file.html#FileLogger.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.info" title="Permalink to this definition"></a></dt>
+<dd><p>Log an info message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>msg</strong><span class="classifier">str</span></dt><dd><p>The message to log.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to print messages to the console, by default False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.set_path">
+<span class="sig-name descname"><span class="pre">set_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/file.html#FileLogger.set_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.set_path" title="Permalink to this definition"></a></dt>
+<dd><p>Set the path to the log file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>path</strong><span class="classifier">str | Path</span></dt><dd><p>The path to the log file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.set_prefix">
+<span class="sig-name descname"><span class="pre">set_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/file.html#FileLogger.set_prefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.set_prefix" title="Permalink to this definition"></a></dt>
+<dd><p>Set the prefix for the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>prefix</strong><span class="classifier">str | None, optional</span></dt><dd><p>The prefix to add to each logged message, by default None.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.file.FileLogger.warn">
+<span class="sig-name descname"><span class="pre">warn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/file.html#FileLogger.warn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.file.FileLogger.warn" title="Permalink to this definition"></a></dt>
+<dd><p>Log a warning message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>msg</strong><span class="classifier">str</span></dt><dd><p>The message to log.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to print messages to the console, by default True.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.loggers.main">
+<span id="ablator-modules-loggers-main-module"></span><h2>ablator.modules.loggers.main module<a class="headerlink" href="#module-ablator.modules.loggers.main" title="Permalink to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.DuplicateRunError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.loggers.main.</span></span><span class="sig-name descname"><span class="pre">DuplicateRunError</span></span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#DuplicateRunError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.DuplicateRunError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.loggers.main.</span></span><span class="sig-name descname"><span class="pre">SummaryLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_n_checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A logger for training and evaluation summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>SUMMARY_DIR_NAME</strong><span class="classifier">str</span></dt><dd><p>Name of the summary directory.</p>
+</dd>
+<dt><strong>RESULTS_JSON_NAME</strong><span class="classifier">str</span></dt><dd><p>Name of the results JSON file.</p>
+</dd>
+<dt><strong>LOG_FILE_NAME</strong><span class="classifier">str</span></dt><dd><p>Name of the log file.</p>
+</dd>
+<dt><strong>CONFIG_FILE_NAME</strong><span class="classifier">str</span></dt><dd><p>Name of the configuration file.</p>
+</dd>
+<dt><strong>METADATA_JSON</strong><span class="classifier">str</span></dt><dd><p>Name of the metadata JSON file.</p>
+</dd>
+<dt><strong>CHKPT_DIR_NAMES</strong><span class="classifier">list[str]</span></dt><dd><p>List of checkpoint directory names.</p>
+</dd>
+<dt><strong>CHKPT_DIR_VALUES</strong><span class="classifier">list[str]</span></dt><dd><p>List of checkpoint directory values.</p>
+</dd>
+<dt><strong>CHKPT_DIRS</strong><span class="classifier">dict[str, Path]</span></dt><dd><p>Dictionary containing checkpoint directories.</p>
+</dd>
+<dt><strong>keep_n_checkpoints</strong><span class="classifier">int</span></dt><dd><p>Number of checkpoints to keep.</p>
+</dd>
+<dt><strong>log_iteration</strong><span class="classifier">int</span></dt><dd><p>Current log iteration.</p>
+</dd>
+<dt><strong>checkpoint_iteration</strong><span class="classifier">dict[str, dict[str, int]]</span></dt><dd><p>checkpoint_iteration is a dictionary that keeps track of the checkpoint iterations for each directory. 
+It is used in the checkpoint() method to determine the appropriate iteration number for the saved checkpoint.</p>
+</dd>
+<dt><strong>log_file_path</strong><span class="classifier">Path | None</span></dt><dd><p>Path to the log file.</p>
+</dd>
+<dt><strong>dashboard</strong><span class="classifier">LoggerBase | None</span></dt><dd><p>Dashboard logger.</p>
+</dd>
+<dt><strong>model_dir</strong><span class="classifier">Path | None</span></dt><dd><p>the model directory.</p>
+</dd>
+<dt><strong>result_json_path</strong><span class="classifier">Path | None</span></dt><dd><p>Path to the results JSON file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.CHKPT_DIRS">
+<span class="sig-name descname"><span class="pre">CHKPT_DIRS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.CHKPT_DIRS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.CHKPT_DIR_NAMES">
+<span class="sig-name descname"><span class="pre">CHKPT_DIR_NAMES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['best',</span> <span class="pre">'recent']</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.CHKPT_DIR_NAMES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.CHKPT_DIR_VALUES">
+<span class="sig-name descname"><span class="pre">CHKPT_DIR_VALUES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['best_checkpoints',</span> <span class="pre">'checkpoints']</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.CHKPT_DIR_VALUES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.CONFIG_FILE_NAME">
+<span class="sig-name descname"><span class="pre">CONFIG_FILE_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'config.yaml'</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.CONFIG_FILE_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.LOG_FILE_NAME">
+<span class="sig-name descname"><span class="pre">LOG_FILE_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'train.log'</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.LOG_FILE_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.METADATA_JSON">
+<span class="sig-name descname"><span class="pre">METADATA_JSON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'metadata.json'</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.METADATA_JSON" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.RESULTS_JSON_NAME">
+<span class="sig-name descname"><span class="pre">RESULTS_JSON_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'results.json'</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.RESULTS_JSON_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.SUMMARY_DIR_NAME">
+<span class="sig-name descname"><span class="pre">SUMMARY_DIR_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dashboard'</span></em><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.SUMMARY_DIR_NAME" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.checkpoint">
+<span class="sig-name descname"><span class="pre">checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_best</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger.checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Save a checkpoint and update the checkpoint iteration</p>
+<p>Saves the model checkpoint in the appropriate directory based on the <cite>is_best</cite> parameter.
+If <cite>is_best</cite> is True, the checkpoint is saved in the “best” directory, indicating the best
+performing model so far. Otherwise, the checkpoint is saved in the “recent” directory,
+representing the most recent checkpoint.</p>
+<p>The file path for the checkpoint is constructed using the selected directory name (“best” or
+“recent”), and the file name with the format “{file_name}_{itr:010}.pt”, where <cite>itr</cite> is the
+iteration number.</p>
+<p>The <cite>checkpoint_iteration</cite> dictionary is updated with the current iteration number for each
+directory. If <cite>itr</cite> is not provided, the iteration number is increased by 1 each time a
+checkpoint is saved. Otherwise, the iteration number is set to the provided <cite>itr</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>save_dict</strong><span class="classifier">object</span></dt><dd><p>The object to save.</p>
+</dd>
+<dt><strong>file_name</strong><span class="classifier">str</span></dt><dd><p>The file name.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">int | None, optional</span></dt><dd><p>The iteration, by default None. If not provided, the current iteration is incremented by 1.</p>
+</dd>
+<dt><strong>is_best</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether this is the best checkpoint, by default False.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the provided <cite>itr</cite> is not larger than the current iteration associated with the checkpoint.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.clean_checkpoints">
+<span class="sig-name descname"><span class="pre">clean_checkpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keep_n_checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger.clean_checkpoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.clean_checkpoints" title="Permalink to this definition"></a></dt>
+<dd><p>Clean up checkpoints and keep only the specified number of checkpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>keep_n_checkpoints</strong><span class="classifier">int</span></dt><dd><p>Number of checkpoints to keep.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.error">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger.error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.error" title="Permalink to this definition"></a></dt>
+<dd><p>Log an error message to files and to console using the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>*args</strong></dt><dd><p>Positional arguments passed to the logger’s error method.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the logger’s error method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.info" title="Permalink to this definition"></a></dt>
+<dd><p>Log an info to files and to console message using the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>*args</strong></dt><dd><p>Positional arguments passed to the logger’s info method.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the logger’s info method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics" title="ablator.modules.metrics.main.TrainMetrics"><span class="pre">TrainMetrics</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.update" title="Permalink to this definition"></a></dt>
+<dd><p>Update the dashboard with the given metrics.
+write some metrics to json files and update the current metadata(log_iteration)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>metrics</strong><span class="classifier">Union[TrainMetrics, dict]</span></dt><dd><p>The metrics to update.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">Optional[int], optional</span></dt><dd><p>The iteration, by default None.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the iteration is not greater than the current iteration.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>self.log_iteration is increased by 1 every time update() is called while training models.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.main.SummaryLogger.warn">
+<span class="sig-name descname"><span class="pre">warn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/main.html#SummaryLogger.warn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.main.SummaryLogger.warn" title="Permalink to this definition"></a></dt>
+<dd><p>Log a warning message to files and to console using the logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>*args</strong></dt><dd><p>Positional arguments passed to the logger’s warn method.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>Keyword arguments passed to the logger’s warn method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.loggers.tensor">
+<span id="ablator-modules-loggers-tensor-module"></span><h2>ablator.modules.loggers.tensor module<a class="headerlink" href="#module-ablator.modules.loggers.tensor" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.loggers.tensor.</span></span><span class="sig-name descname"><span class="pre">TensorboardLogger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.loggers.LoggerBase" title="ablator.modules.loggers.LoggerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerBase</span></code></a></p>
+<p>A logger class for Tensorboard visualization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>summary_dir</strong><span class="classifier">Union[str, Path]</span></dt><dd><p>The directory to store the Tensorboard summary files.</p>
+</dd>
+<dt><strong>backend_logger</strong><span class="classifier">SummaryWriter</span></dt><dd><p>The PyTorch Tensorboard SummaryWriter object used to log data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger.add_image">
+<span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataformats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CHW'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger.add_image" title="Permalink to this definition"></a></dt>
+<dd><p>Add an image to the TensorBoard dashboard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>k</strong><span class="classifier">str</span></dt><dd><p>The tag associated with the image.</p>
+</dd>
+<dt><strong>v</strong><span class="classifier">np.ndarray</span></dt><dd><p>The image data.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">int</span></dt><dd><p>The iteration number.</p>
+</dd>
+<dt><strong>dataformats</strong><span class="classifier">str, optional</span></dt><dd><p>The format of the image data, by default “CHW”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger.add_scalar">
+<span class="sig-name descname"><span class="pre">add_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger.add_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger.add_scalar" title="Permalink to this definition"></a></dt>
+<dd><p>Add a scalar to the TensorBoard dashboard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>k</strong><span class="classifier">str</span></dt><dd><p>The tag associated with the scalar.</p>
+</dd>
+<dt><strong>v</strong><span class="classifier">float | int</span></dt><dd><p>The scalar value.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">int</span></dt><dd><p>The iteration number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger.add_scalars">
+<span class="sig-name descname"><span class="pre">add_scalars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger.add_scalars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger.add_scalars" title="Permalink to this definition"></a></dt>
+<dd><p>Add multiple scalars to the TensorBoard dashboard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>k</strong><span class="classifier">str</span></dt><dd><p>The main tag associated with the scalars.</p>
+</dd>
+<dt><strong>v</strong><span class="classifier">dict[str, float | int]</span></dt><dd><p>A dictionary of scalar tags and values.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">int</span></dt><dd><p>The iteration number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger.add_table">
+<span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger.add_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger.add_table" title="Permalink to this definition"></a></dt>
+<dd><p>Add a table to the TensorBoard dashboard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>k</strong><span class="classifier">str</span></dt><dd><p>The tag associated with the table.</p>
+</dd>
+<dt><strong>v</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>The table data.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">int</span></dt><dd><p>The iteration number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger.add_text">
+<span class="sig-name descname"><span class="pre">add_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger.add_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger.add_text" title="Permalink to this definition"></a></dt>
+<dd><p>Add a text to the TensorBoard dashboard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>k</strong><span class="classifier">str</span></dt><dd><p>The tag associated with the text.</p>
+</dd>
+<dt><strong>v</strong><span class="classifier">str</span></dt><dd><p>The text data.</p>
+</dd>
+<dt><strong>itr</strong><span class="classifier">int</span></dt><dd><p>The iteration number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.tensor.TensorboardLogger.write_config">
+<span class="sig-name descname"><span class="pre">write_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><span class="pre">ConfigBase</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers/tensor.html#TensorboardLogger.write_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.tensor.TensorboardLogger.write_config" title="Permalink to this definition"></a></dt>
+<dd><p>Write the configuration to the TensorBoard dashboard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config</strong><span class="classifier">ConfigBase</span></dt><dd><p>The configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.loggers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.modules.loggers" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.loggers.</span></span><span class="sig-name descname"><span class="pre">LoggerBase</span></span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase.add_image">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataformats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CHW'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase.add_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase.add_image" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase.add_scalar">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase.add_scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase.add_scalar" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase.add_scalars">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_scalars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase.add_scalars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase.add_scalars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase.add_table">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase.add_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase.add_table" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase.add_text">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase.add_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase.add_text" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerBase.write_config">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><span class="pre">ConfigBase</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerBase.write_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerBase.write_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.loggers.</span></span><span class="sig-name descname"><span class="pre">LoggerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.loggers.LoggerConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.loggers.LoggerConfig" title="ablator.modules.loggers.LoggerConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoggerConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.loggers.LoggerConfig.make_logger">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_logger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/loggers.html#LoggerConfig.make_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.loggers.LoggerConfig.make_logger" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.modules.html" class="btn btn-neutral float-left" title="ablator.modules package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.modules.metrics.html" class="btn btn-neutral float-right" title="ablator.modules.metrics package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

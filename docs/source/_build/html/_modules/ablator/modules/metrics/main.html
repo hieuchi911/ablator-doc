@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules.metrics.main &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.modules.metrics.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.modules.metrics.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">import</span> <span class="nn">ablator.utils.base</span> <span class="k">as</span> <span class="nn">butils</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.metrics.stores</span> <span class="kn">import</span> <span class="n">MovingAverage</span><span class="p">,</span> <span class="n">PredictionStore</span>
+
+
+<div class="viewcode-block" id="LossDivergedError"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.LossDivergedError">[docs]</a><span class="k">class</span> <span class="nc">LossDivergedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TrainMetrics"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics">[docs]</a><span class="k">class</span> <span class="nc">TrainMetrics</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores and manages predictions and calculates metrics given some custom evaluation functions.</span>
+<span class="sd">    Makes batch-updates</span>
+<span class="sd">    Manages memory limits</span>
+<span class="sd">    applies evaluation functions.</span>
+<span class="sd">    provides cached or online updates on the train loss</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">memory_limit</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span>
+        <span class="n">evaluation_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># metrics with their initial value that are updated manually, i.e. learning rate</span>
+        <span class="n">static_aux_metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># metrics for which we update with their moving average, i.e. loss</span>
+        <span class="n">moving_aux_metrics</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the train metrics settings</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        batch_limit : int, optional</span>
+<span class="sd">            Maximum number of batches to keep for every category of data (specified by `tags`), so only `batch_limit`</span>
+<span class="sd">            number of latest batches is stored for each of the categories. Default is 30.</span>
+<span class="sd">        memory_limit : int, optional</span>
+<span class="sd">            Maximum memory (in bytes) of batches to keep for every category of data (specified by `tags`). Every time</span>
+<span class="sd">            this limit is exceeded, `batch_limit` will be reduced by 1. Default is 1e8.</span>
+<span class="sd">        evaluation_functions : dict[str, Callable], optional</span>
+<span class="sd">            A dictionary of key-value pairs, keys are evaluation function names, values are </span>
+<span class="sd">            callable evaluation functions, e.g mean, sum. Note that arguments to this Callable</span>
+<span class="sd">            must match with names of prediction batches that the model returns. So if model prediction over</span>
+<span class="sd">            a batch looks like this: {&quot;preds&quot;: &lt;batch of predictions&gt;, &quot;labels&quot;: &lt;batch of predicted labels&gt;}, </span>
+<span class="sd">            then callable&#39;s arguments should be `preds` and `labels`, e.g `evaluation_functions=</span>
+<span class="sd">            {&quot;mean&quot;: lambda preds, labels: np.mean(preads) + np.mean(labels)}`. Default is None.</span>
+<span class="sd">        moving_average_limit : int, optional</span>
+<span class="sd">            The maximum number of values allowed to store moving average metrics. Default is 3000.</span>
+<span class="sd">        tags : list[str], optional</span>
+<span class="sd">            A list of tags to specify predictions results from different categories, a sample use case is to</span>
+<span class="sd">            categorize different sets of data (train, evaluation, test sets), e.g: `tags=[&quot;train&quot;, &quot;val&quot;].`</span>
+<span class="sd">            This will be combined with evaluation function names and moving auxiliary metrics names to create metrics.</span>
+<span class="sd">            For example, if `evaluation_functions.keys() = [&quot;mean&quot;]`, `moving_aux_metrics = [&quot;loss&quot;]`, then metrics that</span>
+<span class="sd">            will be tracked are: `train_mean`, `train_loss`, `val_mean`, `val_loss`. Default is [&quot;train&quot;].</span>
+<span class="sd">        static_aux_metrics : dict[str, ty.Any], optional</span>
+<span class="sd">            A dictionary of static metrics, those with their initial value that are updated manually, </span>
+<span class="sd">            such as learning rate, best loss, total steps, etc. Keys of this dictionary are static metric names,</span>
+<span class="sd">            while values is a proper initial value. Default is None.</span>
+<span class="sd">        moving_aux_metrics : Iterable[str], optional</span>
+<span class="sd">            A list of metrics, those we update with their moving average, such as loss. Default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        Initialize an object of TrainMetrics:</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import TrainMetrics</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda x: np.mean(x)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;, &quot;val&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 1.0},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict() # metrics are set to np.nan if it&#39;s not updated yet </span>
+<span class="sd">        {   </span>
+<span class="sd">            &quot;train_mean&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;val_mean&quot;: np.nan, &quot;val_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;lr&quot;: 1.0</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Metrics takes no positional arguments.&quot;</span>
+
+        <span class="n">_static_aux_metrics</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">static_aux_metrics</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">static_aux_metrics</span>
+        <span class="n">_moving_aux_metrics</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">set</span><span class="p">({})</span> <span class="k">if</span> <span class="n">moving_aux_metrics</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="n">moving_aux_metrics</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">_evaluation_functions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">{}</span> <span class="k">if</span> <span class="n">evaluation_functions</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">evaluation_functions</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__batch_limit__</span> <span class="o">=</span> <span class="n">batch_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__memory_limit__</span> <span class="o">=</span> <span class="n">memory_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__moving_average_limit__</span> <span class="o">=</span> <span class="n">moving_average_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__evaluation_functions__</span> <span class="o">=</span> <span class="n">_evaluation_functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__static_aux_attributes__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">_static_aux_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__tags__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tags</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__moving_aux_attributes__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">eval_metric</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tags__</span>
+                <span class="k">for</span> <span class="n">eval_metric</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">_moving_aux_metrics</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__moving_eval_attributes__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">eval_fn</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tags__</span>
+                <span class="k">for</span> <span class="n">eval_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__evaluation_functions__</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">_all_attr_names</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__moving_aux_attributes__</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__moving_eval_attributes__</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__static_aux_attributes__</span>
+        <span class="p">)</span>
+        <span class="n">duplicates</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_all_attr_names</span> <span class="k">if</span> <span class="n">_all_attr_names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">}</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">duplicates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Duplicate metric names with built-ins </span><span class="si">{</span><span class="n">duplicates</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_static_aux_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__moving_aux_attributes__</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__moving_eval_attributes__</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_ma</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_preds</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TrainMetrics.update_static_metrics"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.update_static_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">update_static_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update static metrics with the values in metric_dict.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        metric_dict : dict[str, ty.Any]</span>
+<span class="sd">            A dictionary containing the static metrics values to update.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If metric_dict has metrics that are not in static_aux_attributes.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        ----</span>
+<span class="sd">        Not all metric_dict items must be preset from static_aux_attributes.</span>
+<span class="sd">        i.e. metric_dict.items - static_aux_attributes =/= static_aux_attributes - metric_dict.items</span>
+
+<span class="sd">        NOTE: Not all metric_dict items must be preset from static_aux_attributes.</span>
+<span class="sd">        i.e. metric_dict.items - static_aux_attributes =/= static_aux_attributes - metric_dict.items</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import TrainMetrics</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda x: np.mean(x)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 1.0},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {   </span>
+<span class="sd">            &quot;train_mean&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;lr&quot;: 1.0</span>
+<span class="sd">        }</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.update_static_metrics({&quot;lr&quot;: 0.3})</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {   </span>
+<span class="sd">            &quot;train_mean&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;lr&quot;: 0.3</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">diff_metrics</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metric_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__static_aux_attributes__</span>
+        <span class="p">)</span>
+        <span class="n">metric_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">metric_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_metrics</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;There are difference in the class metrics: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__static_aux_attributes__</span><span class="si">}</span><span class="s2"> and updated metrics </span><span class="si">{</span><span class="n">metric_keys</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">metric_dict</span> <span class="o">=</span> <span class="n">butils</span><span class="o">.</span><span class="n">iter_to_numpy</span><span class="p">(</span><span class="n">metric_dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metric_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TrainMetrics.update_ma_metrics"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.update_ma_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">update_ma_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Keep the moving average aux metrics updated with new values from metric_dict.</span>
+<span class="sd">        This method will append the new metric values to its collection of metric results.</span>
+<span class="sd">        A sample use case for this method is when we finish a training iteration, we</span>
+<span class="sd">        can add the training loss to `loss` moving average metric collection on tag `train`,</span>
+<span class="sd">        aka the train set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        metric_dict : dict[str, ty.Any]</span>
+<span class="sd">            A dictionary containing the moving average metric values to update.</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            A tag that specifies which set of predictions to update metric values.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If metric_dict has metrics that are not in moving_aux_metrics.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import TrainMetrics</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;sum&quot;: lambda x: np.mean(x)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;, &quot;val&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 1.0},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {   </span>
+<span class="sd">            &quot;train_sum&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;val_sum&quot;: np.nan, &quot;val_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;lr&quot;: 1.0</span>
+<span class="sd">        }</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.update_ma_metrics({&quot;loss&quot;: 0.35}, tag=&quot;val&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {   </span>
+<span class="sd">            &quot;train_sum&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="sd">            &quot;val_sum&quot;: np.nan, &quot;val_loss&quot;: 0.35,</span>
+<span class="sd">            &quot;lr&quot;: 1.0</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metric_keys</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">metric_dict</span><span class="p">}</span>
+        <span class="n">diff_metrics</span> <span class="o">=</span> <span class="n">metric_keys</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__moving_aux_attributes__</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_metrics</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;There are difference in the class metrics: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__moving_aux_attributes__</span><span class="si">}</span><span class="s2"> and parsed metrics </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">metric_keys</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_ma_metrics</span><span class="p">(</span><span class="n">metric_dict</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_update_ma_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># metric dict should contain scalars</span>
+        <span class="n">metric_dict</span> <span class="o">=</span> <span class="n">butils</span><span class="o">.</span><span class="n">iter_to_numpy</span><span class="p">(</span><span class="n">metric_dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metric_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">k</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_ma</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TrainMetrics.reset"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset to empty all prediction sequences (e.g predictions, labels) in a set of predictions specified by `tag` argument.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            A tag that specifies which set of predictions to be reset.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;sum&quot;: lambda pred: np.mean(pred)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;, &quot;val&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 1.0},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(pred=np.array([1] * 3), tag=&quot;train&quot;)    # e.g add 3 predictions all of class 1</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.reset(tag=&quot;train&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_preds</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">preds</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TrainMetrics.evaluate"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">update_ma</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply evaluation_functions to a set of predictions specified by `tag` argument. Possibly update the</span>
+<span class="sd">        moving averages (only those associated with evaluation functions, not moving auxiliary metrics) with</span>
+<span class="sd">        the evaluated results, or reset the predictions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            A tag that specifies which set of predictions to evaluate.</span>
+<span class="sd">        reset : bool, optional</span>
+<span class="sd">            A flag that indicates whether to reset the predictions to empty after evaluation. Default is True.</span>
+<span class="sd">        update_ma : bool, optional</span>
+<span class="sd">            A flag that indicates whether to update the moving averages after evaluation. Default is True.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        metrics : dict</span>
+<span class="sd">            A dictionary of metric values calculated from the predictions.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import TrainMetrics</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda pred: np.mean(pred)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;, &quot;val&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 1.0},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(pred=np.array([100]), tag=&quot;val&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.evaluate(&quot;val&quot;, reset=False, update=True) # val_mean is updated to mean among batch mean values: (100 / 1) / 1 = 100.0</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(pred=np.array([0] * 3), tag=&quot;val&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # for the following line of code, the current evaluation</span>
+<span class="sd">        &gt;&gt;&gt; # result is: (100 + 0 + 0 + 0) / 4 = 25 (which is returned</span>
+<span class="sd">        &gt;&gt;&gt; # by evaluate() function), and since update=True,</span>
+<span class="sd">        &gt;&gt;&gt; # val_mean is updated to: (100.0 + 25) / 2 = 62.5 (we can</span>
+<span class="sd">        &gt;&gt;&gt; # see this if we use .to_dict())</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.evaluate(&quot;val&quot;, reset=True, update=True)</span>
+<span class="sd">        {&#39;mean&#39;: 25.0}</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {&#39;val_mean&#39;: 62.5}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_preds</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">preds</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">update_ma</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_ma_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reset</span><span class="p">:</span>
+            <span class="n">preds</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">metrics</span></div>
+
+<div class="viewcode-block" id="TrainMetrics.append_batch"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.append_batch">[docs]</a>    <span class="k">def</span> <span class="nf">append_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Appends a batch of predictions to a specific set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            A tag that specifies which set of predictions to evaluate.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            A dictionary of key-value pairs, where key is type of prediction (e.g predictions, labels),</span>
+<span class="sd">            and value is a batch of prediction values. Note that the passed keys in **kwrags must match arguments in </span>
+<span class="sd">            evaluation functions arguments in Callable in evaluation_functions when we initialize TrainMetrics object</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If any positional arguments are passed, or if the provided tag is not a defined metric category.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        this is because it is easy to mix up the order of pred, labels and tags</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import TrainMetrics</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda labels: np.mean(labels)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;, &quot;val&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 1.0},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(labels=np.array([100]), tag=&quot;train&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(labels=np.array([0] * 3), tag=&quot;train&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(labels=np.array([50]), tag=&quot;val&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># NOTE this is because it is easy to mix up the order of pred, labels and tags</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Metrics.append_batch takes no positional arguments.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tags__</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Undefined tag &#39;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&#39;. Metric tags </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__tags__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_preds</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_preds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PredictionStore</span><span class="p">:</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_preds__&quot;</span>
+        <span class="n">_preds</span> <span class="o">=</span> <span class="n">PredictionStore</span><span class="p">(</span>
+            <span class="n">batch_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__batch_limit__</span><span class="p">,</span>
+            <span class="n">memory_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__memory_limit__</span><span class="p">,</span>
+            <span class="n">evaluation_functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__evaluation_functions__</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">_preds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_preds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PredictionStore</span><span class="p">:</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_preds__&quot;</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">preds</span>
+
+    <span class="k">def</span> <span class="nf">_init_ma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MovingAverage</span><span class="p">:</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_ma__&quot;</span>
+        <span class="n">_ma</span> <span class="o">=</span> <span class="n">MovingAverage</span><span class="p">(</span>
+            <span class="n">batch_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__moving_average_limit__</span><span class="p">,</span>
+            <span class="n">memory_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__memory_limit__</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">_ma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_ma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MovingAverage</span><span class="p">:</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_ma__&quot;</span>
+        <span class="n">preds</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">preds</span>
+
+<div class="viewcode-block" id="TrainMetrics.to_dict"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all metrics, i.e moving aux metrics, moving evaluation metrics, and static aux metrics.</span>
+<span class="sd">        Note that moving attributes will be an averaged value of all previous batches. Metrics are</span>
+<span class="sd">        set to np.nan if it&#39;s never updated before</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import TrainMetrics</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = TrainMetrics(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda preds: np.mean(preds)},</span>
+<span class="sd">        ...     moving_average_limit=100,</span>
+<span class="sd">        ...     tags=[&quot;train&quot;, &quot;val&quot;],</span>
+<span class="sd">        ...     static_aux_metrics={&quot;lr&quot;: 0.75},</span>
+<span class="sd">        ...     moving_aux_metrics={&quot;loss&quot;},</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(preds=np.array([100]), tag=&quot;val&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.evaluate(&quot;val&quot;, reset=False, update=True)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;train_mean&#39;: np.nan, &#39;train_loss&#39;: np.nan,</span>
+<span class="sd">            &#39;val_mean&#39;: 100.0, &#39;val_loss&#39;: np.nan,</span>
+<span class="sd">            &#39;lr&#39;: 0.75</span>
+<span class="sd">        }</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.append_batch(preds=np.array([0] * 3), tag=&quot;val&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.evaluate(&quot;val&quot;, reset=True, update=True)</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics.to_dict()</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;train_mean&#39;: np.nan, &#39;train_loss&#39;: np.nan,</span>
+<span class="sd">            &#39;val_mean&#39;: 62.5, &#39;val_loss&#39;: np.nan,</span>
+<span class="sd">            &#39;lr&#39;: 0.75</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__moving_aux_attributes__</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__moving_eval_attributes__</span>
+        <span class="n">ma_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ma</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">}</span>
+        <span class="n">static_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__static_aux_attributes__</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">ma_attrs</span><span class="p">,</span> <span class="o">**</span><span class="n">static_attrs</span><span class="p">}</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

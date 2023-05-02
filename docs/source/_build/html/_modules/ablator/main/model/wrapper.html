@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.main.model.wrapper &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.main.model.wrapper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.main.model.wrapper</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.cuda.amp</span> <span class="kn">import</span> <span class="n">GradScaler</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">import</span> <span class="nn">ablator.utils.base</span> <span class="k">as</span> <span class="nn">butils</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="n">ModelConfig</span><span class="p">,</span> <span class="n">RunConfig</span><span class="p">,</span> <span class="n">TrainConfig</span>
+<span class="kn">from</span> <span class="nn">ablator.main.model.main</span> <span class="kn">import</span> <span class="n">EvaluationError</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">,</span> <span class="n">TrainPlateauError</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">LossDivergedError</span><span class="p">,</span> <span class="n">TrainMetrics</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.optimizer</span> <span class="kn">import</span> <span class="n">OptimizerConfig</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.scheduler</span> <span class="kn">import</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">SchedulerConfig</span>
+
+
+<div class="viewcode-block" id="ModelWrapper"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper">[docs]</a><span class="k">class</span> <span class="nc">ModelWrapper</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper around model_class that removes training boiler-plate code, with over-writable functions</span>
+<span class="sd">    with support for custom use-cases.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    model_class: torch.nn.Module</span>
+<span class="sd">        The model class to wrap.</span>
+<span class="sd">    model: torch.nn.Module</span>
+<span class="sd">        The model created from the model class or checkpoint</span>
+<span class="sd">    optimizer: Optimizer</span>
+<span class="sd">        The optimizer created from the optimizer config or checkpoint</span>
+<span class="sd">    scaler: GradScaler</span>
+<span class="sd">        The scaler created from the scaler config or checkpoint</span>
+<span class="sd">    scheduler: Scheduler</span>
+<span class="sd">        The scheduler created from the scheduler config or checkpoint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the model wrapper.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        model_class: torch.nn.Module</span>
+<span class="sd">            The model class to wrap.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model_class</span><span class="o">=</span><span class="n">model_class</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Will be loaded or created from checkpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="p">:</span> <span class="n">GradScaler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">:</span> <span class="n">Scheduler</span> <span class="o">|</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">train_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainConfig</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">train_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelConfig</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">model_config</span>
+
+<div class="viewcode-block" id="ModelWrapper.create_model"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_model">[docs]</a>    <span class="k">def</span> <span class="nf">create_model</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">strict_load</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the model, optimizer, scheduler and scaler from the save dict or from config.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        save_dict: dict[str, ty.Any]</span>
+<span class="sd">            The save dict to load from.</span>
+<span class="sd">        strict_load: bool</span>
+<span class="sd">            Whether to load the model strictly or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">save_dict</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">save_dict</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">save_dict</span>
+        <span class="n">scheduler_state</span> <span class="o">=</span> <span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;scheduler&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;scheduler&quot;</span> <span class="ow">in</span> <span class="n">save_dict</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">optimizer_state</span> <span class="o">=</span> <span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;optimizer&quot;</span> <span class="ow">in</span> <span class="n">save_dict</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">scaler_state</span> <span class="o">=</span> <span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;scaler&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;scaler&quot;</span> <span class="ow">in</span> <span class="n">save_dict</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">model_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">model_config</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_config</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">model_class</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Support of decleartive paradigm without model over-writing</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">model_class</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;model&quot;</span> <span class="ow">in</span> <span class="n">save_dict</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict_load</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">rand_weights_init</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">butils</span><span class="o">.</span><span class="n">init_weights</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_optimizer</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">optimizer_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">optimizer_config</span><span class="p">,</span>
+            <span class="n">optimizer_state</span><span class="o">=</span><span class="n">optimizer_state</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_scheduler</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">scheduler_config</span><span class="p">,</span>
+            <span class="n">scheduler_state</span><span class="o">=</span><span class="n">scheduler_state</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_scaler</span><span class="p">(</span><span class="n">scaler_state</span><span class="o">=</span><span class="n">scaler_state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="o">=</span> <span class="n">scaler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.create_scheduler"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">create_scheduler</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
+        <span class="n">scheduler_config</span><span class="p">:</span> <span class="n">SchedulerConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler_state</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scheduler</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the scheduler from the saved state or from config.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        model: nn.Module</span>
+<span class="sd">            The model to create the scheduler for.</span>
+<span class="sd">        optimizer: Optimizer</span>
+<span class="sd">            The optimizer to create the scheduler for.</span>
+<span class="sd">        scheduler_config: SchedulerConfig</span>
+<span class="sd">            The scheduler config to create the scheduler from.</span>
+<span class="sd">        scheduler_state: dict[str, ty.Any]</span>
+<span class="sd">            The scheduler state to load the scheduler from.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        scheduler: Scheduler</span>
+<span class="sd">            The scheduler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scheduler</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Scheduler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">scheduler_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_config</span><span class="o">.</span><span class="n">make_scheduler</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">scheduler_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Supplied `scheduler_state` without `scheduler_config`. Ignoring scheduler.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">scheduler</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">scheduler_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scheduler</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.create_optimizer"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">create_optimizer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">optimizer_config</span><span class="p">:</span> <span class="n">OptimizerConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer_state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the optimizer from the saved state or from config.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        model: nn.Module</span>
+<span class="sd">            The model to create the optimizer for.</span>
+<span class="sd">        optimizer_config: OptimizerConfig</span>
+<span class="sd">            The optimizer config to create the optimizer from.</span>
+<span class="sd">        optimizer_state: dict[str, ty.Any]</span>
+<span class="sd">            The optimizer state to load the optimizer from.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        optimizer: Optimizer</span>
+<span class="sd">            The optimizer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span>
+
+        <span class="k">if</span> <span class="n">optimizer_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_config</span><span class="o">.</span><span class="n">make_optimizer</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">optimizer_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># NOTE: because https://github.com/pytorch/pytorch/issues/80809</span>
+            <span class="c1"># TODO any good fix  for this yet?</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">optimizer_state</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s2">&quot;step&quot;</span> <span class="ow">in</span> <span class="n">optimizer_state</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">optimizer_state</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;step&quot;</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+                <span class="p">):</span>
+                    <span class="n">optimizer_state</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">optimizer_state</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">][</span><span class="n">k</span><span class="p">][</span>
+                        <span class="s2">&quot;step&quot;</span>
+                    <span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">optimizer_state</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">optimizer_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Supplied `optimizer_state` without `optimizer_config`. Ignoring optimizer.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">optimizer</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.create_scaler"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_scaler">[docs]</a>    <span class="k">def</span> <span class="nf">create_scaler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scaler_state</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GradScaler</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the scaler from the saved state or from config.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        scaler_state: dict[str, ty.Any]</span>
+<span class="sd">            The scaler state to load the scaler from.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        scaler: GradScaler</span>
+<span class="sd">            The scaler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="n">GradScaler</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">amp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scaler_state</span><span class="p">:</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">scaler_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scaler</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.reset_optimizer_scheduler"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.reset_optimizer_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">reset_optimizer_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the optimizer and scheduler by recreating them.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">optimizer_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">optimizer_config</span>
+        <span class="n">scheduler_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">scheduler_config</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_optimizer</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">optimizer_config</span><span class="o">=</span><span class="n">optimizer_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_scheduler</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler_config</span><span class="o">=</span><span class="n">scheduler_config</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.load_checkpoint"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">save_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">model_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the checkpoint from the save dict.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        save_dict: dict[str, ty.Any]</span>
+<span class="sd">            The save dict to load the checkpoint from.</span>
+<span class="sd">        model_only: bool</span>
+<span class="sd">            Whether to load only the model or include scheduler, optimizer and scaler.</span>
+
+<span class="sd">        </span>
+<span class="sd">        Notes:</span>
+<span class="sd">        ------</span>
+<span class="sd">        This method is the implementation of the abstract method in the base class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model_only</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">save_dict</span><span class="p">[</span><span class="s2">&quot;scaler&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span>
+            <span class="n">save_dict</span><span class="p">,</span>
+            <span class="n">strict_load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.to_device"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.to_device">[docs]</a>    <span class="k">def</span> <span class="nf">to_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Moves the data to the specified device.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        data: Iterable</span>
+<span class="sd">            The data to move to the device.</span>
+<span class="sd">        device: ty.Optional[ty.Union[torch.device, str]]</span>
+<span class="sd">            The device to move the data to. If None, the device specified in the config is used.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        data: Iterable</span>
+<span class="sd">            The data on the device.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span>
+        <span class="k">return</span> <span class="n">butils</span><span class="o">.</span><span class="n">iter_to_device</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.model_step"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.model_step">[docs]</a>    <span class="k">def</span> <span class="nf">model_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Iterable</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A single inference step for the model.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        model: nn.Module</span>
+<span class="sd">            The model to train.</span>
+<span class="sd">        batch: Iterable</span>
+<span class="sd">            The batch of input data to pass through the model,it could be a list, dict or a single tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        out: dict[str, torch.Tensor] | None</span>
+<span class="sd">            The output of the model,contains current predictions and loss of the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_device</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocast</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">batch</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">_update_learning_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">butils</span><span class="o">.</span><span class="n">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span>
+
+    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">_inc_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_is_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_interval</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">step_interval</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="o">%</span> <span class="n">step_interval</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_train_evaluation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smoke_test</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">is_best</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">val_loss</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validation_loop</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">dataloader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">,</span>
+                <span class="n">metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">,</span>
+                <span class="n">subsample</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">eval_subsample</span><span class="p">,</span>
+                <span class="n">smoke_test</span><span class="o">=</span><span class="n">smoke_test</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">val_loss</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;val_loss&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;val_loss&quot;</span> <span class="ow">in</span> <span class="n">metrics</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">val_loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Use val loss for scheduling or finding best checkpoint</span>
+
+            <span class="n">is_best</span> <span class="o">=</span> <span class="n">val_loss</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span>
+
+            <span class="k">if</span> <span class="n">is_best</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">best_iteration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">=</span> <span class="n">val_loss</span>
+
+            <span class="n">divergence_step</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_len</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">warm_up_epochs</span>
+            <span class="p">)</span>
+            <span class="n">is_diverged</span> <span class="o">=</span> <span class="n">val_loss</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">divergence_factor</span>
+
+            <span class="k">if</span> <span class="n">is_diverged</span> <span class="ow">and</span> <span class="n">divergence_step</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">LossDivergedError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Val loss </span><span class="si">{</span><span class="n">val_loss</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2"> has diverged by&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;a factor of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">divergence_factor</span><span class="si">}</span><span class="s2"> to &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;best loss </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span><span class="si">:</span><span class="s2">.4e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">scheduler_config</span><span class="p">,</span> <span class="s2">&quot;step_when&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_config</span><span class="o">.</span><span class="n">scheduler_config</span><span class="o">.</span><span class="n">step_when</span> <span class="o">==</span> <span class="s2">&quot;val&quot;</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">val_loss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">EvaluationError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;A validation dataset is rquired with </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> scheduler&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">val_loss</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">is_best</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint</span><span class="p">(</span><span class="n">is_best</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Early stopping</span>
+        <span class="n">early_stopping_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">early_stopping_iter</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">early_stopping_iter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_iteration</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">early_stopping_iter</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">TrainPlateauError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Early stopping, no improvement for </span><span class="si">{</span><span class="n">early_stopping_iter</span><span class="si">}</span><span class="s2"> iterations.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_model_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Iterable</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_step</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">outputs</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">out</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">loss</span><span class="p">,</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">outputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Model should return outputs: dict[str, torch.Tensor] | None, loss: torch.Tensor | None.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">loss</span>
+
+<div class="viewcode-block" id="ModelWrapper.train_step"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train_step">[docs]</a>    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Iterable</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A single step for training.</span>
+<span class="sd">        It also updates learning rate with scheduler.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        batch: Iterable</span>
+<span class="sd">            The batch of input data to pass through the model,it could be a list, dict or a single tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        outputs: dict[str, torch.Tensor] | None</span>
+<span class="sd">            The output of the model.</span>
+<span class="sd">        train_metrics: dict[str, ty.Any]</span>
+<span class="sd">            The training metrics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span>
+        <span class="c1"># Ensure no left-over grads are in the model&#39;s parameters from custom evaluation or what-not</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">outputs</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_step</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="n">loss_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scaler</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">)</span>
+        <span class="n">aux_metrics</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">outputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aux_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_metrics</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="s2">&quot;step_when&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;epoch&quot;</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch_len</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inc_iter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_learning_rate</span><span class="p">()</span>
+
+        <span class="n">train_metrics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">train_metrics</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss_value</span>
+        <span class="k">if</span> <span class="n">aux_metrics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="s2">&quot;loss&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aux_metrics</span>
+            <span class="p">),</span> <span class="s2">&quot;Can not return key `loss` from `aux_metrics`&quot;</span>
+            <span class="n">train_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aux_metrics</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">train_metrics</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.log_step"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.log_step">[docs]</a>    <span class="k">def</span> <span class="nf">log_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A single step for logging.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">        ------</span>
+<span class="sd">        This method is update the logger with the current metrics and log a status message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_message</span><span class="p">()</span>
+        <span class="n">verbose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">==</span> <span class="s2">&quot;console&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.mock_train"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.mock_train">[docs]</a>    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">mock_train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_config</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">RunConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">run_async</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span> <span class="o">|</span> <span class="n">TrainMetrics</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Mock train the model as a smoke test</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        run_config: RunConfig</span>
+<span class="sd">            The run config to use for the mock train.</span>
+<span class="sd">        run_async: bool</span>
+<span class="sd">            Whether to run the mock train in a separate process.</span>
+<span class="sd">        block: bool</span>
+<span class="sd">            Whether to block the current process until the mock train is finished.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        p: mp.Process</span>
+<span class="sd">            The process running the mock train.</span>
+<span class="sd">        metrics: TrainMetrics</span>
+<span class="sd">            The metrics from the mock train.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mock_model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">run_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">run_config</span> <span class="o">=</span> <span class="n">mock_model</span><span class="o">.</span><span class="n">run_config</span>
+        <span class="k">if</span> <span class="n">run_async</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">mock_model</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">run_config</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">block</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">p</span>
+        <span class="k">return</span> <span class="n">mock_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">run_config</span><span class="o">=</span><span class="n">run_config</span><span class="p">,</span> <span class="n">smoke_test</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.update_status"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.update_status">[docs]</a>    <span class="k">def</span> <span class="nf">update_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the metrics with current training stats, and then all metrics (static and moving average) will be set as description for the tqdm progress.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">update_static_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_stats</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">!=</span> <span class="s2">&quot;tqdm&quot;</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_tqdm</span><span class="o">.</span><span class="n">format_dict</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span>
+        <span class="n">time_remaining</span> <span class="o">=</span> <span class="s2">&quot;??&quot;</span>
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="n">time_remaining</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_tqdm</span><span class="o">.</span><span class="n">format_interval</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_steps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span>
+            <span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_tqdm</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_tqdm</span><span class="o">.</span><span class="n">set_postfix_str</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Remaining: </span><span class="si">{</span><span class="n">time_remaining</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_tqdm</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.status_message"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.status_message">[docs]</a>    <span class="k">def</span> <span class="nf">status_message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string generated from dictinoary of current metrics,including all the static metrics and moving average metrics.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        str</span>
+<span class="sd">            The status message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># must return current epoch, iter, losses and metrics</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.log"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log if the current iteration is a logging step. It also evaluate training metrics for logging.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Log step</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_itr</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_step</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.eval"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.eval">[docs]</a>    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smoke_test</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the model then update scheduler and save checkpoint if the current iteration is an evaluation step.</span>
+<span class="sd">        It also check if it is early stopping.(check configs for more details)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Evaluation step</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_itr</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_train_evaluation_step</span><span class="p">(</span><span class="n">smoke_test</span><span class="o">=</span><span class="n">smoke_test</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">LossDivergedError</span><span class="p">,</span> <span class="n">TrainPlateauError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">e</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">eval_step</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_itr</span> <span class="o">==</span> <span class="mi">0</span>
+                    <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_itr</span>
+                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_message</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluation Step [</span><span class="si">{</span><span class="n">eval_step</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The total number of steps for training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_len</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span>
+
+<div class="viewcode-block" id="ModelWrapper.train_loop"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train_loop">[docs]</a>    <span class="k">def</span> <span class="nf">train_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smoke_test</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train the model in many steps, evaluate the model and log the metrics for each iteration.</span>
+<span class="sd">        metrics including static metrics like learning rate, along with validation and training metrics like loss and mean.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        smoke_test: bool</span>
+<span class="sd">            Whether to run a smoke test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">train_dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span>
+        <span class="n">generator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_steps</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="c1"># restart the generator if the previous generator is exhausted.</span>
+                <span class="n">generator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">)</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">generator</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train_tqdm</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="n">outputs</span><span class="p">,</span> <span class="n">train_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="o">**</span><span class="n">outputs</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">update_ma_metrics</span><span class="p">(</span><span class="n">train_metrics</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s2">&quot;loss&quot;</span> <span class="ow">in</span> <span class="n">train_metrics</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">train_metrics</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Loss Diverged. Terminating. loss: </span><span class="si">{</span><span class="n">train_metrics</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">LossDivergedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">smoke_test</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update_status</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">smoke_test</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch_len</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">smoke_test</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.train"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train">[docs]</a>    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">,</span> <span class="n">smoke_test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainMetrics</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize states and train the model.</span>
+<span class="sd">        When keyboard interrupts, saves a checkpoint</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        run_config: RunConfig</span>
+<span class="sd">            The run config to use for training.</span>
+<span class="sd">        smoke_test: bool</span>
+<span class="sd">            Whether to run a smoke test.</span>
+<span class="sd">        debug: bool</span>
+<span class="sd">            Whether to run in debug mode.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        TrainMetrics</span>
+<span class="sd">            The metrics from the training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_state</span><span class="p">(</span><span class="n">run_config</span><span class="o">=</span><span class="n">run_config</span><span class="p">,</span> <span class="n">smoke_test</span><span class="o">=</span><span class="n">smoke_test</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_loop</span><span class="p">(</span><span class="n">smoke_test</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.evaluate"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.evaluate">[docs]</a>    <span class="nd">@ty</span><span class="o">.</span><span class="n">final</span>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the model after training on the test and validation sets.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        run_config: RunConfig  </span>
+<span class="sd">            The run config to use for evaluation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_state</span><span class="p">(</span><span class="n">run_config</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluating </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_checkpoint</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO make new metrics</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current metrics: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">loader</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">test_dataloader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># NOTE we set max memory limit and let it crash because we do not want</span>
+                <span class="c1"># inaccurate metrics calculation. Possibly smarter ways to go about it.</span>
+                <span class="n">eval_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+                    <span class="n">batch_limit</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">memory_limit</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e9</span><span class="p">),</span>
+                    <span class="n">moving_average_limit</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">),</span>
+                    <span class="n">evaluation_functions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_functions</span><span class="p">(),</span>
+                    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="n">tag</span><span class="p">],</span>
+                    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;aux_metric_names&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_validation_loop</span><span class="p">(</span>
+                    <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                    <span class="n">dataloader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">metrics</span><span class="o">=</span><span class="n">eval_metrics</span><span class="p">,</span>
+                    <span class="n">subsample</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">metrics</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_metrics</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluation: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">metrics</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.apply_loss"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.apply_loss">[docs]</a>    <span class="k">def</span> <span class="nf">apply_loss</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">loss</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
+        <span class="n">scaler</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">GradScaler</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Scheduler</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the loss and apply the gradients, call optimizer.step() and scheduler.step().</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        model: nn.Module</span>
+<span class="sd">            The model to apply the loss to.</span>
+<span class="sd">        loss: torch.Tensor | None</span>
+<span class="sd">            The loss to apply.</span>
+<span class="sd">        optimizer: Optimizer</span>
+<span class="sd">            The optimizer to step.</span>
+<span class="sd">        scaler: torch.cuda.amp.GradScaler</span>
+<span class="sd">            The scaler to use for mixed precision training.</span>
+<span class="sd">        scheduler: ty.Optional[Scheduler]</span>
+<span class="sd">            The scheduler to step.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        float | None</span>
+<span class="sd">            The loss value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amp</span><span class="p">:</span>
+                <span class="n">scaler</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">loss_value</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amp</span><span class="p">:</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">unscale_</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">scheduler</span><span class="p">,</span> <span class="s2">&quot;step_when&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
+            <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">loss_value</span></div>
+
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_validation_loop</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">TrainMetrics</span><span class="p">,</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+        <span class="n">subsample</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">smoke_test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">was_training</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">training</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">batch_lim</span> <span class="o">:=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">__batch_limit__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Metrics batch-limit </span><span class="si">{</span><span class="n">batch_lim</span><span class="si">}</span><span class="s2"> is smaller than &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;the validation dataloader length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="p">)</span>
+        <span class="n">metrics_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_loop</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subsample</span><span class="p">,</span> <span class="n">smoke_test</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">was_training</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">metrics_dict</span>
+
+<div class="viewcode-block" id="ModelWrapper.validation_loop"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.validation_loop">[docs]</a>    <span class="k">def</span> <span class="nf">validation_loop</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">dataloader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">TrainMetrics</span><span class="p">,</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+        <span class="n">subsample</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">smoke_test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the model on data in dataloader (which can either be val dataloader - so tag is val, or test dataloader - so tag is test)</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        model: nn.Module</span>
+<span class="sd">            The model to validate.</span>
+<span class="sd">        dataloader: DataLoader</span>
+<span class="sd">            The dataloader to use for validation.</span>
+<span class="sd">        metrics: TrainMetrics</span>
+<span class="sd">            The metrics to use for validation.</span>
+<span class="sd">        tag: ty.Literal[&quot;train&quot;, &quot;test&quot;, &quot;val&quot;]</span>
+<span class="sd">            The tag to use for validation. Also see `TrainMetrics` for details.</span>
+<span class="sd">        subsample: float</span>
+<span class="sd">            The fraction of the dataloader to use for validation.</span>
+<span class="sd">        smoke_test: bool</span>
+<span class="sd">            Whether to execute this function as a smoke test. If True, only one iteration will be performed, which is useful for quickly checking if the code runs without errors. Default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        dict[str, float]</span>
+<span class="sd">            The metrics from the validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cutoff_itr</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">)</span> <span class="o">*</span> <span class="n">subsample</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">outputs</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_step</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">outputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">aux_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aux_metrics</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+                    <span class="n">metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="o">**</span><span class="n">outputs</span><span class="p">)</span>
+
+                <span class="n">val_metrics</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">loss</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">val_metrics</span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">aux_metrics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="p">(</span>
+                        <span class="s2">&quot;loss&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aux_metrics</span>
+                    <span class="p">),</span> <span class="s2">&quot;Invalid return key `loss` from `aux_metrics`&quot;</span>
+                    <span class="n">val_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aux_metrics</span><span class="p">)</span>
+                <span class="n">metrics</span><span class="o">.</span><span class="n">update_ma_metrics</span><span class="p">(</span><span class="n">val_metrics</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">cutoff_itr</span> <span class="ow">or</span> <span class="n">smoke_test</span><span class="p">:</span>
+                    <span class="k">break</span>
+        <span class="n">metrics</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">metrics_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">metrics_dict</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.make_dataloader_train"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloader_train">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">make_dataloader_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to make the training dataloader.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        run_config: RunConfig</span>
+<span class="sd">            The run configuration.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        DataLoader</span>
+<span class="sd">            The training dataloader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.evaluation_functions"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.evaluation_functions">[docs]</a>    <span class="k">def</span> <span class="nf">evaluation_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        dict[str, Callable]</span>
+<span class="sd">            The evaluation functions to use.Also see `TrainMetrics` for details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="c1"># Functions that can be optionally over-written.</span>
+<div class="viewcode-block" id="ModelWrapper.make_dataloader_test"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloader_test">[docs]</a>    <span class="k">def</span> <span class="nf">make_dataloader_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to make the test dataloader.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        run_config: RunConfig</span>
+<span class="sd">            The run configuration.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        DataLoader | None</span>
+<span class="sd">            The test dataloader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.make_dataloader_val"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloader_val">[docs]</a>    <span class="k">def</span> <span class="nf">make_dataloader_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataLoader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to make the validation dataloader.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        run_config: RunConfig</span>
+<span class="sd">            The run configuration.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        DataLoader | None</span>
+<span class="sd">            The validation dataloader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.custom_evaluation"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.custom_evaluation">[docs]</a>    <span class="k">def</span> <span class="nf">custom_evaluation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">:</span> <span class="n">Iterable</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.aux_metrics"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.aux_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">aux_metrics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">output_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Auxiliary metrics to be computed during training.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        output_dict: dict[str, torch.Tensor] | None</span>
+<span class="sd">            The output dictionary from the model.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:   </span>
+<span class="sd">        --------</span>
+<span class="sd">        ty.Optional[dict[str, ty.Any]]</span>
+<span class="sd">            The auxiliary metrics.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">        ------</span>
+<span class="sd">        Auxiliary metrics are computed during training and are used for moving_aux_metrics in `TrainMetrics`.</span>
+<span class="sd">        Check `TrainMetrics` for more details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.config_parser"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.config_parser">[docs]</a>    <span class="k">def</span> <span class="nf">config_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to initialize Derived properties</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">run_config</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.make_dataloaders"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloaders">[docs]</a>    <span class="k">def</span> <span class="nf">make_dataloaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is done post-initialization because otherwise the</span>
+<span class="sd">        dataloaders are pickled with the object when running distributed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_dataloader_train</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_dataloader_val</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_dataloader_test</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.checkpoint"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save a checkpoint of the model.It will use the class name of the model as the filename.</span>
+
+<span class="sd">        </span>
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        is_best: bool</span>
+<span class="sd">            Whether this is the best model so far.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
+            <span class="n">itr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_iteration</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ModelWrapper.save_dict"><a class="viewcode-back" href="../../../../ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.save_dict">[docs]</a>    <span class="k">def</span> <span class="nf">save_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the current state of the trainer, including  model parameters, and current states of the optimizer, the scaler, and the scheduler</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        dict[str, ty.Any]</span>
+<span class="sd">            The current state of the trainer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_state_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+        <span class="n">optimizer_state_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">optimizer_state_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+        <span class="n">scheduler_state_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scheduler_state_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+        <span class="n">scaler_state_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scaler_state_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">model_state_dict</span><span class="p">,</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer_state_dict</span><span class="p">,</span>
+            <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">scheduler_state_dict</span><span class="p">,</span>
+            <span class="s2">&quot;scaler&quot;</span><span class="p">:</span> <span class="n">scaler_state_dict</span><span class="p">,</span>
+        <span class="p">}</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

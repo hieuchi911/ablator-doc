@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.main package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.main.model package" href="ablator.main.model.html" />
+    <link rel="prev" title="ablator.config package" href="ablator.config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ablator.main package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.main.model.html">ablator.main.model package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.main.configs">ablator.main.configs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.ModelConfig"><code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ModelConfig.config_class"><code class="docutils literal notranslate"><span class="pre">ModelConfig.config_class</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.Optim"><code class="docutils literal notranslate"><span class="pre">Optim</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.Optim.max"><code class="docutils literal notranslate"><span class="pre">Optim.max</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.Optim.min"><code class="docutils literal notranslate"><span class="pre">Optim.min</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.ParallelConfig"><code class="docutils literal notranslate"><span class="pre">ParallelConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.concurrent_trials"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.concurrent_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.config_class"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.cpus_per_experiment"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.cpus_per_experiment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.gcp_config"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.gcp_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.gpu_mb_per_experiment"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.gpu_mb_per_experiment</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.ignore_invalid_params"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.ignore_invalid_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.optim_metrics"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.optim_metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.remote_config"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.remote_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.search_algo"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.search_algo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.search_space"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.search_space</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.ParallelConfig.total_trials"><code class="docutils literal notranslate"><span class="pre">ParallelConfig.total_trials</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.RunConfig"><code class="docutils literal notranslate"><span class="pre">RunConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.amp"><code class="docutils literal notranslate"><span class="pre">RunConfig.amp</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.config_class"><code class="docutils literal notranslate"><span class="pre">RunConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.device"><code class="docutils literal notranslate"><span class="pre">RunConfig.device</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.divergence_factor"><code class="docutils literal notranslate"><span class="pre">RunConfig.divergence_factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.early_stopping_iter"><code class="docutils literal notranslate"><span class="pre">RunConfig.early_stopping_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.eval_epoch"><code class="docutils literal notranslate"><span class="pre">RunConfig.eval_epoch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.eval_subsample"><code class="docutils literal notranslate"><span class="pre">RunConfig.eval_subsample</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.experiment_dir"><code class="docutils literal notranslate"><span class="pre">RunConfig.experiment_dir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.init_chkpt"><code class="docutils literal notranslate"><span class="pre">RunConfig.init_chkpt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.keep_n_checkpoints"><code class="docutils literal notranslate"><span class="pre">RunConfig.keep_n_checkpoints</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.log_epoch"><code class="docutils literal notranslate"><span class="pre">RunConfig.log_epoch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.metrics_mb_limit"><code class="docutils literal notranslate"><span class="pre">RunConfig.metrics_mb_limit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.metrics_n_batches"><code class="docutils literal notranslate"><span class="pre">RunConfig.metrics_n_batches</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.model_config"><code class="docutils literal notranslate"><span class="pre">RunConfig.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.random_seed"><code class="docutils literal notranslate"><span class="pre">RunConfig.random_seed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.tensorboard"><code class="docutils literal notranslate"><span class="pre">RunConfig.tensorboard</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.train_config"><code class="docutils literal notranslate"><span class="pre">RunConfig.train_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.uid"><code class="docutils literal notranslate"><span class="pre">RunConfig.uid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.verbose"><code class="docutils literal notranslate"><span class="pre">RunConfig.verbose</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.RunConfig.warm_up_epochs"><code class="docutils literal notranslate"><span class="pre">RunConfig.warm_up_epochs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.SearchAlgo"><code class="docutils literal notranslate"><span class="pre">SearchAlgo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchAlgo.random"><code class="docutils literal notranslate"><span class="pre">SearchAlgo.random</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchAlgo.tpe"><code class="docutils literal notranslate"><span class="pre">SearchAlgo.tpe</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.SearchSpace"><code class="docutils literal notranslate"><span class="pre">SearchSpace</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchSpace.categorical_values"><code class="docutils literal notranslate"><span class="pre">SearchSpace.categorical_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchSpace.config_class"><code class="docutils literal notranslate"><span class="pre">SearchSpace.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchSpace.value_range"><code class="docutils literal notranslate"><span class="pre">SearchSpace.value_range</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchSpace.value_type"><code class="docutils literal notranslate"><span class="pre">SearchSpace.value_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.SearchType"><code class="docutils literal notranslate"><span class="pre">SearchType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchType.integer"><code class="docutils literal notranslate"><span class="pre">SearchType.integer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.SearchType.numerical"><code class="docutils literal notranslate"><span class="pre">SearchType.numerical</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.configs.TrainConfig"><code class="docutils literal notranslate"><span class="pre">TrainConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.batch_size"><code class="docutils literal notranslate"><span class="pre">TrainConfig.batch_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.config_class"><code class="docutils literal notranslate"><span class="pre">TrainConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.dataset"><code class="docutils literal notranslate"><span class="pre">TrainConfig.dataset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.epochs"><code class="docutils literal notranslate"><span class="pre">TrainConfig.epochs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.optimizer_config"><code class="docutils literal notranslate"><span class="pre">TrainConfig.optimizer_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.rand_weights_init"><code class="docutils literal notranslate"><span class="pre">TrainConfig.rand_weights_init</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.configs.TrainConfig.scheduler_config"><code class="docutils literal notranslate"><span class="pre">TrainConfig.scheduler_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.main.mp">ablator.main.mp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.mp.ParallelTrainer"><code class="docutils literal notranslate"><span class="pre">ParallelTrainer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.mp.ParallelTrainer.evaluate"><code class="docutils literal notranslate"><span class="pre">ParallelTrainer.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.mp.ParallelTrainer.kill_idle"><code class="docutils literal notranslate"><span class="pre">ParallelTrainer.kill_idle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.mp.ParallelTrainer.launch"><code class="docutils literal notranslate"><span class="pre">ParallelTrainer.launch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.mp.ParallelTrainer.sync_down"><code class="docutils literal notranslate"><span class="pre">ParallelTrainer.sync_down()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.mp.ParallelTrainer.sync_up"><code class="docutils literal notranslate"><span class="pre">ParallelTrainer.sync_up()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.mp.parse_metrics"><code class="docutils literal notranslate"><span class="pre">parse_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.mp.parse_rsync_paths"><code class="docutils literal notranslate"><span class="pre">parse_rsync_paths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.mp.train_main_remote"><code class="docutils literal notranslate"><span class="pre">train_main_remote()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.main.proto">ablator.main.proto module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.proto.ProtoTrainer"><code class="docutils literal notranslate"><span class="pre">ProtoTrainer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.proto.ProtoTrainer.evaluate"><code class="docutils literal notranslate"><span class="pre">ProtoTrainer.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.proto.ProtoTrainer.launch"><code class="docutils literal notranslate"><span class="pre">ProtoTrainer.launch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.proto.ProtoTrainer.pre_train_setup"><code class="docutils literal notranslate"><span class="pre">ProtoTrainer.pre_train_setup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.proto.ProtoTrainer.smoke_test"><code class="docutils literal notranslate"><span class="pre">ProtoTrainer.smoke_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.proto.ProtoTrainer.sync"><code class="docutils literal notranslate"><span class="pre">ProtoTrainer.sync()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.main.state">ablator.main.state module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.Base"><code class="docutils literal notranslate"><span class="pre">Base</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Base.metadata"><code class="docutils literal notranslate"><span class="pre">Base.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Base.registry"><code class="docutils literal notranslate"><span class="pre">Base.registry</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.ExperimentState"><code class="docutils literal notranslate"><span class="pre">ExperimentState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.all_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.all_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.all_trials_uid"><code class="docutils literal notranslate"><span class="pre">ExperimentState.all_trials_uid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.complete_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.complete_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.failed_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.failed_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.n_trials_remaining"><code class="docutils literal notranslate"><span class="pre">ExperimentState.n_trials_remaining</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.pending_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.pending_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.pruned_duplicate_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.pruned_duplicate_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.pruned_errored_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.pruned_errored_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.running_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.running_trials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.sample_trials"><code class="docutils literal notranslate"><span class="pre">ExperimentState.sample_trials()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.search_space_dot_path"><code class="docutils literal notranslate"><span class="pre">ExperimentState.search_space_dot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.tune_trial_str"><code class="docutils literal notranslate"><span class="pre">ExperimentState.tune_trial_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.ExperimentState.update_trial_state"><code class="docutils literal notranslate"><span class="pre">ExperimentState.update_trial_state()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.OptunaState"><code class="docutils literal notranslate"><span class="pre">OptunaState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.OptunaState.sample_trial"><code class="docutils literal notranslate"><span class="pre">OptunaState.sample_trial()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.OptunaState.update_trial"><code class="docutils literal notranslate"><span class="pre">OptunaState.update_trial()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.Trial"><code class="docutils literal notranslate"><span class="pre">Trial</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.config_param"><code class="docutils literal notranslate"><span class="pre">Trial.config_param</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.config_uid"><code class="docutils literal notranslate"><span class="pre">Trial.config_uid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.id"><code class="docutils literal notranslate"><span class="pre">Trial.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.metrics"><code class="docutils literal notranslate"><span class="pre">Trial.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.optuna_trial_num"><code class="docutils literal notranslate"><span class="pre">Trial.optuna_trial_num</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.runtime_errors"><code class="docutils literal notranslate"><span class="pre">Trial.runtime_errors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.Trial.state"><code class="docutils literal notranslate"><span class="pre">Trial.state</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.TrialState"><code class="docutils literal notranslate"><span class="pre">TrialState</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.COMPLETE"><code class="docutils literal notranslate"><span class="pre">TrialState.COMPLETE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.FAIL"><code class="docutils literal notranslate"><span class="pre">TrialState.FAIL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.PRUNED"><code class="docutils literal notranslate"><span class="pre">TrialState.PRUNED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.PRUNED_DUPLICATE"><code class="docutils literal notranslate"><span class="pre">TrialState.PRUNED_DUPLICATE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.PRUNED_INVALID"><code class="docutils literal notranslate"><span class="pre">TrialState.PRUNED_INVALID</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.PRUNED_POOR_PERFORMANCE"><code class="docutils literal notranslate"><span class="pre">TrialState.PRUNED_POOR_PERFORMANCE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.RECOVERABLE_ERROR"><code class="docutils literal notranslate"><span class="pre">TrialState.RECOVERABLE_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.RUNNING"><code class="docutils literal notranslate"><span class="pre">TrialState.RUNNING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.WAITING"><code class="docutils literal notranslate"><span class="pre">TrialState.WAITING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.main.state.TrialState.to_optuna_state"><code class="docutils literal notranslate"><span class="pre">TrialState.to_optuna_state()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.augment_trial_kwargs"><code class="docutils literal notranslate"><span class="pre">augment_trial_kwargs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.parse_metrics"><code class="docutils literal notranslate"><span class="pre">parse_metrics()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.main.state.sample_trial_params"><code class="docutils literal notranslate"><span class="pre">sample_trial_params()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.main">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ablator.main package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.main.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-main-package">
+<h1>ablator.main package<a class="headerlink" href="#ablator-main-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.model.html">ablator.main.model package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.model.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.model.html#module-ablator.main.model.main">ablator.main.model.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.EvaluationError"><code class="docutils literal notranslate"><span class="pre">EvaluationError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.LogStepError"><code class="docutils literal notranslate"><span class="pre">LogStepError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase"><code class="docutils literal notranslate"><span class="pre">ModelBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.checkpoint"><code class="docutils literal notranslate"><span class="pre">ModelBase.checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.config_parser"><code class="docutils literal notranslate"><span class="pre">ModelBase.config_parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.create_model"><code class="docutils literal notranslate"><span class="pre">ModelBase.create_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.current_epoch"><code class="docutils literal notranslate"><span class="pre">ModelBase.current_epoch</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.epoch_len"><code class="docutils literal notranslate"><span class="pre">ModelBase.epoch_len</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.eval_itr"><code class="docutils literal notranslate"><span class="pre">ModelBase.eval_itr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.evaluate"><code class="docutils literal notranslate"><span class="pre">ModelBase.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.evaluation_functions"><code class="docutils literal notranslate"><span class="pre">ModelBase.evaluation_functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.load_checkpoint"><code class="docutils literal notranslate"><span class="pre">ModelBase.load_checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.log_itr"><code class="docutils literal notranslate"><span class="pre">ModelBase.log_itr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.make_dataloaders"><code class="docutils literal notranslate"><span class="pre">ModelBase.make_dataloaders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.save_dict"><code class="docutils literal notranslate"><span class="pre">ModelBase.save_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.train"><code class="docutils literal notranslate"><span class="pre">ModelBase.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.train_stats"><code class="docutils literal notranslate"><span class="pre">ModelBase.train_stats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.ModelBase.uid"><code class="docutils literal notranslate"><span class="pre">ModelBase.uid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.main.TrainPlateauError"><code class="docutils literal notranslate"><span class="pre">TrainPlateauError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.model.html#module-ablator.main.model.wrapper">ablator.main.model.wrapper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper"><code class="docutils literal notranslate"><span class="pre">ModelWrapper</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.apply_loss"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.apply_loss()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.aux_metrics"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.aux_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.checkpoint"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.config_parser"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.config_parser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_model"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.create_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_optimizer"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.create_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_scaler"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.create_scaler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.create_scheduler"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.create_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.custom_evaluation"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.custom_evaluation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.eval"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.eval()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.evaluate"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.evaluation_functions"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.evaluation_functions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.load_checkpoint"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.load_checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.log"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.log_step"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.log_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloader_test"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.make_dataloader_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloader_train"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.make_dataloader_train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloader_val"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.make_dataloader_val()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.make_dataloaders"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.make_dataloaders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.mock_train"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.mock_train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.model_config"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.model_step"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.model_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.reset_optimizer_scheduler"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.reset_optimizer_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.save_dict"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.save_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.status_message"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.status_message()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.to_device"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.to_device()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.total_steps"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.total_steps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train_config"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.train_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train_loop"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.train_loop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.train_step"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.train_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.update_status"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.update_status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper.validation_loop"><code class="docutils literal notranslate"><span class="pre">ModelWrapper.validation_loop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.model.html#module-ablator.main.model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.main.configs">
+<span id="ablator-main-configs-module"></span><h2>ablator.main.configs module<a class="headerlink" href="#module-ablator.main.configs" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.ModelConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">ModelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#ModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.ModelConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>Model configuration.
+When initializing a model, the config is passed to the model constructor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ModelConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.main.configs.ModelConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.main.configs.ModelConfig" title="ablator.main.configs.ModelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfig</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.Optim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">Optim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#Optim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.Optim" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.types.Enum" title="ablator.config.types.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>type of optimization direction.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.Optim.max">
+<span class="sig-name descname"><span class="pre">max</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'max'</span></em><a class="headerlink" href="#ablator.main.configs.Optim.max" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.Optim.min">
+<span class="sig-name descname"><span class="pre">min</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'min'</span></em><a class="headerlink" href="#ablator.main.configs.Optim.min" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">ParallelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#ParallelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.ParallelConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunConfig</span></code></a></p>
+<p>parallel training configuration.</p>
+<dl class="simple">
+<dt>total_trials: int</dt><dd><p>total number of trials.</p>
+</dd>
+<dt>concurrent_trials: int</dt><dd><p>number of trials to run concurrently.</p>
+</dd>
+<dt>search_space: Dict[SearchSpace]</dt><dd><p>search space for hyperparameter search,eg.{“train_config.optimizer_config.arguments.lr”: SearchSpace(value_range=[0, 10], value_type=”int”),}    optim_metrics: Dict[Optim]
+metrics to optimize, eg.{“val_loss”: “min”}</p>
+</dd>
+<dt>search_algo: SearchAlgo = SearchAlgo.tpe</dt><dd><p>type of search algorithm.</p>
+</dd>
+<dt>ignore_invalid_params: bool = False</dt><dd><p>whether to ignore invalid parameters when sampling.</p>
+</dd>
+<dt>remote_config: Optional[RemoteConfig] = None</dt><dd><p>remote storage configuration.</p>
+</dd>
+<dt>gcp_config: Optional[GcpConfig] = None</dt><dd><p>gcp configuration.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.concurrent_trials">
+<span class="sig-name descname"><span class="pre">concurrent_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.concurrent_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.main.configs.ParallelConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParallelConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.cpus_per_experiment">
+<span class="sig-name descname"><span class="pre">cpus_per_experiment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.cpus_per_experiment" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.gcp_config">
+<span class="sig-name descname"><span class="pre">gcp_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig" title="ablator.modules.storage.cloud.GcpConfig"><span class="pre">GcpConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.gcp_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.gpu_mb_per_experiment">
+<span class="sig-name descname"><span class="pre">gpu_mb_per_experiment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.gpu_mb_per_experiment" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.ignore_invalid_params">
+<span class="sig-name descname"><span class="pre">ignore_invalid_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.ignore_invalid_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.optim_metrics">
+<span class="sig-name descname"><span class="pre">optim_metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.config.html#ablator.config.types.Dict" title="ablator.config.types.Dict"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.Optim" title="ablator.main.configs.Optim"><span class="pre">Optim</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.optim_metrics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.remote_config">
+<span class="sig-name descname"><span class="pre">remote_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig" title="ablator.modules.storage.remote.RemoteConfig"><span class="pre">RemoteConfig</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.remote_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.search_algo">
+<span class="sig-name descname"><span class="pre">search_algo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.SearchAlgo" title="ablator.main.configs.SearchAlgo"><span class="pre">SearchAlgo</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tpe'</span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.search_algo" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.search_space">
+<span class="sig-name descname"><span class="pre">search_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Dict" title="ablator.config.types.Dict"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.SearchSpace" title="ablator.main.configs.SearchSpace"><span class="pre">SearchSpace</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.search_space" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.ParallelConfig.total_trials">
+<span class="sig-name descname"><span class="pre">total_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ablator.main.configs.ParallelConfig.total_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">RunConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#RunConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.RunConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>base configuration for running an experiment.
+experiment_dir: Optional[str] = None</p>
+<blockquote>
+<div><p>location to store experiment artifacts.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>random_seed: Optional[int] = None</dt><dd><p>random seed.</p>
+</dd>
+<dt>train_config: TrainConfig</dt><dd><p>training configuration.(check TrainConfig for more details)</p>
+</dd>
+<dt>model_config: ModelConfig</dt><dd><p>model configuration.(check ModelConfig for more details)</p>
+</dd>
+<dt>keep_n_checkpoints: int = 3</dt><dd><p>number of latest checkpoints to keep.</p>
+</dd>
+<dt>tensorboard: bool = True</dt><dd><p>whether to use tensorboardLogger.</p>
+</dd>
+<dt>amp: bool = True</dt><dd><p>whether to use automatic mixed precision when running on gpu.</p>
+</dd>
+<dt>device: str = “cuda” or “cpu”</dt><dd><p>device to run on.</p>
+</dd>
+<dt>verbose: Literal[“console”, “tqdm”, “silent”] = “console”</dt><dd><p>verbosity level.</p>
+</dd>
+<dt>eval_subsample: float = 1</dt><dd><p>fraction of the dataset to use for evaluation.</p>
+</dd>
+<dt>metrics_n_batches: int = 32</dt><dd><p>max number of batches stored in every tag(train, eval, test) for evaluation.</p>
+</dd>
+<dt>metrics_mb_limit: int = 100 </dt><dd><p>max number of megabytes stored in every tag(train, eval, test) for evaluation.</p>
+</dd>
+<dt>early_stopping_iter: Optional[int] = None</dt><dd><p>The maximum allowed difference between the current iteration and the last iteration with the best metric before applying early stopping. 
+Early stopping will be triggered if the difference (current_itr - best_itr) exceeds ‘early_stopping_iter’. 
+If set to None, early stopping will not be applied.</p>
+</dd>
+<dt>eval_epoch: float = 1</dt><dd><p>The epoch interval between two evaluations.</p>
+</dd>
+<dt>log_epoch: float = 1</dt><dd><p>The epoch interval between two logging.</p>
+</dd>
+<dt>init_chkpt: Optional[str] = None</dt><dd><p>path to a checkpoint to initialize the model with.</p>
+</dd>
+<dt>warm_up_epochs: float = 0</dt><dd><p>number of epochs marked as warm up epochs.</p>
+</dd>
+<dt>divergence_factor: float = 100</dt><dd><p>if cur_loss &gt; best_loss &gt; divergence_factor, the model is considered to have diverged.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.amp">
+<span class="sig-name descname"><span class="pre">amp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.amp" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.main.configs.RunConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">RunConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.device">
+<span class="sig-name descname"><span class="pre">device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cuda'</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.device" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.divergence_factor">
+<span class="sig-name descname"><span class="pre">divergence_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.divergence_factor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.early_stopping_iter">
+<span class="sig-name descname"><span class="pre">early_stopping_iter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.early_stopping_iter" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.eval_epoch">
+<span class="sig-name descname"><span class="pre">eval_epoch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.eval_epoch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.eval_subsample">
+<span class="sig-name descname"><span class="pre">eval_subsample</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.eval_subsample" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.experiment_dir">
+<span class="sig-name descname"><span class="pre">experiment_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.experiment_dir" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.init_chkpt">
+<span class="sig-name descname"><span class="pre">init_chkpt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.init_chkpt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.keep_n_checkpoints">
+<span class="sig-name descname"><span class="pre">keep_n_checkpoints</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.keep_n_checkpoints" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.log_epoch">
+<span class="sig-name descname"><span class="pre">log_epoch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.log_epoch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.metrics_mb_limit">
+<span class="sig-name descname"><span class="pre">metrics_mb_limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.metrics_mb_limit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.metrics_n_batches">
+<span class="sig-name descname"><span class="pre">metrics_n_batches</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.metrics_n_batches" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.configs.ModelConfig" title="ablator.main.configs.ModelConfig"><span class="pre">ModelConfig</span></a></em><a class="headerlink" href="#ablator.main.configs.RunConfig.model_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.random_seed">
+<span class="sig-name descname"><span class="pre">random_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.random_seed" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.tensorboard">
+<span class="sig-name descname"><span class="pre">tensorboard</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.tensorboard" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.train_config">
+<span class="sig-name descname"><span class="pre">train_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.configs.TrainConfig" title="ablator.main.configs.TrainConfig"><span class="pre">TrainConfig</span></a></em><a class="headerlink" href="#ablator.main.configs.RunConfig.train_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.uid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Get the unique identifier for the configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>str</dt><dd><p>The unique identifier for the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'console'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'tqdm'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'silent'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'console'</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.verbose" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.RunConfig.warm_up_epochs">
+<span class="sig-name descname"><span class="pre">warm_up_epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Stateless" title="ablator.config.types.Stateless"><span class="pre">Stateless</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ablator.main.configs.RunConfig.warm_up_epochs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchAlgo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">SearchAlgo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#SearchAlgo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.SearchAlgo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.types.Enum" title="ablator.config.types.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>type of search algorithm.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchAlgo.random">
+<span class="sig-name descname"><span class="pre">random</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'random'</span></em><a class="headerlink" href="#ablator.main.configs.SearchAlgo.random" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchAlgo.tpe">
+<span class="sig-name descname"><span class="pre">tpe</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tpe'</span></em><a class="headerlink" href="#ablator.main.configs.SearchAlgo.tpe" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchSpace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">SearchSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#SearchSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.SearchSpace" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>search space configuration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchSpace.categorical_values">
+<span class="sig-name descname"><span class="pre">categorical_values</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.config.html#ablator.config.types.List" title="ablator.config.types.List"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.SearchSpace.categorical_values" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchSpace.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.main.configs.SearchSpace.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.main.configs.SearchSpace" title="ablator.main.configs.SearchSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchSpace</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchSpace.value_range">
+<span class="sig-name descname"><span class="pre">value_range</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.config.html#ablator.config.types.Tuple" title="ablator.config.types.Tuple"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.SearchSpace.value_range" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchSpace.value_type">
+<span class="sig-name descname"><span class="pre">value_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.configs.SearchType" title="ablator.main.configs.SearchType"><span class="pre">SearchType</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float'</span></em><a class="headerlink" href="#ablator.main.configs.SearchSpace.value_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">SearchType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#SearchType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.SearchType" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.types.Enum" title="ablator.config.types.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>type of search space.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchType.integer">
+<span class="sig-name descname"><span class="pre">integer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'int'</span></em><a class="headerlink" href="#ablator.main.configs.SearchType.integer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.SearchType.numerical">
+<span class="sig-name descname"><span class="pre">numerical</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'float'</span></em><a class="headerlink" href="#ablator.main.configs.SearchType.numerical" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.configs.</span></span><span class="sig-name descname"><span class="pre">TrainConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/configs.html#TrainConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.configs.TrainConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>Training configuration.</p>
+<dl class="simple">
+<dt>dataset: str</dt><dd><p>dataset name. maybe used in custom dataset loader functions.</p>
+</dd>
+<dt>batch_size: int</dt><dd><p>batch size.</p>
+</dd>
+<dt>epochs: int</dt><dd><p>number of epochs to train.</p>
+</dd>
+<dt>optimizer_config: OptimizerConfig</dt><dd><p>optimizer configuration.(check OptimizerConfig for more details)</p>
+</dd>
+<dt>scheduler_config: Optional[SchedulerConfig]</dt><dd><p>scheduler configuration.(check SchedulerConfig for more details)</p>
+</dd>
+<dt>rand_weights_init: bool = True</dt><dd><p>whether to initialize model weights randomly.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ablator.main.configs.TrainConfig.batch_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.main.configs.TrainConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.main.configs.TrainConfig" title="ablator.main.configs.TrainConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrainConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.dataset">
+<span class="sig-name descname"><span class="pre">dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.main.configs.TrainConfig.dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.epochs">
+<span class="sig-name descname"><span class="pre">epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ablator.main.configs.TrainConfig.epochs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.optimizer_config">
+<span class="sig-name descname"><span class="pre">optimizer_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.modules.html#ablator.modules.optimizer.OptimizerConfig" title="ablator.modules.optimizer.OptimizerConfig"><span class="pre">OptimizerConfig</span></a></em><a class="headerlink" href="#ablator.main.configs.TrainConfig.optimizer_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.rand_weights_init">
+<span class="sig-name descname"><span class="pre">rand_weights_init</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#ablator.main.configs.TrainConfig.rand_weights_init" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.configs.TrainConfig.scheduler_config">
+<span class="sig-name descname"><span class="pre">scheduler_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.html#ablator.modules.scheduler.SchedulerConfig" title="ablator.modules.scheduler.SchedulerConfig"><span class="pre">SchedulerConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.configs.TrainConfig.scheduler_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.main.mp">
+<span id="ablator-main-mp-module"></span><h2>ablator.main.mp module<a class="headerlink" href="#module-ablator.main.mp" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.mp.ParallelTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.mp.</span></span><span class="sig-name descname"><span class="pre">ParallelTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ParallelConfig</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#ParallelTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.ParallelTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.main.proto.ProtoTrainer" title="ablator.main.proto.ProtoTrainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProtoTrainer</span></code></a></p>
+<p>A class for parallelizing training of models of different configurations with ray.
+Performance of these models (metrics) are for optuna to tune hyperparameters. They are also logged to optuna storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>run_config</strong><span class="classifier">ParallelConfig</span></dt><dd><p>Running configuration for parallel training.</p>
+</dd>
+<dt><strong>device</strong><span class="classifier">str</span></dt><dd><p>The device to use for training.</p>
+</dd>
+<dt><strong>experiment_dir</strong><span class="classifier">Path</span></dt><dd><p>The directory that stores experiment information (optuna storage, experiment state database).</p>
+</dd>
+<dt><strong>logger</strong><span class="classifier">FileLogger</span></dt><dd><p>The logger that writes messages to a file and prints them to the console.</p>
+</dd>
+<dt><strong>experiment_state</strong><span class="classifier">ExperimentState</span></dt><dd><p>This attribute manages optuna trials.</p>
+</dd>
+<dt><strong>total_trials</strong><span class="classifier">int</span></dt><dd><p>Number of trials to run.</p>
+</dd>
+<dt><strong>gpu_mem_bottleneck</strong><span class="classifier">int</span></dt><dd><p>The minimum memory capacity of all available gpus.</p>
+</dd>
+<dt><strong>cpu</strong><span class="classifier">float</span></dt><dd><p>The number of cpu used per trial.</p>
+</dd>
+<dt><strong>gpu</strong><span class="classifier">float</span></dt><dd><p>The number of gpu used per trial.</p>
+</dd>
+<dt><strong>total_mem_usage</strong><span class="classifier">int</span></dt><dd><p>Total amount of memory usage.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.mp.ParallelTrainer.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#ParallelTrainer.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.ParallelTrainer.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate model performance in trials that are completed, using evaluation functions defined
+in the model wrapper. Evaluation results will be logged to the console and log files in the
+experiment directory. This method also synchronizes the experiment directory to Google cloud
+storage and remote servers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.mp.ParallelTrainer.kill_idle">
+<span class="sig-name descname"><span class="pre">kill_idle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#ParallelTrainer.kill_idle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.ParallelTrainer.kill_idle" title="Permalink to this definition"></a></dt>
+<dd><p>Kill any ray processes that are idle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.mp.ParallelTrainer.launch">
+<span class="sig-name descname"><span class="pre">launch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auxilary_modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ray_head_address</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#ParallelTrainer.launch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.ParallelTrainer.launch" title="Permalink to this definition"></a></dt>
+<dd><p>Set up and launch the parallel training and tuning process. This includes:
+prepare ray cluster for running optuna trials to tune hyperparameters; if available,
+synchronize Google Cloud storage buckets to working directory defined in runtime configuration;
+initialize optuna trials and add them to optuna storage and experiment state
+database for tracking training progress (or retrieve existing trials from optuna
+storage). Trials initialized (or retrieved), <cite>self.experiment_state.running_trials</cite>,
+will be pushed to ray nodes so they can be executed in parallel.
+After all trials have finished and progress is recorded in sqlite databases in
+the working directory, these changes will be synchronized back to the GCP nodes via <cite>rsync_up()</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>working_directory</strong><span class="classifier">str</span></dt><dd><p>The working directory that stores codes, modules that will be used by ray.</p>
+</dd>
+<dt><strong>auxilary_modules</strong><span class="classifier">list[tys.ModuleType], None</span></dt><dd><p>A list of modules to be used as ray clusters’ working environment.</p>
+</dd>
+<dt><strong>ray_head_address</strong><span class="classifier">str, default=’auto’</span></dt><dd><p>Ray cluster address.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.mp.ParallelTrainer.sync_down">
+<span class="sig-name descname"><span class="pre">sync_down</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#ParallelTrainer.sync_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.ParallelTrainer.sync_down" title="Permalink to this definition"></a></dt>
+<dd><p>Synchronize content of Google cloud storage to current working directory and to all GCP nodes.</p>
+<p class="rubric">Notes</p>
+<p>GCP nodes names should be equal to ray node names.
+Can be previously run trials if we are resuming the state.
+First sync down from the remote</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.mp.ParallelTrainer.sync_up">
+<span class="sig-name descname"><span class="pre">sync_up</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#ParallelTrainer.sync_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.ParallelTrainer.sync_up" title="Permalink to this definition"></a></dt>
+<dd><p>Synchronize content of current experiment directory to Google cloud storage and
+other remote servers.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.main.mp.parse_metrics">
+<span class="sig-prename descclassname"><span class="pre">ablator.main.mp.</span></span><span class="sig-name descname"><span class="pre">parse_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optim_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/mp.html#parse_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.parse_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Resolve metrics to be optimized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>optim_direction: list[str]</strong></dt><dd><p>The metrics to be optimized, defined in the ParallelConfig.</p>
+</dd>
+<dt><strong>metrics: dict[str, float]</strong></dt><dd><p>The metrics returned after a ray job finishes.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict[str, float]</dt><dd><p>A dictionary of metric names and their corresponding metric values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.main.mp.parse_rsync_paths">
+<span class="sig-prename descclassname"><span class="pre">ablator.main.mp.</span></span><span class="sig-name descname"><span class="pre">parse_rsync_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rsynced_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pathlib.Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/mp.html#parse_rsync_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.parse_rsync_paths" title="Permalink to this definition"></a></dt>
+<dd><p>Parse the experiment directory that’s being in sync with remote servers (Google cloud storage, other
+remote nodes) and the root folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>rsynced_folder</strong><span class="classifier">Path, str</span></dt><dd><p>The experiment directory that’s being in sync with remote servers.</p>
+</dd>
+<dt><strong>root_folder</strong><span class="classifier">Path, str, None, default=None</span></dt><dd><p>The root folder that contains all experiment directories.</p>
+</dd>
+<dt><strong>Returns</strong></dt><dd></dd>
+<dt><strong>——-</strong></dt><dd></dd>
+<dt><strong>dict[str, Path]</strong></dt><dd><p>A dictionary with 2 keys: <cite>local_path</cite> and <cite>remote_path</cite>, which specifies the local directory
+and the remote path that will be in sync.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.main.mp.train_main_remote">
+<span class="sig-prename descclassname"><span class="pre">ablator.main.mp.</span></span><span class="sig-name descname"><span class="pre">train_main_remote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper" title="ablator.main.model.wrapper.ModelWrapper"><span class="pre">ModelWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ParallelConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger" title="ablator.modules.loggers.file.FileLogger"><span class="pre">FileLogger</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fault_tollerant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crash_exceptions_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.state.TrialState" title="ablator.main.state.TrialState"><span class="pre">ablator.main.state.TrialState</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/mp.html#train_main_remote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.mp.train_main_remote" title="Permalink to this definition"></a></dt>
+<dd><p>The trial job that will be executed remotely at a ray node. This is where model training happens.
+In addition, experiment directory will be synchronized to the Google Cloud storage and remote nodes.
+Synchronization is done via GcpConfig and RemoteConfig <cite>rsync_up()</cite> methods. Refer to documentation of
+these 2 classes for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model</strong><span class="classifier">ModelWrapper</span></dt><dd><p>The ModelWrapper that is used to train a model.</p>
+</dd>
+<dt><strong>run_config</strong><span class="classifier">ParallelConfig</span></dt><dd><p>Runtime configuration for this trial.</p>
+</dd>
+<dt><strong>mp_logger</strong><span class="classifier">FileLogger</span></dt><dd><p>The file logger that’s used to log training progress.</p>
+</dd>
+<dt><strong>root_dir</strong><span class="classifier">Path</span></dt><dd><p>The root directory that stores experiment states (experiment directory).</p>
+</dd>
+<dt><strong>fault_tollerant</strong><span class="classifier">bool, optional, default=True</span></dt><dd><p>Whether to tollerate crashes, aka to cease execution when the ray job crashes.</p>
+</dd>
+<dt><strong>crash_exceptions_types</strong><span class="classifier">list[type], None, optional, default=None</span></dt><dd><p>Types of exceptions that are considered as crashes.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>run_config</strong><span class="classifier">ParallelConfig</span></dt><dd><p>Running configuration of the trial.</p>
+</dd>
+<dt>dict[str, float], None</dt><dd><p>If exception raised (Except for LossDivergedError and TrainPlateauError),
+this will be None object. Otherwise, this will be a dictionary of metrics.</p>
+</dd>
+<dt>TrialState</dt><dd><p>A TrialState object indicating the state of the trial job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.main.proto">
+<span id="ablator-main-proto-module"></span><h2>ablator.main.proto module<a class="headerlink" href="#module-ablator.main.proto" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.proto.ProtoTrainer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.proto.</span></span><span class="sig-name descname"><span class="pre">ProtoTrainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wrapper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.model.html#ablator.main.model.wrapper.ModelWrapper" title="ablator.main.model.wrapper.ModelWrapper"><span class="pre">ModelWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/proto.html#ProtoTrainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.proto.ProtoTrainer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages resources for Prototyping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If experiment directory is not defined in the running configuration.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>wrapper</strong><span class="classifier">ModelWrapper</span></dt><dd><p>The main model wrapper.</p>
+</dd>
+<dt><strong>run_config</strong><span class="classifier">RunConfig</span></dt><dd><p>Running configuration for the model.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.proto.ProtoTrainer.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/proto.html#ProtoTrainer.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.proto.ProtoTrainer.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Run model evaluation on the training results, sync evaluation results to external logging services
+(e.g Google cloud storage, other remote servers).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>metrics</strong><span class="classifier">TrainMetrics</span></dt><dd><p>Metrics returned after evaluation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.proto.ProtoTrainer.launch">
+<span class="sig-name descname"><span class="pre">launch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/proto.html#ProtoTrainer.launch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.proto.ProtoTrainer.launch" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the data state of the wrapper and train the model inside the wrapper, then sync training
+results (logged to experiment directory while training) with external logging services (e.g Google
+cloud storage, other remote servers).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>metrics</strong><span class="classifier">TrainMetrics</span></dt><dd><p>Metrics returned after training.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.proto.ProtoTrainer.pre_train_setup">
+<span class="sig-name descname"><span class="pre">pre_train_setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/proto.html#ProtoTrainer.pre_train_setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.proto.ProtoTrainer.pre_train_setup" title="Permalink to this definition"></a></dt>
+<dd><p>Used to prepare resources to avoid stalling during training or when resources are
+shared between trainers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.proto.ProtoTrainer.smoke_test">
+<span class="sig-name descname"><span class="pre">smoke_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/proto.html#ProtoTrainer.smoke_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.proto.ProtoTrainer.smoke_test" title="Permalink to this definition"></a></dt>
+<dd><p>Run a smoke test training process on the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config</strong><span class="classifier">RunConfig</span></dt><dd><p>Running configuration for the model.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.proto.ProtoTrainer.sync">
+<span class="sig-name descname"><span class="pre">sync</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/proto.html#ProtoTrainer.sync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.proto.ProtoTrainer.sync" title="Permalink to this definition"></a></dt>
+<dd><p>Syncs training artifacts with external logging services.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.main.state">
+<span id="ablator-main-state-module"></span><h2>ablator.main.state module<a class="headerlink" href="#module-ablator.main.state" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.state.Base">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">Base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#Base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.Base" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeclarativeBase</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Base.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">MetaData</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">MetaData()</span></em><a class="headerlink" href="#ablator.main.state.Base.metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Refers to the <code class="xref py py-class docutils literal notranslate"><span class="pre">_schema.MetaData</span></code> collection that will be used
+for new <code class="xref py py-class docutils literal notranslate"><span class="pre">_schema.Table</span></code> objects.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><span class="xref std std-ref">orm_declarative_metadata</span></p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Base.registry">
+<span class="sig-name descname"><span class="pre">registry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">_RegistryType</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;sqlalchemy.orm.decl_api.registry</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#ablator.main.state.Base.registry" title="Permalink to this definition"></a></dt>
+<dd><p>Refers to the <code class="xref py py-class docutils literal notranslate"><span class="pre">_orm.registry</span></code> in use where new
+<code class="xref py py-class docutils literal notranslate"><span class="pre">_orm.Mapper</span></code> objects will be associated.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">ExperimentState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ParallelConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger" title="ablator.modules.loggers.file.FileLogger"><span class="pre">FileLogger</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resume</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#ExperimentState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.ExperimentState" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.all_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.all_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.all_trials_uid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_trials_uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.all_trials_uid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.complete_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">complete_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.complete_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.failed_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">failed_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.failed_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.n_trials_remaining">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_trials_remaining</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.n_trials_remaining" title="Permalink to this definition"></a></dt>
+<dd><p>We get all trials as it can include, trials at different
+states. We exclude the unscheduled trials (pending), and
+the ones that are pruned during sampling.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.pending_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pending_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.pending_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.pruned_duplicate_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pruned_duplicate_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.pruned_duplicate_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.pruned_errored_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pruned_errored_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.pruned_errored_trials" title="Permalink to this definition"></a></dt>
+<dd><p>error trials can not be initialized to a configuration
+and such as return the kwargs parameters.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.running_trials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">running_trials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.ExperimentState.running_trials" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.sample_trials">
+<span class="sig-name descname"><span class="pre">sample_trials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_trials_to_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ablator.main.configs.ParallelConfig</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#ExperimentState.sample_trials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.ExperimentState.sample_trials" title="Permalink to this definition"></a></dt>
+<dd><p>Sample n trials from the search space and update database.
+Number n is the miniumn value of n_trials_to_sample and n_trials_remaining.
+n_trials_remaining is the number of total_trials(defined in config) minus the number of trials that have been sampled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n_trials_to_sample</strong><span class="classifier">int</span></dt><dd><p>The number of trials to sample.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[ParallelConfig] | None</dt><dd><p>The list of sampled trials.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.search_space_dot_path">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_space_dot_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ParallelConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#ExperimentState.search_space_dot_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.ExperimentState.search_space_dot_path" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary of parameter names and their corresponding values for a given trial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trial</strong><span class="classifier">ParallelConfig</span></dt><dd><p>The trial object to get the search space dot paths from.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict[str, Any]</dt><dd><p>A dictionary of parameter names and their corresponding values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">search_space</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train_config.optimizer_config.arguments.lr&quot;</span><span class="p">:</span> <span class="n">SearchSpace</span><span class="p">(</span><span class="n">value_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">value_type</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="s2">&quot;train_config.optimizer_config.arguments.lr&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.tune_trial_str">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tune_trial_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.configs.ParallelConfig" title="ablator.main.configs.ParallelConfig"><span class="pre">ParallelConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#ExperimentState.tune_trial_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.ExperimentState.tune_trial_str" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a string representation of a trial object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trial</strong><span class="classifier">ParallelConfig</span></dt><dd><p>The trial object to generate a string representation for.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>str</dt><dd><p>A string representation of the trial object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.ExperimentState.update_trial_state">
+<span class="sig-name descname"><span class="pre">update_trial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.state.TrialState" title="ablator.main.state.TrialState"><span class="pre">TrialState</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">TrialState.RUNNING</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#ExperimentState.update_trial_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.ExperimentState.update_trial_state" title="Permalink to this definition"></a></dt>
+<dd><p>Update the state of a trial in both the Experiment database and tell Optuna.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config_uid</strong><span class="classifier">str</span></dt><dd><p>The uid of the trial to update.</p>
+</dd>
+<dt><strong>metrics</strong><span class="classifier">dict[str, float] | None, optional</span></dt><dd><p>The metrics of the trial, by default None.</p>
+</dd>
+<dt><strong>state</strong><span class="classifier">TrialState, optional</span></dt><dd><p>The state of the trial, by default TrialState.RUNNING</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span><span class="s2">&quot;fje_2211&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.state.OptunaState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">OptunaState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">storage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">study_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.configs.Optim" title="ablator.main.configs.Optim"><span class="pre">ablator.main.configs.Optim</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_algo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.configs.SearchSpace" title="ablator.main.configs.SearchSpace"><span class="pre">ablator.main.configs.SearchSpace</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#OptunaState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.OptunaState" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to store the state of the Optuna study.</p>
+<dl class="simple">
+<dt>optim_metrics: OrderedDict</dt><dd><p>The ordered dictionary containing the names of the metrics to optimize and their direction (minimize or maximize).</p>
+</dd>
+<dt>search_space: dict of str to SearchSpace</dt><dd><p>The search space containing the parameters to sample from.</p>
+</dd>
+<dt>optuna_study: optuna.study.Study</dt><dd><p>The Optuna study object.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.OptunaState.sample_trial">
+<span class="sig-name descname"><span class="pre">sample_trial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#OptunaState.sample_trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.OptunaState.sample_trial" title="Permalink to this definition"></a></dt>
+<dd><p>Sample a new set of trial parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>Tuple[int, dict[str, Any]]</dt><dd><p>A tuple of the trial number and a dictionary of parameter names and their corresponding values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.OptunaState.update_trial">
+<span class="sig-name descname"><span class="pre">update_trial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.main.state.TrialState" title="ablator.main.state.TrialState"><span class="pre">TrialState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#OptunaState.update_trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.OptunaState.update_trial" title="Permalink to this definition"></a></dt>
+<dd><p>Update the state of a trial when it is completed with metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trial_num</strong><span class="classifier">int</span></dt><dd><p>The trial number.</p>
+</dd>
+<dt><strong>metrics</strong><span class="classifier">dict[str, float] or None</span></dt><dd><p>A dictionary of metric names and their corresponding values, or None if the trial is not complete.</p>
+</dd>
+<dt><strong>state</strong><span class="classifier">TrialState</span></dt><dd><p>The state of the trial.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If <cite>metrics</cite> is None and <cite>state</cite> is COMPLETE.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.state.Trial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">Trial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#Trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.Trial" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.main.state.Base" title="ablator.main.state.Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">Base</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.config_param">
+<span class="sig-name descname"><span class="pre">config_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">PickleType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.config_param" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.config_uid">
+<span class="sig-name descname"><span class="pre">config_uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.config_uid" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.metrics">
+<span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">PickleType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.metrics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.optuna_trial_num">
+<span class="sig-name descname"><span class="pre">optuna_trial_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.optuna_trial_num" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.runtime_errors">
+<span class="sig-name descname"><span class="pre">runtime_errors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.runtime_errors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.Trial.state">
+<span class="sig-name descname"><span class="pre">state</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">PickleType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.main.state.Trial.state" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">TrialState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/state.html#TrialState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.TrialState" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>An enumeration of possible states for a trial with more pruned states.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>RUNNING (int): A trial that has been succesfully scheduled to run
+COMPLETE (int): Succesfully completed trial
+PRUNED (int): Trial pruned because of various reasons
+FAIL (int): Trial that produced an error during execution
+WAITING (int): Trial that has been sampled but is not scheduled to run yet
+PRUNED_INVALID (int): Trial that was pruned during sampling as it was invalid
+PRUNED_DUPLICATE (int): Trial that was sampled but was already present
+PRUNED_POOR_PERFORMANCE (int): Trial that was pruned during execution for poor performance
+RECOVERABLE_ERROR (int): Trial that was pruned during execution for poor performance</p>
+</dd>
+<dt>Methods:</dt><dd><p>to_optuna_state: Convert this TrialState to an OptunaTrialState.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.COMPLETE">
+<span class="sig-name descname"><span class="pre">COMPLETE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ablator.main.state.TrialState.COMPLETE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.FAIL">
+<span class="sig-name descname"><span class="pre">FAIL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#ablator.main.state.TrialState.FAIL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.PRUNED">
+<span class="sig-name descname"><span class="pre">PRUNED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#ablator.main.state.TrialState.PRUNED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.PRUNED_DUPLICATE">
+<span class="sig-name descname"><span class="pre">PRUNED_DUPLICATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#ablator.main.state.TrialState.PRUNED_DUPLICATE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.PRUNED_INVALID">
+<span class="sig-name descname"><span class="pre">PRUNED_INVALID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#ablator.main.state.TrialState.PRUNED_INVALID" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.PRUNED_POOR_PERFORMANCE">
+<span class="sig-name descname"><span class="pre">PRUNED_POOR_PERFORMANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#ablator.main.state.TrialState.PRUNED_POOR_PERFORMANCE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.RECOVERABLE_ERROR">
+<span class="sig-name descname"><span class="pre">RECOVERABLE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#ablator.main.state.TrialState.RECOVERABLE_ERROR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#ablator.main.state.TrialState.RUNNING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.WAITING">
+<span class="sig-name descname"><span class="pre">WAITING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#ablator.main.state.TrialState.WAITING" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.state.TrialState.to_optuna_state">
+<span class="sig-name descname"><span class="pre">to_optuna_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">optuna.trial._state.TrialState</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#TrialState.to_optuna_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.TrialState.to_optuna_state" title="Permalink to this definition"></a></dt>
+<dd><p>Convert this TrialState to an OptunaTrialState.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>OptunaTrialState | None: </dt><dd><p>Corresponding OptunaTrialState or None if the state is not applicable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.main.state.augment_trial_kwargs">
+<span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">augment_trial_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#augment_trial_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.augment_trial_kwargs" title="Permalink to this definition"></a></dt>
+<dd><p>Augment the trial_kwargs with additional key-value pairs specified in the augmentation dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>trial_kwargs</strong><span class="classifier">dict</span></dt><dd><p>The dictionary containing the key-value pairs to be augmented.</p>
+</dd>
+<dt><strong>augmentation</strong><span class="classifier">dict</span></dt><dd><p>The dictionary containing the additional key-value pairs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>The augmented dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">trial_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">augmentation</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;d.e&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">augment_trial_kwargs</span><span class="p">(</span><span class="n">trial_kwargs</span><span class="p">,</span> <span class="n">augmentation</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3, &#39;d&#39;: {&#39;e&#39;: 4}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.main.state.parse_metrics">
+<span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">parse_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_directions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OrderedDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#parse_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.parse_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Convert metrics to ordered dictionary of float values using their direction (minimize or maximize).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>metric_directions</strong><span class="classifier">OrderedDict</span></dt><dd><p>The ordered dictionary containing the directions of the metrics (minimize or maximize).</p>
+</dd>
+<dt><strong>metrics</strong><span class="classifier">dict</span></dt><dd><p>The dictionary containing the metric values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>OrderedDict</dt><dd><p>The ordered dictionary of metric values converted to float using their direction.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">metric_directions</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_metrics</span><span class="p">(</span><span class="n">metric_directions</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+<span class="go">OrderedDict([(&#39;a&#39;, 1.0), (&#39;b&#39;, inf)])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.main.state.sample_trial_params">
+<span class="sig-prename descclassname"><span class="pre">ablator.main.state.</span></span><span class="sig-name descname"><span class="pre">sample_trial_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optuna_trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Trial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ablator.main.configs.SearchSpace" title="ablator.main.configs.SearchSpace"><span class="pre">ablator.main.configs.SearchSpace</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/state.html#sample_trial_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.state.sample_trial_params" title="Permalink to this definition"></a></dt>
+<dd><p>Sample parameter values from the search space for a given Optuna trial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>optuna_trial</strong><span class="classifier">optuna.Trial</span></dt><dd><p>The Optuna trial object.</p>
+</dd>
+<dt><strong>search_space</strong><span class="classifier">dict of str to SearchSpace</span></dt><dd><p>The search space containing the parameters to sample from.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict of str to any</dt><dd><p>The dictionary containing the sampled parameter values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the search space contains an invalid <cite>SearchSpace</cite> object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optuna_trial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="o">.</span><span class="n">ask</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">search_space</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">SearchSpace</span><span class="p">(</span><span class="n">value_type</span><span class="o">=</span><span class="n">SearchType</span><span class="o">.</span><span class="n">numerical</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)),</span> 
+<span class="gp">... </span><span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">SearchSpace</span><span class="p">(</span><span class="n">categorical_values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]),</span> 
+<span class="gp">... </span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">SearchSpace</span><span class="p">(</span><span class="n">value_type</span><span class="o">=</span><span class="n">SearchType</span><span class="o">.</span><span class="n">integer</span><span class="p">,</span> <span class="n">value_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">))}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample_trial_params</span><span class="p">(</span><span class="n">optuna_trial</span><span class="p">,</span> <span class="n">search_space</span><span class="p">)</span>
+<span class="go">{&#39;x&#39;: 0.030961748695615783, &#39;y&#39;: &#39;a&#39;, &#39;z&#39;: 9}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-ablator.main">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.main" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.config.html" class="btn btn-neutral float-left" title="ablator.config package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.main.model.html" class="btn btn-neutral float-right" title="ablator.main.model package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

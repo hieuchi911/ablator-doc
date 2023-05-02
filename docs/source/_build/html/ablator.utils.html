@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.utils package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ablator.modules.storage package" href="ablator.modules.storage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ablator.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.utils.base">ablator.utils.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.Dummy"><code class="docutils literal notranslate"><span class="pre">Dummy</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.apply_lambda_to_iter"><code class="docutils literal notranslate"><span class="pre">apply_lambda_to_iter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.debugger_is_active"><code class="docutils literal notranslate"><span class="pre">debugger_is_active()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.get_gpu_max_mem"><code class="docutils literal notranslate"><span class="pre">get_gpu_max_mem()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.get_gpu_mem"><code class="docutils literal notranslate"><span class="pre">get_gpu_mem()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.get_latest_chkpts"><code class="docutils literal notranslate"><span class="pre">get_latest_chkpts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.get_lr"><code class="docutils literal notranslate"><span class="pre">get_lr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.init_weights"><code class="docutils literal notranslate"><span class="pre">init_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.iter_to_device"><code class="docutils literal notranslate"><span class="pre">iter_to_device()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.iter_to_numpy"><code class="docutils literal notranslate"><span class="pre">iter_to_numpy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.parse_device"><code class="docutils literal notranslate"><span class="pre">parse_device()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.base.set_seed"><code class="docutils literal notranslate"><span class="pre">set_seed()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.utils.file">ablator.utils.file module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.clean_checkpoints"><code class="docutils literal notranslate"><span class="pre">clean_checkpoints()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.default_val_parser"><code class="docutils literal notranslate"><span class="pre">default_val_parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.dict_to_json"><code class="docutils literal notranslate"><span class="pre">dict_to_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.json_to_dict"><code class="docutils literal notranslate"><span class="pre">json_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.make_sub_dirs"><code class="docutils literal notranslate"><span class="pre">make_sub_dirs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.nested_set"><code class="docutils literal notranslate"><span class="pre">nested_set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.utils.file.save_checkpoint"><code class="docutils literal notranslate"><span class="pre">save_checkpoint()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ablator.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-utils-package">
+<h1>ablator.utils package<a class="headerlink" href="#ablator-utils-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.utils.base">
+<span id="ablator-utils-base-module"></span><h2>ablator.utils.base module<a class="headerlink" href="#module-ablator.utils.base" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.utils.base.Dummy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">Dummy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#Dummy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.Dummy" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.apply_lambda_to_iter">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">apply_lambda_to_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#apply_lambda_to_iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.apply_lambda_to_iter" title="Permalink to this definition"></a></dt>
+<dd><p>Applies a given function <cite>fn</cite> to each element of an iterable data structure.</p>
+<p>This function recursively applies <cite>fn</cite> to elements within nested dictionaries or lists.
+It can be used for converting torch.Tensor elements to NumPy arrays or moving tensors
+to a specified device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>iterable</strong><span class="classifier">Iterable</span></dt><dd><p>The input iterable.</p>
+</dd>
+<dt><strong>fn</strong><span class="classifier">Callable</span></dt><dd><p>The function to apply to each element.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>any</dt><dd><p>The resulting data structure after applying <cite>fn</cite> to each element of the input <cite>iterable</cite>.
+The type of the returned object matches the type of the input <cite>iterable</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.debugger_is_active">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">debugger_is_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/ablator/utils/base.html#debugger_is_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.debugger_is_active" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the debugger is currently active.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>bool</dt><dd><p>True if the debugger is active, False otherwise.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Return if the debugger is currently active</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.get_gpu_max_mem">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">get_gpu_max_mem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/utils/base.html#get_gpu_max_mem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.get_gpu_max_mem" title="Permalink to this definition"></a></dt>
+<dd><p>Get the maximum memory of all available GPUs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ty.List[int]</dt><dd><p>A list of the maximum memory for each GPU.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.get_gpu_mem">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">get_gpu_mem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mem_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'used'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'total'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'free'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'total'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/utils/base.html#get_gpu_mem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.get_gpu_mem" title="Permalink to this definition"></a></dt>
+<dd><p>Get the memory information of all available GPUs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mem_type</strong><span class="classifier">ty.Literal[“used”, “total”, “free”], optional</span></dt><dd><p>The type of memory information to retrieve, by default “total”.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ty.List[int]</dt><dd><p>A list of memory values for each GPU, depending on the specified memory type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.get_latest_chkpts">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">get_latest_chkpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/utils/base.html#get_latest_chkpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.get_latest_chkpts" title="Permalink to this definition"></a></dt>
+<dd><p>Get a list of all checkpoint files in a directory, sorted from the latest to the earliest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>checkpoint_dir</strong><span class="classifier">Path</span></dt><dd><p>The directory containing checkpoint files.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[Path]</dt><dd><p>A list of the checkpoint files sorted by filename.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.get_lr">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">get_lr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#get_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.get_lr" title="Permalink to this definition"></a></dt>
+<dd><p>Get the learning rate from an optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>optimizer</strong><span class="classifier">torch.optim.Optimizer or dict</span></dt><dd><p>The optimizer.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>float</dt><dd><p>The learning rate.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.init_weights">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#init_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.init_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the weights of a module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>module</strong><span class="classifier">nn.Module</span></dt><dd><p>The input module to initialize.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If the module is a Linear layer, initialize weight values from a normal distribution N(mu=0, std=1.0). If biases are available, initialize them to zeros.</p></li>
+<li><p>If the module is an Embedding layer, initialize embeddings with values from N(mu=0, std=1.0). If padding is enabled, set the padding embedding to a zero vector.</p></li>
+<li><p>If the module is a LayerNorm layer, set all biases to zeros and all weights to 1.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.iter_to_device">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">iter_to_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/utils/base.html#iter_to_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.iter_to_device" title="Permalink to this definition"></a></dt>
+<dd><p>Moving torch.Tensor elements to the specified device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data_dict</strong><span class="classifier">dict or list</span></dt><dd><p>The input dictionary or list containing torch.Tensor elements.</p>
+</dd>
+<dt><strong>device</strong><span class="classifier">torch.device | str</span></dt><dd><p>The target device for the tensors.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ty.Union[Sequence[torch.Tensor], dict[str, torch.Tensor]]</dt><dd><p>The input data with tensors moved to the target device.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.iter_to_numpy">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">iter_to_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#iter_to_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.iter_to_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>Convert elements of the input iterable to NumPy arrays if they are torch.Tensor objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>iterable</strong><span class="classifier">Iterable</span></dt><dd><p>The input iterable.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>any</dt><dd><p>The iterable with torch.Tensor elements replaced with their NumPy array equivalents.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.parse_device">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">parse_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#parse_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.parse_device" title="Permalink to this definition"></a></dt>
+<dd><p>Parse a device string, an integer, or a list of device strings or integers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>device</strong><span class="classifier">ty.Union[str, list[str], int]</span></dt><dd><p>The target device for the tensors.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>any</dt><dd><p>The parsed device string, integer, or list of device strings or integers.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>ValueError</dt><dd><p>If the device string is not one of {‘cpu’, ‘cuda’} or doesn’t start with ‘cuda:’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="go">&#39;cpu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+<span class="go">&#39;cuda&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span><span class="p">)</span>
+<span class="go">&#39;cuda:0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_device</span><span class="p">([</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda&quot;</span><span class="p">])</span>
+<span class="go">[&#39;cpu&#39;, &#39;cuda&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parse_device</span><span class="p">([</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda:0&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda:1&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda:2&quot;</span><span class="p">])</span>
+<span class="go">[&#39;cpu&#39;, &#39;cuda:0&#39;, &#39;cuda:1&#39;, &#39;cuda:2&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.base.set_seed">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.base.</span></span><span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/base.html#set_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.base.set_seed" title="Permalink to this definition"></a></dt>
+<dd><p>Set the random seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>seed</strong><span class="classifier">int</span></dt><dd><p>The random seed to set.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>int</dt><dd><p>The set random seed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.utils.file">
+<span id="ablator-utils-file-module"></span><h2>ablator.utils.file module<a class="headerlink" href="#module-ablator.utils.file" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.clean_checkpoints">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">clean_checkpoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkpoint_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_checkpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/file.html#clean_checkpoints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.clean_checkpoints" title="Permalink to this definition"></a></dt>
+<dd><p>Remove all but the n latest checkpoints from the given directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>checkpoint_folder</strong><span class="classifier">Path</span></dt><dd><p>Directory containing the checkpoint files.</p>
+</dd>
+<dt><strong>n_checkpoints</strong><span class="classifier">int</span></dt><dd><p>Number of checkpoints to keep.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.default_val_parser">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">default_val_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/file.html#default_val_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.default_val_parser" title="Permalink to this definition"></a></dt>
+<dd><p>Converts the input value to a JSON compatible format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>val</strong><span class="classifier">ty.Any</span></dt><dd><p>The value to be converted.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ty.Any</dt><dd><p>The converted value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.dict_to_json">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">dict_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/file.html#dict_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.dict_to_json" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a dictionary into a JSON string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_dict</strong><span class="classifier">dict</span></dt><dd><p>The dictionary to be converted.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>str</dt><dd><p>The JSON string representation of the dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.json_to_dict">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">json_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/file.html#json_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.json_to_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a JSON string into a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_json</strong><span class="classifier">str</span></dt><dd><p>JSON string to be converted.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>A dictionary representation of the JSON string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.make_sub_dirs">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">make_sub_dirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dir_names</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/utils/file.html#make_sub_dirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.make_sub_dirs" title="Permalink to this definition"></a></dt>
+<dd><p>Create subdirectories under the given parent directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>parent</strong><span class="classifier">str | Path</span></dt><dd><p>Parent directory where subdirectories should be created.</p>
+</dd>
+<dt><strong>*dir_names</strong><span class="classifier">str</span></dt><dd><p>Names of the subdirectories to create.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[Path]</dt><dd><p>A list of created subdirectory paths.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.nested_set">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">nested_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/file.html#nested_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.nested_set" title="Permalink to this definition"></a></dt>
+<dd><p>Set a value in a nested dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_dict</strong><span class="classifier">dict</span></dt><dd><p>The dictionary to update.</p>
+</dd>
+<dt><strong>keys</strong><span class="classifier">list[str]</span></dt><dd><p>List of keys representing the nested path.</p>
+</dd>
+<dt><strong>value</strong><span class="classifier">ty.Any</span></dt><dd><p>The value need to set at the specified path.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>The updated dictionary with the new value set.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nested_set</span><span class="p">(</span><span class="n">_dict</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_dict</span>
+<span class="go">{&#39;a&#39;: {&#39;b&#39;: {&#39;c&#39;: 2}}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.utils.file.save_checkpoint">
+<span class="sig-prename descclassname"><span class="pre">ablator.utils.file.</span></span><span class="sig-name descname"><span class="pre">save_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'checkpoint.pt'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/utils/file.html#save_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.utils.file.save_checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Save a checkpoint of the given state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>state</strong><span class="classifier">dict</span></dt><dd><p>Model State dictionary to save.</p>
+</dd>
+<dt><strong>filename</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the checkpoint file, by default “checkpoint.pt”.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.utils" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.modules.storage.html" class="btn btn-neutral float-left" title="ablator.modules.storage package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

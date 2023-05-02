@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.analysis.results &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.analysis.results</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.analysis.results</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">warning</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">ray</span>
+<span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Memory</span>
+
+<span class="kn">from</span> <span class="nn">ablator.config.main</span> <span class="kn">import</span> <span class="n">ConfigBase</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="n">Optim</span><span class="p">,</span> <span class="n">ParallelConfig</span><span class="p">,</span> <span class="n">SearchSpace</span>
+
+
+<div class="viewcode-block" id="process_row"><a class="viewcode-back" href="../../../ablator.analysis.html#ablator.analysis.results.process_row">[docs]</a><span class="k">def</span> <span class="nf">process_row</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">aux_info</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a given row to make it conform to the JSON format, loading it as a JSON object,</span>
+<span class="sd">    and updating it with auxiliary information.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    row : str</span>
+<span class="sd">        The input row to be processed, expected to be a JSON-like string.</span>
+<span class="sd">    **aux_info : dict</span>
+<span class="sd">        Additional key-value pairs to be added to the resulting dictionary.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, ty.Any] | None</span>
+<span class="sd">        A dictionary resulting from the combination of the processed row and auxiliary information,</span>
+<span class="sd">        or None if the input row cannot be parsed as a JSON object.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If there are overlapping column names between the auxiliary information and the input row.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; row = &#39;&quot;name&quot;: &quot;John Doe&quot;, &quot;age&quot;: 30&#39;</span>
+<span class="sd">    &gt;&gt;&gt; aux_info = {&quot;city&quot;: &quot;San Francisco&quot;}</span>
+<span class="sd">    &gt;&gt;&gt; process_row(row, **aux_info)</span>
+<span class="sd">    {&#39;name&#39;: &#39;John Doe&#39;, &#39;age&#39;: 30, &#39;city&#39;: &#39;San Francisco&#39;}</span>
+
+<span class="sd">    &gt;&gt;&gt; row = &#39;{&quot;name&quot;: &quot;John Doe&quot;, &quot;age&quot;: 30}&#39;</span>
+<span class="sd">    &gt;&gt;&gt; aux_info = {&quot;age&quot;: 25, &quot;city&quot;: &quot;San Francisco&quot;}</span>
+<span class="sd">    &gt;&gt;&gt; process_row(row, **aux_info)</span>
+<span class="sd">    AssertionError: Overlapping column names between auxiliary dictionary and run results. aux_info: {&#39;age&#39;: 25, &#39;city&#39;: &#39;San Francisco&#39;}</span>
+<span class="sd">    row: {&quot;name&quot;: &quot;John Doe&quot;, &quot;age&quot;: 30}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">row</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">row</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">+=</span> <span class="s2">&quot;}&quot;</span>
+    <span class="n">s</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s</span><span class="p">,</span> <span class="n">aux_info</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Overlapping column names between auxilary dictionary and run results. aux_info: </span><span class="si">{</span><span class="n">aux_info</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">row:</span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2"> &quot;</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aux_info</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="read_result"><a class="viewcode-back" href="../../../ablator.analysis.html#ablator.analysis.results.read_result">[docs]</a><span class="k">def</span> <span class="nf">read_result</span><span class="p">(</span><span class="n">config_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ConfigBase</span><span class="p">],</span> <span class="n">json_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the results of an experiment and return them as a pandas DataFrame.</span>
+
+<span class="sd">    The function reads the data from a JSON file, processes each row, and appends</span>
+<span class="sd">    experiment attributes from a YAML configuration file. The resulting DataFrame</span>
+<span class="sd">    is indexed and returned.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_type : type[ConfigBase]</span>
+<span class="sd">        The type of the configuration class that is used to load the experiment</span>
+<span class="sd">        configuration from a YAML file.</span>
+<span class="sd">    json_path : Path</span>
+<span class="sd">        The path to the JSON file containing the results of the experiment.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        A pandas DataFrame containing the processed experiment results.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    Exception</span>
+<span class="sd">        If there is an error in processing the JSON file or loading the</span>
+<span class="sd">        experiment configuration, the exception will be caught and the</span>
+<span class="sd">        traceback will be printed.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; result json file:</span>
+<span class="sd">    {</span>
+<span class="sd">    &quot;run_id&quot;: &quot;run_1&quot;,</span>
+<span class="sd">    &quot;accuracy&quot;: 0.85,</span>
+<span class="sd">    &quot;loss&quot;: 0.35</span>
+<span class="sd">    }</span>
+<span class="sd">    {</span>
+<span class="sd">    &quot;run_id&quot;: &quot;run_2&quot;,</span>
+<span class="sd">    &quot;accuracy&quot;: 0.87,</span>
+<span class="sd">    &quot;loss&quot;: 0.32</span>
+<span class="sd">    }</span>
+<span class="sd">    &gt;&gt;&gt; config file</span>
+<span class="sd">    experiment_name: &quot;My Experiment&quot;</span>
+<span class="sd">    batch_size: 64</span>
+<span class="sd">    &gt;&gt;&gt; return value</span>
+<span class="sd">           run_id  accuracy loss experiment_name batch_size     path</span>
+<span class="sd">    0       run_1      0.85  0.35    My Experiment    64  path/to/experiment</span>
+<span class="sd">    1        run_2      0.87  0.32    My Experiment    64  path/to/experiment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">experiment_config</span> <span class="o">=</span> <span class="n">config_type</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">))</span>
+        <span class="n">experiment_attributes</span> <span class="o">=</span> <span class="n">experiment_config</span><span class="o">.</span><span class="n">make_dict</span><span class="p">(</span>
+            <span class="n">experiment_config</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;}</span><span class="se">\n</span><span class="s2">{&quot;</span><span class="p">)</span>
+
+        <span class="n">_process_row</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+            <span class="n">process_row</span><span class="p">,</span>
+            <span class="o">**</span><span class="p">{</span>
+                <span class="o">**</span><span class="n">experiment_attributes</span><span class="p">,</span>
+                <span class="o">**</span><span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">json_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()},</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">processed_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">_process_row</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+        <span class="n">processed_jsons</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">processed_rows</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">processed_jsons</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">malformed_rows</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed_rows</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed_jsons</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">malformed_rows</span><span class="si">}</span><span class="s2"> malformed rows in </span><span class="si">{</span><span class="n">json_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Results"><a class="viewcode-back" href="../../../ablator.analysis.html#ablator.analysis.results.Results">[docs]</a><span class="k">class</span> <span class="nc">Results</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    class for processing experiment results.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : type[ParallelConfig]</span>
+<span class="sd">        The configuration class used</span>
+<span class="sd">    experiment_dir : str | Path</span>
+<span class="sd">        The path to the experiment directory.</span>
+<span class="sd">    cache : bool, optional</span>
+<span class="sd">        Whether to cache the results, by default False</span>
+<span class="sd">    use_ray : bool, optional</span>
+<span class="sd">        Whether to use ray for parallel processing, by default False</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    experiment_dir : Path</span>
+<span class="sd">        The path to the experiment directory.</span>
+<span class="sd">    config : type[ParallelConfig]</span>
+<span class="sd">        The configuration class used</span>
+<span class="sd">    metric_map : dict[str, Optim]</span>
+<span class="sd">        A dictionary mapping optimize metric names to their optimization direction.</span>
+<span class="sd">    data: pd.DataFrame</span>
+<span class="sd">        The processed results of the experiment. refer read_results for more details.</span>
+<span class="sd">    config_attrs: list[str]</span>
+<span class="sd">        The list of all the optimizable hyperparameter names</span>
+<span class="sd">    search_space: dict[str, ty.Any]</span>
+<span class="sd">        All the search space of the experiment.</span>
+<span class="sd">    numerical_attributes: list[str]</span>
+<span class="sd">        The list of all the numerical hyperparameter names</span>
+<span class="sd">    categorical_attributes: list[str]</span>
+<span class="sd">        The list of all the categorical hyperparameter names  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">],</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_ray</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ParallelConfig</span><span class="p">),</span> <span class="s2">&quot;Configuration must be of type. &quot;</span>
+        <span class="c1"># TODO parse results from experiment directory as opposed to configuration.</span>
+        <span class="c1"># Need a way to derived MPConfig implementation from a pickled file.</span>
+        <span class="c1"># We need the types of the configuration, metric map.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">)</span>
+        <span class="n">run_config_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;default_config.yaml&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">run_config_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">run_config_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">run_config_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optim</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">optim_metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_cache</span><span class="p">(</span><span class="n">clean</span><span class="o">=</span><span class="ow">not</span> <span class="n">cache</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_results</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="n">init_ray</span><span class="o">=</span><span class="n">use_ray</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_attrs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_space</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_space</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SearchSpace</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_space</span>
+        <span class="c1"># NOTE possibly a good idea to set small range integer attributes to categorical</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numerical_attributes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_space</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">value_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">categorical_attributes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_space</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">categorical_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assert_cat_attributes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">categorical_attributes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;.cache&quot;</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse_results</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_results</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="s2">&quot;init_ray&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">clean</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_results</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_assert_cat_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categorical_attributes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        check if the categorical attributes are imbalanced</span>
+<span class="sd">        default ratio is 0.8, which means if the most frequent value</span>
+<span class="sd">        is more than 80% every other kind of values, then it is imbalanced</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        categorical_attributes : list[str]</span>
+<span class="sd">            list of categorical attributes</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            if the categorical attributes are imbalanced</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; [X,X,Y,Z]imbalanced</span>
+<span class="sd">        &gt;&gt;&gt; [X,Y,Z]balanced</span>
+<span class="sd">        &gt;&gt;&gt; [X,X Y,Y,Z]balanced</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">categorical_attributes</span><span class="p">:</span>
+            <span class="n">value_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+            <span class="n">unique_values</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value_counts</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">value_counts</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">imbalance_ratio_cut_off</span> <span class="o">=</span> <span class="mf">0.8</span>
+            <span class="n">imbalanced_values</span> <span class="o">=</span> <span class="n">unique_values</span><span class="p">[</span>
+                <span class="n">counts</span> <span class="o">/</span> <span class="n">counts</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">imbalance_ratio_cut_off</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">imbalanced_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Imbalanced trials for attr </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> and values: </span><span class="si">{</span><span class="n">unique_values</span><span class="si">}</span><span class="s2"> with counts </span><span class="si">{</span><span class="n">counts</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metric_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the list of all optimize directions</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[str]   </span>
+<span class="sd">            list of optimize metric names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_parse_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">init_ray</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read multiple results from experiment directory with ray to enable parallel processing.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        experiment_dir : Path</span>
+<span class="sd">            The experiment directory</span>
+<span class="sd">        init_ray : bool</span>
+<span class="sd">            Whether to use ray for parallel processing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Experiment directory </span><span class="si">{</span><span class="n">experiment_dir</span><span class="si">}</span><span class="s2"> does not exist. You can provide one as an argument `experiment_dir`&quot;</span>
+        <span class="k">if</span> <span class="n">init_ray</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ray</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+            <span class="n">ray</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_results</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">),</span> <span class="n">experiment_dir</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Results.read_results"><a class="viewcode-back" href="../../../ablator.analysis.html#ablator.analysis.results.Results.read_results">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_results</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">config_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ConfigBase</span><span class="p">],</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">num_cpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read multiple results from experiment directory with ray to enable parallel processing.</span>
+
+<span class="sd">        This function calls read_result many times, refer to read_result for more details.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_type : type[ConfigBase]</span>
+<span class="sd">            The configuration class</span>
+<span class="sd">        experiment_dir : Path</span>
+<span class="sd">            The experiment directory</span>
+<span class="sd">        num_cpus : int, optional</span>
+<span class="sd">            Number of CPUs to use for ray processing, by default None</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame    </span>
+<span class="sd">            A dataframe of all the results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">json_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">experiment_dir</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No results found in </span><span class="si">{</span><span class="n">experiment_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">cpu_count</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">num_cpus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">num_cpus</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_paths</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">cpu_count</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">json_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">json_path</span> <span class="ow">in</span> <span class="n">json_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ray</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ray</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">num_cpus</span><span class="o">=</span><span class="n">num_cpus</span><span class="p">)(</span><span class="n">read_result</span><span class="p">)</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span>
+                        <span class="n">config_type</span><span class="p">,</span> <span class="n">json_path</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">read_result</span><span class="p">(</span><span class="n">config_type</span><span class="p">,</span> <span class="n">json_path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">ray</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_paths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># smoke test</span>
+            <span class="n">read_result</span><span class="p">(</span><span class="n">config_type</span><span class="p">,</span> <span class="n">json_path</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

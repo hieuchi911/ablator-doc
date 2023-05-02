@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules.metrics.stores &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.modules.metrics.stores</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.modules.metrics.stores</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">ablator.utils.base</span> <span class="k">as</span> <span class="nn">butils</span>
+
+
+<div class="viewcode-block" id="ArrayStore"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore">[docs]</a><span class="k">class</span> <span class="nc">ArrayStore</span><span class="p">(</span><span class="n">Sequence</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for manipulations (storing, getting, resetting) of batches of values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">batch_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="c1"># 100 MB memory limit</span>
+        <span class="n">memory_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e8</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the storage settings.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        batch_limit : int, optional</span>
+<span class="sd">            The maximum number of batches of values to store for this single store. Default is 30.</span>
+<span class="sd">        memory_limit : int or None, optional</span>
+<span class="sd">            The maximum memory allowed for all values in bytes. Default is 1e8.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import ArrayStore</span>
+<span class="sd">        &gt;&gt;&gt; train_metrics = ArrayStore(</span>
+<span class="sd">        ...     batch_limit=50,</span>
+<span class="sd">        ...     memory_limit=1000</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">batch_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory_limit</span> <span class="o">=</span> <span class="n">memory_limit</span>
+
+<div class="viewcode-block" id="ArrayStore.append"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Appends a batch of values, or a single value, constrained on the limits.</span>
+<span class="sd">        If after appending a new batch, `batch_limit` is exceeded, only `batch_limit` number</span>
+<span class="sd">        of latest batches is kept. If memory limit is exceeded, `batch_limit` will be reduced.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        val : np.ndarray or float or int</span>
+<span class="sd">            The data, can be a batch of data, or a scalar.</span>
+<span class="sd">            </span>
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        AssertionError:</span>
+<span class="sd">            If appended value is not numpy array, an integer, or a float number.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        The following example shows a case where batch limit is exceeded</span>
+<span class="sd">        (100 values/batches to be appended while only 10 is allowed)</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import ArrayStore</span>
+<span class="sd">        &gt;&gt;&gt; array_store = ArrayStore(</span>
+<span class="sd">        ...     batch_limit=10,</span>
+<span class="sd">        ...     memory_limit=1000</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(100):</span>
+<span class="sd">        &gt;&gt;&gt;     array_store.append(int(i))</span>
+<span class="sd">        &gt;&gt;&gt; array_store.arr</span>
+<span class="sd">        [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]</span>
+<span class="sd">        &gt;&gt;&gt; array_store.limit</span>
+<span class="sd">        10</span>
+
+<span class="sd">        This example shows a case where memory limit is exceeded. As soon as the 5th</span>
+<span class="sd">        value is appended, memory of the list is 104 &gt; 100), so `batch_limit` is set</span>
+<span class="sd">        to the length of the store so far (which is 5) reduced by 1, which equals to 4.</span>
+<span class="sd">        Therefore, from then on, only 4 values/batches is allowed.</span>
+<span class="sd">        &gt;&gt;&gt; array_store = ArrayStore(</span>
+<span class="sd">        ...     batch_limit=10,</span>
+<span class="sd">        ...     memory_limit=100</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(100):</span>
+<span class="sd">        &gt;&gt;&gt;     array_store.append(int(i))</span>
+<span class="sd">        &gt;&gt;&gt; array_store.arr</span>
+<span class="sd">        [96, 97, 98, 99]</span>
+<span class="sd">        &gt;&gt;&gt; array_store.limit</span>
+<span class="sd">        4</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Appends a batch of values&quot;&quot;&quot;</span>
+        <span class="c1"># Appending by batch is faster than converting numpy to list</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid ArrayStore value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="p">:]</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory_limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_limit</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="ArrayStore.get"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a flatten array of values</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import ArrayStore</span>
+<span class="sd">        &gt;&gt;&gt; array_store = ArrayStore(</span>
+<span class="sd">        ...     batch_limit=10,</span>
+<span class="sd">        ...     memory_limit=1000</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(100):</span>
+<span class="sd">        &gt;&gt;&gt;     array_store.append(np.array([int(i)]))</span>
+<span class="sd">        &gt;&gt;&gt; array_store.get()</span>
+<span class="sd">        [[90 91 92 93 94 95 96 97 98 99]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ArrayStore.reset"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset list of values to empty.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import ArrayStore</span>
+<span class="sd">        &gt;&gt;&gt; array_store = ArrayStore(</span>
+<span class="sd">        ...     batch_limit=10,</span>
+<span class="sd">        ...     memory_limit=1000</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(100):</span>
+<span class="sd">        &gt;&gt;&gt;     array_store.append(int(i))</span>
+<span class="sd">        &gt;&gt;&gt; array_store.arr</span>
+<span class="sd">        [90, 91, 92, 93, 94, 95, 96, 97, 98, 99]</span>
+<span class="sd">        &gt;&gt;&gt; array_store.reset()</span>
+<span class="sd">        &gt;&gt;&gt; array_store.arr</span>
+<span class="sd">        []</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arr</span> <span class="o">=</span> <span class="p">[]</span></div></div>
+
+
+<div class="viewcode-block" id="PredictionStore"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore">[docs]</a><span class="k">class</span> <span class="nc">PredictionStore</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for storing prediction scores. This allows for evaluating prediction results using evaluation functions</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">batch_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="c1"># 100 MB memory limit</span>
+        <span class="n">memory_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e8</span><span class="p">),</span>
+        <span class="n">moving_average_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span>
+        <span class="n">evaluation_functions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the storage settings.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        batch_limit : int, optional</span>
+<span class="sd">            Maximum number of batches to keep for each array store corresponding to each category of prediction</span>
+<span class="sd">            outputs (e.g preds, labels), so only `batch_limit` number of latest batches is stored per set of</span>
+<span class="sd">            array store. Default is 30.</span>
+<span class="sd">        memory_limit : int or None, optional</span>
+<span class="sd">            Maximum memory (in bytes) of batches to keep for each array store corresponding to each category of</span>
+<span class="sd">            prediction outputs (e.g preds, labels). Default is 1e8.</span>
+<span class="sd">        moving_average_limit : int, optional</span>
+<span class="sd">            The maximum number of values allowed to store moving average metrics. Default is 3000.</span>
+<span class="sd">        evaluation_functions : dict[str, Callable], optional</span>
+<span class="sd">            A dictionary of key-value pairs, keys are evaluation function names, values are </span>
+<span class="sd">            callable evaluation functions, e.g mean, sum. Note that arguments to this Callable</span>
+<span class="sd">            must match with names of prediction batches that the model returns. So if model prediction over</span>
+<span class="sd">            a batch looks like this: {&quot;preds&quot;: &lt;batch of predictions&gt;, &quot;labels&quot;: &lt;batch of predicted labels&gt;}, </span>
+<span class="sd">            then callable&#39;s arguments should be `preds` and `labels`, e.g `evaluation_functions=</span>
+<span class="sd">            {&quot;mean&quot;: lambda preds, labels: np.mean(preads) + np.mean(labels)}`. Default is None.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import PredictionStore</span>
+<span class="sd">        &gt;&gt;&gt; pred_store = PredictionStore(</span>
+<span class="sd">        ...     batch_limit=10,</span>
+<span class="sd">        ...     memory_limit=1000,</span>
+<span class="sd">        ...     moving_average_limit=1000,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda x: np.mean(x)}</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># self.labels = ArrayStore(batch_limit=batch_limit, memory_limit=memory_limit)</span>
+        <span class="c1"># self.preds = ArrayStore(batch_limit=batch_limit, memory_limit=memory_limit)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">batch_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory_limit</span> <span class="o">=</span> <span class="n">memory_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MovingAverage</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">MovingAverage</span><span class="p">(</span><span class="n">moving_average_limit</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">evaluation_functions</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">evaluation_functions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="p">{}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__evaluation_functions__</span> <span class="o">=</span> <span class="n">evaluation_functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_init_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_arr__&quot;</span>
+        <span class="n">_arr</span> <span class="o">=</span> <span class="n">ArrayStore</span><span class="p">(</span><span class="n">batch_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span> <span class="n">memory_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">memory_limit</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">_arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayStore</span><span class="p">:</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">_arr__&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">arr</span>
+
+<div class="viewcode-block" id="PredictionStore.append"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">batches</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Appends batches of values, constrained on the limits.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tag : str</span>
+<span class="sd">            A tag that specifies which set of predictions to evaluate.</span>
+<span class="sd">        **batches : dict[str, np.ndarray]</span>
+<span class="sd">            A dictionary of key-value pairs, where key is type of prediction (e.g predictions, labels),</span>
+<span class="sd">            and value is a batch of prediction values. Note that the passed keys in **batches must match arguments in </span>
+<span class="sd">            evaluation functions arguments in the Callable in evaluation_functions when we initialize PredictionStore object</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If passed keys do not match arguments in evaluation functions, or when batches among the keys are different in size.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import PredictionStore</span>
+<span class="sd">        &gt;&gt;&gt; pred_store = PredictionStore(</span>
+<span class="sd">        ...     batch_limit=10,</span>
+<span class="sd">        ...     memory_limit=1000,</span>
+<span class="sd">        ...     moving_average_limit=1000,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda preds, labels: np.mean(preds) + np.mean(labels)}</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; pred_store.append(preds=np.array([4,3,0]), labels=np.array([5,1,1]))</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_init_arr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">batches</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">batches</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Missing keys from the prediction store update. Expected: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="si">}</span><span class="s2">, received </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">batches</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">batches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">np_arr</span> <span class="o">=</span> <span class="n">butils</span><span class="o">.</span><span class="n">iter_to_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">sizes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np_arr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_arr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np_arr</span><span class="p">)</span>
+            <span class="n">limits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_arr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Different number of batches between inputs. Sizes: </span><span class="si">{</span><span class="n">sizes</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">new_limit</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">limits</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_arr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">new_limit</span></div>
+
+<div class="viewcode-block" id="PredictionStore.evaluate"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply evaluation_functions to predictions sets, e.g preds, labels.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        metrics : dict</span>
+<span class="sd">            A dictionary of metric values calculated from different sets of predictions.</span>
+
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If passed keys do not match arguments in evaluation functions.</span>
+<span class="sd">        </span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If evaluation result is not a numeric scalar.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import PredictionStore</span>
+<span class="sd">        &gt;&gt;&gt; pred_store = PredictionStore(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     evaluation_functions={&quot;mean&quot;: lambda preds, labels: np.mean(preds) + np.mean(labels)</span>
+<span class="sd">        ...     moving_average_limit=100</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; pred_store.append(preds=np.array([4,3,0]), labels=np.array([5,1,3]))</span>
+<span class="sd">        &gt;&gt;&gt; pred_store.evaluate()</span>
+<span class="sd">        {&#39;mean&#39;: 5.333333333333334}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;PredictionStore has no predictions to evaluate.&quot;</span><span class="p">)</span>
+        <span class="n">batches</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_arr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__evaluation_functions__</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">batches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__evaluation_functions__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">fn_args</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">v</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">==</span> <span class="n">fn_args</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Evaluation function arguments </span><span class="si">{</span><span class="n">fn_args</span><span class="si">}</span><span class="s2"> different than stored predictions: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">metric</span> <span class="o">=</span> <span class="n">v</span><span class="p">(</span><span class="o">**</span><span class="n">batches</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+                <span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid value </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2"> returned by evaluation function </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Must be numeric scalar.&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">return</span> <span class="n">metrics</span></div>
+
+<div class="viewcode-block" id="PredictionStore.reset"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset to empty all prediction sequences (e.g predictions, labels).</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.main import PredictionStore</span>
+<span class="sd">        &gt;&gt;&gt; pred_store = PredictionStore(</span>
+<span class="sd">        ...     batch_limit=30,</span>
+<span class="sd">        ...     memory_limit=None,</span>
+<span class="sd">        ...     evaluation_functions={&quot;sum&quot;: lambda pred: np.mean(pred)},</span>
+<span class="sd">        ...     moving_average_limit=100</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; pred_store.append(preds=np.array([4,3,0]), labels=np.array([5,1,3]))</span>
+<span class="sd">        &gt;&gt;&gt; pred_store.reset()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_arr</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="MovingAverage"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.MovingAverage">[docs]</a><span class="k">class</span> <span class="nc">MovingAverage</span><span class="p">(</span><span class="n">ArrayStore</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is used to store moving average metrics </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__mean__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mean__</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__o</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="fm">__lt__</span><span class="p">(</span><span class="n">__o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__o</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">__o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__float__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_spec</span><span class="o">=</span><span class="s2">&quot;.2e&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="MovingAverage.append"><a class="viewcode-back" href="../../../../ablator.modules.metrics.html#ablator.modules.metrics.stores.MovingAverage.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Appends a batch of values, or a single value, constrained on the limits.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        val : ty.Union[np.ndarray, torch.Tensor, float, int]</span>
+<span class="sd">            The data to be appended</span>
+<span class="sd">            </span>
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        ValueError:</span>
+<span class="sd">            If appended value is of required type, or if val is not a scalar.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from ablator.modules.metrics.stores import MovingAverage</span>
+<span class="sd">        &gt;&gt;&gt; ma_store = MovingAverage()</span>
+<span class="sd">        &gt;&gt;&gt; for i in range(100):</span>
+<span class="sd">        &gt;&gt;&gt;     ma_store.append(np.array([int(i)]))</span>
+<span class="sd">        &gt;&gt;&gt; ma_store.arr</span>
+<span class="sd">        [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid MovingAverage value type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)):</span>
+            <span class="n">npval</span> <span class="o">=</span> <span class="n">butils</span><span class="o">.</span><span class="n">iter_to_numpy</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scalar</span> <span class="o">=</span> <span class="n">npval</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MovingAverage value must be scalar. </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scalar</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scalar</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.config package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.main package" href="ablator.main.html" />
+    <link rel="prev" title="ablator.analysis.plot package" href="ablator.analysis.plot.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ablator.config package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.config.main">ablator.config.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.main.ConfigBase"><code class="docutils literal notranslate"><span class="pre">ConfigBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.annotations"><code class="docutils literal notranslate"><span class="pre">ConfigBase.annotations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.assert_state"><code class="docutils literal notranslate"><span class="pre">ConfigBase.assert_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.assert_unambigious"><code class="docutils literal notranslate"><span class="pre">ConfigBase.assert_unambigious()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.config_class"><code class="docutils literal notranslate"><span class="pre">ConfigBase.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.diff"><code class="docutils literal notranslate"><span class="pre">ConfigBase.diff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.diff_str"><code class="docutils literal notranslate"><span class="pre">ConfigBase.diff_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.get_annot_type_with_dot_path"><code class="docutils literal notranslate"><span class="pre">ConfigBase.get_annot_type_with_dot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.get_type_with_dot_path"><code class="docutils literal notranslate"><span class="pre">ConfigBase.get_type_with_dot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.get_val_with_dot_path"><code class="docutils literal notranslate"><span class="pre">ConfigBase.get_val_with_dot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.keys"><code class="docutils literal notranslate"><span class="pre">ConfigBase.keys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.load"><code class="docutils literal notranslate"><span class="pre">ConfigBase.load()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.make_dict"><code class="docutils literal notranslate"><span class="pre">ConfigBase.make_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.merge"><code class="docutils literal notranslate"><span class="pre">ConfigBase.merge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.to_dict"><code class="docutils literal notranslate"><span class="pre">ConfigBase.to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.to_dot_path"><code class="docutils literal notranslate"><span class="pre">ConfigBase.to_dot_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.to_str"><code class="docutils literal notranslate"><span class="pre">ConfigBase.to_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.to_yaml"><code class="docutils literal notranslate"><span class="pre">ConfigBase.to_yaml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.uid"><code class="docutils literal notranslate"><span class="pre">ConfigBase.uid</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.main.ConfigBase.write"><code class="docutils literal notranslate"><span class="pre">ConfigBase.write()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.main.Missing"><code class="docutils literal notranslate"><span class="pre">Missing</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.main.configclass"><code class="docutils literal notranslate"><span class="pre">configclass()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.config.types">ablator.config.types module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Annotation"><code class="docutils literal notranslate"><span class="pre">Annotation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.types.Annotation.collection"><code class="docutils literal notranslate"><span class="pre">Annotation.collection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.types.Annotation.optional"><code class="docutils literal notranslate"><span class="pre">Annotation.optional</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.types.Annotation.state"><code class="docutils literal notranslate"><span class="pre">Annotation.state</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.config.types.Annotation.variable_type"><code class="docutils literal notranslate"><span class="pre">Annotation.variable_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Derived"><code class="docutils literal notranslate"><span class="pre">Derived</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Dict"><code class="docutils literal notranslate"><span class="pre">Dict</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Enum"><code class="docutils literal notranslate"><span class="pre">Enum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.List"><code class="docutils literal notranslate"><span class="pre">List</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Optional"><code class="docutils literal notranslate"><span class="pre">Optional</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Stateful"><code class="docutils literal notranslate"><span class="pre">Stateful</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Stateless"><code class="docutils literal notranslate"><span class="pre">Stateless</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.Tuple"><code class="docutils literal notranslate"><span class="pre">Tuple</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.get_annotation_state"><code class="docutils literal notranslate"><span class="pre">get_annotation_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.parse_type_hint"><code class="docutils literal notranslate"><span class="pre">parse_type_hint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.types.parse_value"><code class="docutils literal notranslate"><span class="pre">parse_value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.config.utils">ablator.config.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.utils.dict_hash"><code class="docutils literal notranslate"><span class="pre">dict_hash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.config.utils.flatten_nested_dict"><code class="docutils literal notranslate"><span class="pre">flatten_nested_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.config">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ablator.config package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.config.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-config-package">
+<h1>ablator.config package<a class="headerlink" href="#ablator-config-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.config.main">
+<span id="ablator-config-main-module"></span><h2>ablator.config.main module<a class="headerlink" href="#module-ablator.config.main" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.main.</span></span><span class="sig-name descname"><span class="pre">ConfigBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for configuration objects.</p>
+<p>First, it checks if there are any unannotated variables inside the child config class. If there are, it will raise an assert error.</p>
+<p class="rubric">Notes</p>
+<p>all config class must be decorated with &#64;configclass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config_class</strong><span class="classifier">Type</span></dt><dd><p>The class of the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.annotations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ablator.config.types.Annotation" title="ablator.config.types.Annotation"><span class="pre">ablator.config.types.Annotation</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.config.main.ConfigBase.annotations" title="Permalink to this definition"></a></dt>
+<dd><p>Get the parsed annotations of the configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>dict[str, Annotation]</dt><dd><p>A dictionary of parsed annotations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.assert_state">
+<span class="sig-name descname"><span class="pre">assert_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><span class="pre">ConfigBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.assert_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.assert_state" title="Permalink to this definition"></a></dt>
+<dd><p>Assert that the configuration object has a valid state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config</strong><span class="classifier">ConfigBase</span></dt><dd><p>The configuration object to compare.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>bool</dt><dd><p>True if the configuration object has a valid state, False otherwise.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.assert_unambigious">
+<span class="sig-name descname"><span class="pre">assert_unambigious</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.assert_unambigious"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.assert_unambigious" title="Permalink to this definition"></a></dt>
+<dd><p>Assert that the configuration object is unambiguous and has all the required values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the configuration object is ambiguous or missing required values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.config.main.ConfigBase.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.diff">
+<span class="sig-name descname"><span class="pre">diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><span class="pre">ConfigBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_stateless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.diff" title="Permalink to this definition"></a></dt>
+<dd><p>Get the differences between the current configuration object and another configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config</strong><span class="classifier">ConfigBase</span></dt><dd><p>The configuration object to compare.</p>
+</dd>
+<dt><strong>ignore_stateless</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>Whether to ignore stateless values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[tuple[str, tuple[type, Any], tuple[type, Any]]]</dt><dd><p>The list of differences as tuples.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Let’s say we have two configuration objects <cite>config1</cite> and <cite>config2</cite> with the following attributes:</p>
+<dl class="simple">
+<dt>config1:</dt><dd><p>learning_rate: 0.01
+optimizer: ‘Adam’
+num_layers: 3</p>
+</dd>
+<dt>config2:</dt><dd><p>learning_rate: 0.02
+optimizer: ‘SGD’
+num_layers: 3</p>
+</dd>
+</dl>
+<p>The diff between these two configurations would look like:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config1</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">config2</span><span class="p">)</span>
+<span class="go">[(&#39;learning_rate&#39;, (float, 0.01), (float, 0.02)), (&#39;optimizer&#39;, (str, &#39;Adam&#39;), (str, &#39;SGD&#39;))]</span>
+</pre></div>
+</div>
+<p>In this example, the learning_rate and optimizer values are different between the two configuration objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.diff_str">
+<span class="sig-name descname"><span class="pre">diff_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><span class="pre">ConfigBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_stateless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.diff_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.diff_str" title="Permalink to this definition"></a></dt>
+<dd><p>Get the differences between the current configuration object and another configuration object as strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config</strong><span class="classifier">ConfigBase</span></dt><dd><p>The configuration object to compare.</p>
+</dd>
+<dt><strong>ignore_stateless</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>Whether to ignore stateless values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[str]</dt><dd><p>The list of differences as strings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.get_annot_type_with_dot_path">
+<span class="sig-name descname"><span class="pre">get_annot_type_with_dot_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dot_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.get_annot_type_with_dot_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.get_annot_type_with_dot_path" title="Permalink to this definition"></a></dt>
+<dd><p>Get the type of a configuration object annotation using dot notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dot_path</strong><span class="classifier">str</span></dt><dd><p>The dot notation path to the annotation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Type</dt><dd><p>The type of the annotation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.get_type_with_dot_path">
+<span class="sig-name descname"><span class="pre">get_type_with_dot_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dot_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.get_type_with_dot_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.get_type_with_dot_path" title="Permalink to this definition"></a></dt>
+<dd><p>Get the type of a configuration object attribute using dot notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dot_path</strong><span class="classifier">str</span></dt><dd><p>The dot notation path to the attribute.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Type</dt><dd><p>The type of the attribute.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.get_val_with_dot_path">
+<span class="sig-name descname"><span class="pre">get_val_with_dot_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dot_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.get_val_with_dot_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.get_val_with_dot_path" title="Permalink to this definition"></a></dt>
+<dd><p>Get the value of a configuration object attribute using dot notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>dot_path</strong><span class="classifier">str</span></dt><dd><p>The dot notation path to the attribute.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Any</dt><dd><p>The value of the attribute.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.keys">
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.keys" title="Permalink to this definition"></a></dt>
+<dd><p>Get the keys of the configuration dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>KeysView[str]</dt><dd><p>The keys of the configuration dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.load" title="Permalink to this definition"></a></dt>
+<dd><p>Load a configuration object from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>path</strong><span class="classifier">Union[Path, str]</span></dt><dd><p>The path to the configuration file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ConfigBase</dt><dd><p>The loaded configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.make_dict">
+<span class="sig-name descname"><span class="pre">make_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#ablator.config.types.Annotation" title="ablator.config.types.Annotation"><span class="pre">ablator.config.types.Annotation</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_stateless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.make_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.make_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Create a dictionary representation of the configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>annotations</strong><span class="classifier">dict[str, Annotation]</span></dt><dd><p>A dictionary of annotations.</p>
+</dd>
+<dt><strong>ignore_stateless</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>Whether to ignore stateless values.</p>
+</dd>
+<dt><strong>flatten</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>Whether to flatten nested dictionaries.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>The dictionary representation of the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><span class="pre">ConfigBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ty.Self</span></span></span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.merge" title="Permalink to this definition"></a></dt>
+<dd><p>Merge the current configuration object with another configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>config</strong><span class="classifier">ConfigBase</span></dt><dd><p>The configuration object to merge.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ty.Self</dt><dd><p>The merged configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore_stateless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.to_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the configuration object to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ignore_stateless</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>Whether to ignore stateless values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>The dictionary representation of the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.to_dot_path">
+<span class="sig-name descname"><span class="pre">to_dot_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore_stateless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.to_dot_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.to_dot_path" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the configuration object to a dictionary with dot notation paths as keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ignore_stateless</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>Whether to ignore stateless values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>str</dt><dd><p>The YAML representation of the configuration object in dot notation paths.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.to_str">
+<span class="sig-name descname"><span class="pre">to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.to_str" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the configuration object to a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>str</dt><dd><p>The string representation of the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.to_yaml">
+<span class="sig-name descname"><span class="pre">to_yaml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.to_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.to_yaml" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the configuration object to YAML format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>str</dt><dd><p>The YAML representation of the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.uid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#ablator.config.main.ConfigBase.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Get the unique identifier for the configuration object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>str</dt><dd><p>The unique identifier for the configuration object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.config.main.ConfigBase.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#ConfigBase.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.ConfigBase.write" title="Permalink to this definition"></a></dt>
+<dd><p>Write the configuration object to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>path</strong><span class="classifier">Union[Path, str]</span></dt><dd><p>The path to the file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.main.Missing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.main.</span></span><span class="sig-name descname"><span class="pre">Missing</span></span><a class="reference internal" href="_modules/ablator/config/main.html#Missing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.Missing" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This type is defined only for raising an error</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.config.main.configclass">
+<span class="sig-prename descclassname"><span class="pre">ablator.config.main.</span></span><span class="sig-name descname"><span class="pre">configclass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/main.html#configclass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.main.configclass" title="Permalink to this definition"></a></dt>
+<dd><p>Decorator for ConfigBase subclasses, adds the config_class attribute to the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cls</strong><span class="classifier">Type[ConfigBase]</span></dt><dd><p>The class to be decorated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Type[ConfigBase]</dt><dd><p>The decorated class with the config_class attribute.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.config.types">
+<span id="ablator-config-types-module"></span><h2>ablator.config.types module<a class="headerlink" href="#module-ablator.config.types" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Annotation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ablator.config.types.Annotation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.config.types.Annotation.collection">
+<span class="sig-name descname"><span class="pre">collection</span></span><a class="headerlink" href="#ablator.config.types.Annotation.collection" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.config.types.Annotation.optional">
+<span class="sig-name descname"><span class="pre">optional</span></span><a class="headerlink" href="#ablator.config.types.Annotation.optional" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.config.types.Annotation.state">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="headerlink" href="#ablator.config.types.Annotation.state" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.config.types.Annotation.variable_type">
+<span class="sig-name descname"><span class="pre">variable_type</span></span><a class="headerlink" href="#ablator.config.types.Annotation.variable_type" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Derived">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Derived</span></span><a class="reference internal" href="_modules/ablator/config/types.html#Derived"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Derived" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>This type is for attributes are derived during the experiment.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Dict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Dict</span></span><a class="reference internal" href="_modules/ablator/config/types.html#Dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Dict" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Enum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Enum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/types.html#Enum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Enum" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>A custom Enum class that provides additional equality and hashing methods.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">GREEN</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">... </span>    <span class="n">BLUE</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">==</span> <span class="n">Color</span><span class="o">.</span><span class="n">RED</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span><span class="p">)</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 63%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>__eq__(self, __o: object) -&gt; bool:</strong></p></td>
+<td><p>Checks for equality between the Enum instance and another object.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>__hash__(self) -&gt; int:</strong></p></td>
+<td><p>Calculates the hash of the Enum instance.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.List">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">List</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/types.html#List"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.List" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Optional">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Optional</span></span><a class="reference internal" href="_modules/ablator/config/types.html#Optional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Optional" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Stateful">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Stateful</span></span><a class="reference internal" href="_modules/ablator/config/types.html#Stateful"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Stateful" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>This is for attributes that are fixed between experiments. By default
+all type_hints are stateful. Do not need to use.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Stateless">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Stateless</span></span><a class="reference internal" href="_modules/ablator/config/types.html#Stateless"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Stateless" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>This type is for attributes that can take different value assignments
+between experiments</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.config.types.Tuple">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">Tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/types.html#Tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.Tuple" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.config.types.get_annotation_state">
+<span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">get_annotation_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/types.html#get_annotation_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.get_annotation_state" title="Permalink to this definition"></a></dt>
+<dd><p>Get state of an annotation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>annotation:</strong></dt><dd><p>type annotation</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Stateful, Derived, Stateless, or None</dt><dd></dd>
+<dt>(Stateful is the default)</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.config.types.parse_type_hint">
+<span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">parse_type_hint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_hint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/types.html#parse_type_hint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.parse_type_hint" title="Permalink to this definition"></a></dt>
+<dd><p>Parses a type hint and returns a parsed annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>type_hint</strong><span class="classifier">Type</span></dt><dd><p>The input type hint to parse.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Annotation</dt><dd><p>A namedtuple containing state, optional, collection, and variable_type information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.config.types.parse_value">
+<span class="sig-prename descclassname"><span class="pre">ablator.config.types.</span></span><span class="sig-name descname"><span class="pre">parse_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ablator.config.types.Annotation" title="ablator.config.types.Annotation"><span class="pre">Annotation</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/types.html#parse_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.types.parse_value" title="Permalink to this definition"></a></dt>
+<dd><p>Parses a value based on the given annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>val</strong><span class="classifier">Any</span></dt><dd><p>The input value to parse.</p>
+</dd>
+<dt><strong>annot</strong><span class="classifier">Annotation</span></dt><dd><p>The annotation namedtuple to guide the parsing.</p>
+</dd>
+<dt><strong>name</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the value, by default None.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Any</dt><dd><p>The parsed value.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>RuntimeError</dt><dd><p>If the required value is missing and it is not optional or derived or stateless.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.config.utils">
+<span id="ablator-config-utils-module"></span><h2>ablator.config.utils module<a class="headerlink" href="#module-ablator.config.utils" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.config.utils.dict_hash">
+<span class="sig-prename descclassname"><span class="pre">ablator.config.utils.</span></span><span class="sig-name descname"><span class="pre">dict_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">dictionaries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/config/utils.html#dict_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.utils.dict_hash" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the MD5 hash of one or more dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>*dictionaries</strong><span class="classifier">list[dict[str, ty.Any]]</span></dt><dd><p>One or more dictionaries to calculate the hash for.</p>
+</dd>
+<dt><strong>hash_len</strong><span class="classifier">int, optional</span></dt><dd><p>The length of the hash to return, by default 4.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>str</dt><dd><p>The MD5 hash of the dictionaries.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.config.utils.flatten_nested_dict">
+<span class="sig-prename descclassname"><span class="pre">ablator.config.utils.</span></span><span class="sig-name descname"><span class="pre">flatten_nested_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seperator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/config/utils.html#flatten_nested_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.config.utils.flatten_nested_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Flattens a nested dictionary, expanding lists and tuples if specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>_dict</strong><span class="classifier">dict</span></dt><dd><p>The input dictionary to be flattened.</p>
+</dd>
+<dt><strong>expand_list</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to expand lists and tuples in the dictionary, by default True.</p>
+</dd>
+<dt><strong>seperator</strong><span class="classifier">str, optional</span></dt><dd><p>The separator used for joining the keys, by default “.”.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict[str, ty.Any]</dt><dd><p>The flattened dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.config">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.config" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.analysis.plot.html" class="btn btn-neutral float-left" title="ablator.analysis.plot package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.main.html" class="btn btn-neutral float-right" title="ablator.main package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
