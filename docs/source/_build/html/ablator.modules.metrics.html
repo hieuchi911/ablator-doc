@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules.metrics package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.modules.storage package" href="ablator.modules.storage.html" />
+    <link rel="prev" title="ablator.modules.loggers package" href="ablator.modules.loggers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ablator.modules.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html">ablator.modules.loggers package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ablator.modules.metrics package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.metrics.main">ablator.modules.metrics.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.metrics.stores">ablator.modules.metrics.stores module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.metrics">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.storage.html">ablator.modules.storage package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules.optimizer">ablator.modules.optimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules.scheduler">ablator.modules.scheduler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="ablator.modules.html">ablator.modules package</a> &raquo;</li>
+      <li>ablator.modules.metrics package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.modules.metrics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-modules-metrics-package">
+<h1>ablator.modules.metrics package<a class="headerlink" href="#ablator-modules-metrics-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.modules.metrics.main">
+<span id="ablator-modules-metrics-main-module"></span><h2>ablator.modules.metrics.main module<a class="headerlink" href="#module-ablator.modules.metrics.main" title="Permalink to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.LossDivergedError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.metrics.main.</span></span><span class="sig-name descname"><span class="pre">LossDivergedError</span></span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#LossDivergedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.LossDivergedError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.metrics.main.</span></span><span class="sig-name descname"><span class="pre">TrainMetrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving_average_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static_aux_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving_aux_metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Stores and manages predictions and calculates metrics given some custom evaluation functions.
+Makes batch-updates
+Manages memory limits
+applies evaluation functions.
+provides cached or online updates on the train loss</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics.append_batch">
+<span class="sig-name descname"><span class="pre">append_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics.append_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics.append_batch" title="Permalink to this definition"></a></dt>
+<dd><p>Appends a batch of predictions to a specific set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tag</strong><span class="classifier">str</span></dt><dd><p>A tag that specifies which set of predictions to evaluate.</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">dict</span></dt><dd><p>A dictionary of key-value pairs, where key is type of prediction (e.g predictions, labels),
+and value is a batch of prediction values. Note that the passed keys in <a href="#id1"><span class="problematic" id="id2">**</span></a>kwrags must match arguments in 
+evaluation functions arguments in Callable in evaluation_functions when we initialize TrainMetrics object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If any positional arguments are passed, or if the provided tag is not a defined metric category.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>this is because it is easy to mix up the order of pred, labels and tags</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">TrainMetrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">labels</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">static_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">]),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">50</span><span class="p">]),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_ma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Apply evaluation_functions to a set of predictions specified by <cite>tag</cite> argument. Possibly update the
+moving averages (only those associated with evaluation functions, not moving auxiliary metrics) with
+the evaluated results, or reset the predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tag</strong><span class="classifier">str</span></dt><dd><p>A tag that specifies which set of predictions to evaluate.</p>
+</dd>
+<dt><strong>reset</strong><span class="classifier">bool, optional</span></dt><dd><p>A flag that indicates whether to reset the predictions to empty after evaluation. Default is True.</p>
+</dd>
+<dt><strong>update_ma</strong><span class="classifier">bool, optional</span></dt><dd><p>A flag that indicates whether to update the moving averages after evaluation. Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>metrics</strong><span class="classifier">dict</span></dt><dd><p>A dictionary of metric values calculated from the predictions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">TrainMetrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pred</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pred</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">static_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">pred</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">]),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># val_mean is updated to mean among batch mean values: (100 / 1) / 1 = 100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">pred</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># for the following line of code, the current evaluation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># result is: (100 + 0 + 0 + 0) / 4 = 25 (which is returned</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># by evaluate() function), and since update=True,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># val_mean is updated to: (100.0 + 25) / 2 = 62.5 (we can</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># see this if we use .to_dict())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">{&#39;mean&#39;: 25.0}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{&#39;val_mean&#39;: 62.5}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset to empty all prediction sequences (e.g predictions, labels) in a set of predictions specified by <cite>tag</cite> argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tag</strong><span class="classifier">str</span></dt><dd><p>A tag that specifies which set of predictions to be reset.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pred</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pred</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">static_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">pred</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>    <span class="c1"># e.g add 3 predictions all of class 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics.to_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Get all metrics, i.e moving aux metrics, moving evaluation metrics, and static aux metrics.
+Note that moving attributes will be an averaged value of all previous batches. Metrics are
+set to np.nan if it’s never updated before</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">TrainMetrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">preds</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">preds</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">static_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">]),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{</span>
+<span class="go">    &#39;train_mean&#39;: np.nan, &#39;train_loss&#39;: np.nan,</span>
+<span class="go">    &#39;val_mean&#39;: 100.0, &#39;val_loss&#39;: np.nan,</span>
+<span class="go">    &#39;lr&#39;: 0.75</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">append_batch</span><span class="p">(</span><span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{</span>
+<span class="go">    &#39;train_mean&#39;: np.nan, &#39;train_loss&#39;: np.nan,</span>
+<span class="go">    &#39;val_mean&#39;: 62.5, &#39;val_loss&#39;: np.nan,</span>
+<span class="go">    &#39;lr&#39;: 0.75</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics.update_ma_metrics">
+<span class="sig-name descname"><span class="pre">update_ma_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics.update_ma_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics.update_ma_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Keep the moving average aux metrics updated with new values from metric_dict.
+This method will append the new metric values to its collection of metric results.
+A sample use case for this method is when we finish a training iteration, we
+can add the training loss to <cite>loss</cite> moving average metric collection on tag <cite>train</cite>,
+aka the train set.</p>
+<dl class="simple">
+<dt>metric_dict<span class="classifier">dict[str, ty.Any]</span></dt><dd><p>A dictionary containing the moving average metric values to update.</p>
+</dd>
+<dt>tag<span class="classifier">str</span></dt><dd><p>A tag that specifies which set of predictions to update metric values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError:</dt><dd><p>If metric_dict has metrics that are not in moving_aux_metrics.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">TrainMetrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">static_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{   </span>
+<span class="go">    &quot;train_sum&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="go">    &quot;val_sum&quot;: np.nan, &quot;val_loss&quot;: np.nan,</span>
+<span class="go">    &quot;lr&quot;: 1.0</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">update_ma_metrics</span><span class="p">({</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">},</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;val&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{   </span>
+<span class="go">    &quot;train_sum&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="go">    &quot;val_sum&quot;: np.nan, &quot;val_loss&quot;: 0.35,</span>
+<span class="go">    &quot;lr&quot;: 1.0</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.main.TrainMetrics.update_static_metrics">
+<span class="sig-name descname"><span class="pre">update_static_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/main.html#TrainMetrics.update_static_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.main.TrainMetrics.update_static_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Update static metrics with the values in metric_dict.</p>
+<dl class="simple">
+<dt>metric_dict<span class="classifier">dict[str, ty.Any]</span></dt><dd><p>A dictionary containing the static metrics values to update.</p>
+</dd>
+</dl>
+<dl class="field-list">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>AssertionError:</dt><dd><p>If metric_dict has metrics that are not in static_aux_attributes.</p>
+</dd>
+<dt>Notes</dt><dd></dd>
+</dl>
+<blockquote>
+<div></div></blockquote>
+<dl class="simple">
+<dt>Not all metric_dict items must be preset from static_aux_attributes.</dt><dd></dd>
+<dt>i.e. metric_dict.items - static_aux_attributes =/= static_aux_attributes - metric_dict.items</dt><dd></dd>
+<dt>NOTE: Not all metric_dict items must be preset from static_aux_attributes.</dt><dd></dd>
+<dt>i.e. metric_dict.items - static_aux_attributes =/= static_aux_attributes - metric_dict.items</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">TrainMetrics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span> <span class="o">=</span> <span class="n">TrainMetrics</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">static_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">moving_aux_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{   </span>
+<span class="go">    &quot;train_mean&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="go">    &quot;lr&quot;: 1.0</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">update_static_metrics</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">train_metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{   </span>
+<span class="go">    &quot;train_mean&quot;: np.nan, &quot;train_loss&quot;: np.nan,</span>
+<span class="go">    &quot;lr&quot;: 0.3</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.metrics.stores">
+<span id="ablator-modules-metrics-stores-module"></span><h2>ablator.modules.metrics.stores module<a class="headerlink" href="#module-ablator.modules.metrics.stores" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.ArrayStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.metrics.stores.</span></span><span class="sig-name descname"><span class="pre">ArrayStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100000000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#ArrayStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.ArrayStore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></p>
+<p>Base class for manipulations (storing, getting, resetting) of batches of values.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.ArrayStore.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#ArrayStore.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.ArrayStore.append" title="Permalink to this definition"></a></dt>
+<dd><p>Appends a batch of values, or a single value, constrained on the limits.
+If after appending a new batch, <cite>batch_limit</cite> is exceeded, only <cite>batch_limit</cite> number
+of latest batches is kept. If memory limit is exceeded, <cite>batch_limit</cite> will be reduced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>val</strong><span class="classifier">np.ndarray or float or int</span></dt><dd><p>The data, can be a batch of data, or a scalar.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError:</dt><dd><p>If appended value is not numpy array, an integer, or a float number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>The following example shows a case where batch limit is exceeded
+(100 values/batches to be appended while only 10 is allowed)
+&gt;&gt;&gt; from ablator.modules.metrics.stores import ArrayStore
+&gt;&gt;&gt; array_store = ArrayStore(
+…     batch_limit=10,
+…     memory_limit=1000
+… )
+&gt;&gt;&gt; for i in range(100):
+&gt;&gt;&gt;     array_store.append(int(i))
+&gt;&gt;&gt; array_store.arr
+[90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+&gt;&gt;&gt; array_store.limit
+10</p>
+<p>This example shows a case where memory limit is exceeded. As soon as the 5th
+value is appended, memory of the list is 104 &gt; 100), so <cite>batch_limit</cite> is set
+to the length of the store so far (which is 5) reduced by 1, which equals to 4.
+Therefore, from then on, only 4 values/batches is allowed.
+&gt;&gt;&gt; array_store = ArrayStore(
+…     batch_limit=10,
+…     memory_limit=100
+… )
+&gt;&gt;&gt; for i in range(100):
+&gt;&gt;&gt;     array_store.append(int(i))
+&gt;&gt;&gt; array_store.arr
+[96, 97, 98, 99]
+&gt;&gt;&gt; array_store.limit
+4</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.ArrayStore.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#ArrayStore.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.ArrayStore.get" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a flatten array of values</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.stores</span> <span class="kn">import</span> <span class="n">ArrayStore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array_store</span> <span class="o">=</span> <span class="n">ArrayStore</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="mi">1000</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">array_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array_store</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="go">[[90 91 92 93 94 95 96 97 98 99]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.ArrayStore.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#ArrayStore.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.ArrayStore.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset list of values to empty.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.stores</span> <span class="kn">import</span> <span class="n">ArrayStore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array_store</span> <span class="o">=</span> <span class="n">ArrayStore</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="mi">1000</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">array_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array_store</span><span class="o">.</span><span class="n">arr</span>
+<span class="go">[90, 91, 92, 93, 94, 95, 96, 97, 98, 99]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array_store</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array_store</span><span class="o">.</span><span class="n">arr</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.MovingAverage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.metrics.stores.</span></span><span class="sig-name descname"><span class="pre">MovingAverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100000000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#MovingAverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.MovingAverage" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.metrics.stores.ArrayStore" title="ablator.modules.metrics.stores.ArrayStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayStore</span></code></a></p>
+<p>This class is used to store moving average metrics</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.MovingAverage.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#MovingAverage.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.MovingAverage.append" title="Permalink to this definition"></a></dt>
+<dd><p>Appends a batch of values, or a single value, constrained on the limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>val</strong><span class="classifier">ty.Union[np.ndarray, torch.Tensor, float, int]</span></dt><dd><p>The data to be appended</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>ValueError:</dt><dd><p>If appended value is of required type, or if val is not a scalar.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.stores</span> <span class="kn">import</span> <span class="n">MovingAverage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ma_store</span> <span class="o">=</span> <span class="n">MovingAverage</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">ma_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ma_store</span><span class="o">.</span><span class="n">arr</span>
+<span class="go">[70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.MovingAverage.value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#ablator.modules.metrics.stores.MovingAverage.value" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.PredictionStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.metrics.stores.</span></span><span class="sig-name descname"><span class="pre">PredictionStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving_average_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_functions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Callable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#PredictionStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.PredictionStore" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for storing prediction scores. This allows for evaluating prediction results using evaluation functions</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.PredictionStore.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">batches</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#PredictionStore.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.PredictionStore.append" title="Permalink to this definition"></a></dt>
+<dd><p>Appends batches of values, constrained on the limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tag</strong><span class="classifier">str</span></dt><dd><p>A tag that specifies which set of predictions to evaluate.</p>
+</dd>
+<dt><strong>**batches</strong><span class="classifier">dict[str, np.ndarray]</span></dt><dd><p>A dictionary of key-value pairs, where key is type of prediction (e.g predictions, labels),
+and value is a batch of prediction values. Note that the passed keys in <a href="#id3"><span class="problematic" id="id4">**</span></a>batches must match arguments in 
+evaluation functions arguments in the Callable in evaluation_functions when we initialize PredictionStore object</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If passed keys do not match arguments in evaluation functions, or when batches among the keys are different in size.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.stores</span> <span class="kn">import</span> <span class="n">PredictionStore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span> <span class="o">=</span> <span class="n">PredictionStore</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">labels</span><span class="p">)}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.PredictionStore.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#PredictionStore.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.PredictionStore.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Apply evaluation_functions to predictions sets, e.g preds, labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>metrics</strong><span class="classifier">dict</span></dt><dd><p>A dictionary of metric values calculated from different sets of predictions.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If passed keys do not match arguments in evaluation functions.</p>
+</dd>
+<dt>ValueError</dt><dd><p>If evaluation result is not a numeric scalar.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">PredictionStore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span> <span class="o">=</span> <span class="n">PredictionStore</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">preds</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+<span class="go">{&#39;mean&#39;: 5.333333333333334}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.metrics.stores.PredictionStore.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/metrics/stores.html#PredictionStore.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.metrics.stores.PredictionStore.reset" title="Permalink to this definition"></a></dt>
+<dd><p>Reset to empty all prediction sequences (e.g predictions, labels).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">PredictionStore</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span> <span class="o">=</span> <span class="n">PredictionStore</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">batch_limit</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">memory_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">evaluation_functions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sum&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">pred</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pred</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="n">moving_average_limit</span><span class="o">=</span><span class="mi">100</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">labels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred_store</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.metrics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.modules.metrics" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.modules.loggers.html" class="btn btn-neutral float-left" title="ablator.modules.loggers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.modules.storage.html" class="btn btn-neutral float-right" title="ablator.modules.storage package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.main.state &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.main.state</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.main.state</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">optuna</span>
+<span class="kn">from</span> <span class="nn">optuna.trial</span> <span class="kn">import</span> <span class="n">TrialState</span> <span class="k">as</span> <span class="n">OptunaTrialState</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">PickleType</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">create_engine</span><span class="p">,</span> <span class="n">select</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">mapped_column</span>
+
+<span class="kn">import</span> <span class="nn">ablator.utils.base</span> <span class="k">as</span> <span class="nn">butils</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Optim</span><span class="p">,</span>
+    <span class="n">ParallelConfig</span><span class="p">,</span>
+    <span class="n">SearchAlgo</span><span class="p">,</span>
+    <span class="n">SearchSpace</span><span class="p">,</span>
+    <span class="n">SearchType</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.loggers.file</span> <span class="kn">import</span> <span class="n">FileLogger</span>
+<span class="kn">from</span> <span class="nn">ablator.utils.file</span> <span class="kn">import</span> <span class="n">nested_set</span>
+
+
+<div class="viewcode-block" id="Base"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.Base">[docs]</a><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="TrialState"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.TrialState">[docs]</a><span class="k">class</span> <span class="nc">TrialState</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An enumeration of possible states for a trial with more pruned states.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        RUNNING (int): A trial that has been succesfully scheduled to run</span>
+<span class="sd">        COMPLETE (int): Succesfully completed trial</span>
+<span class="sd">        PRUNED (int): Trial pruned because of various reasons</span>
+<span class="sd">        FAIL (int): Trial that produced an error during execution</span>
+<span class="sd">        WAITING (int): Trial that has been sampled but is not scheduled to run yet</span>
+<span class="sd">        PRUNED_INVALID (int): Trial that was pruned during sampling as it was invalid</span>
+<span class="sd">        PRUNED_DUPLICATE (int): Trial that was sampled but was already present</span>
+<span class="sd">        PRUNED_POOR_PERFORMANCE (int): Trial that was pruned during execution for poor performance</span>
+<span class="sd">        RECOVERABLE_ERROR (int): Trial that was pruned during execution for poor performance</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        to_optuna_state: Convert this TrialState to an OptunaTrialState.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># extension of &quot;optuna.trial.TrialState&quot;</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># A trial that has been succesfully scheduled to run</span>
+    <span class="n">COMPLETE</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Succesfully completed trial</span>
+    <span class="n">PRUNED</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Trial pruned because of various reasons</span>
+    <span class="n">FAIL</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Trial that produced an error during execution</span>
+    <span class="n">WAITING</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># Trial that has been sampled but is not scheduled to run yet</span>
+    <span class="n">PRUNED_INVALID</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Trial that was pruned during sampling as it was invalid</span>
+    <span class="n">PRUNED_DUPLICATE</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Trial that was sampled but was already present</span>
+    <span class="n">PRUNED_POOR_PERFORMANCE</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">7</span>  <span class="c1"># Trial that was pruned during execution for poor performance</span>
+    <span class="p">)</span>
+    <span class="n">RECOVERABLE_ERROR</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># Trial that was pruned during execution for poor performance</span>
+
+<div class="viewcode-block" id="TrialState.to_optuna_state"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.TrialState.to_optuna_state">[docs]</a>    <span class="k">def</span> <span class="nf">to_optuna_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OptunaTrialState</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert this TrialState to an OptunaTrialState.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            OptunaTrialState | None: </span>
+<span class="sd">                Corresponding OptunaTrialState or None if the state is not applicable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED</span><span class="p">,</span>
+            <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_INVALID</span><span class="p">,</span>
+            <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_DUPLICATE</span><span class="p">,</span>
+            <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_POOR_PERFORMANCE</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">return</span> <span class="n">OptunaTrialState</span><span class="o">.</span><span class="n">PRUNED</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="p">{</span><span class="n">TrialState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">OptunaTrialState</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="augment_trial_kwargs"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.augment_trial_kwargs">[docs]</a><span class="k">def</span> <span class="nf">augment_trial_kwargs</span><span class="p">(</span>
+    <span class="n">trial_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">augmentation</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Augment the trial_kwargs with additional key-value pairs specified in the augmentation dictionary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    trial_kwargs : dict</span>
+<span class="sd">        The dictionary containing the key-value pairs to be augmented.</span>
+<span class="sd">    augmentation : dict</span>
+<span class="sd">        The dictionary containing the additional key-value pairs.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The augmented dictionary.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; trial_kwargs = {&#39;a&#39;: 1, &#39;b&#39;: 2}</span>
+<span class="sd">    &gt;&gt;&gt; augmentation = {&#39;c&#39;: 3, &#39;d.e&#39;: 4}</span>
+<span class="sd">    &gt;&gt;&gt; augment_trial_kwargs(trial_kwargs, augmentation)</span>
+<span class="sd">    {&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3, &#39;d&#39;: {&#39;e&#39;: 4}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">trial_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">trial_kwargs</span><span class="p">)</span>
+    <span class="n">config_dot_path</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">dot_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">augmentation</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dot_paths</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">dot_paths</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Duplicate tune paths: </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">dot_paths</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">dot_paths</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">config_dot_path</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">augmentation</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">config_dot_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="n">trial_kwargs</span> <span class="o">=</span> <span class="n">nested_set</span><span class="p">(</span><span class="n">trial_kwargs</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trial_kwargs</span></div>
+
+
+<div class="viewcode-block" id="parse_metrics"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.parse_metrics">[docs]</a><span class="k">def</span> <span class="nf">parse_metrics</span><span class="p">(</span>
+    <span class="n">metric_directions</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert metrics to ordered dictionary of float values using their direction (minimize or maximize).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metric_directions : OrderedDict</span>
+<span class="sd">        The ordered dictionary containing the directions of the metrics (minimize or maximize).</span>
+<span class="sd">    metrics : dict</span>
+<span class="sd">        The dictionary containing the metric values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    OrderedDict</span>
+<span class="sd">        The ordered dictionary of metric values converted to float using their direction.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; metric_directions = OrderedDict([(&#39;a&#39;, &#39;max&#39;), (&#39;b&#39;, &#39;min&#39;)])</span>
+<span class="sd">    &gt;&gt;&gt; metrics = {&#39;a&#39;: 1, &#39;b&#39;: None}</span>
+<span class="sd">    &gt;&gt;&gt; parse_metrics(metric_directions, metrics)</span>
+<span class="sd">    OrderedDict([(&#39;a&#39;, 1.0), (&#39;b&#39;, inf)])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">metric_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metric_directions</span><span class="p">)</span>
+    <span class="n">user_metrics</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">user_metrics</span> <span class="o">==</span> <span class="n">metric_keys</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Different specified metric directions `</span><span class="si">{</span><span class="n">metric_keys</span><span class="si">}</span><span class="s2">` and `</span><span class="si">{</span><span class="n">user_metrics</span><span class="si">}</span><span class="s2">`&quot;</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metric_directions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">Optim</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">Optim</span><span class="o">.</span><span class="n">max</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="n">vals</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">vals</span></div>
+
+
+<div class="viewcode-block" id="sample_trial_params"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.sample_trial_params">[docs]</a><span class="k">def</span> <span class="nf">sample_trial_params</span><span class="p">(</span>
+    <span class="n">optuna_trial</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">Trial</span><span class="p">,</span>
+    <span class="n">search_space</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SearchSpace</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample parameter values from the search space for a given Optuna trial.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    optuna_trial : optuna.Trial</span>
+<span class="sd">        The Optuna trial object.</span>
+<span class="sd">    search_space : dict of str to SearchSpace</span>
+<span class="sd">        The search space containing the parameters to sample from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict of str to any</span>
+<span class="sd">        The dictionary containing the sampled parameter values.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the search space contains an invalid `SearchSpace` object.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; optuna_trial = self.optuna_study.ask()</span>
+<span class="sd">    &gt;&gt;&gt; search_space = {&#39;x&#39;: SearchSpace(value_type=SearchType.numerical, value_range=(0.0, 1.0)), </span>
+<span class="sd">    ... &#39;y&#39;: SearchSpace(categorical_values=[&#39;a&#39;, &#39;b&#39;]), </span>
+<span class="sd">    ... &#39;z&#39;: SearchSpace(value_type=SearchType.integer, value_range=(1, 10))}</span>
+<span class="sd">    &gt;&gt;&gt; sample_trial_params(optuna_trial, search_space)</span>
+<span class="sd">    {&#39;x&#39;: 0.030961748695615783, &#39;y&#39;: &#39;a&#39;, &#39;z&#39;: 9}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parameter</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">search_space</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># TODO conditional sampling</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">value_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="n">SearchType</span><span class="o">.</span><span class="n">integer</span><span class="p">:</span>
+            <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">value_range</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span> <span class="o">==</span> <span class="n">low</span>
+            <span class="p">),</span> <span class="s2">&quot;`value_range` must be in the format of (min,max)&quot;</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">optuna_trial</span><span class="o">.</span><span class="n">suggest_int</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="o">.</span><span class="n">value_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span><span class="o">.</span><span class="n">value_type</span> <span class="o">==</span> <span class="n">SearchType</span><span class="o">.</span><span class="n">numerical</span><span class="p">:</span>
+            <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">value_range</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
+            <span class="n">high</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">min</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span> <span class="o">==</span> <span class="n">low</span>
+            <span class="p">),</span> <span class="s2">&quot;`value_range` must be in the format of (min,max)&quot;</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">optuna_trial</span><span class="o">.</span><span class="n">suggest_float</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="o">.</span><span class="n">categorical_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">optuna_trial</span><span class="o">.</span><span class="n">suggest_categorical</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">categorical_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid SearchSpace </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parameter</span></div>
+
+
+<div class="viewcode-block" id="Trial"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.Trial">[docs]</a><span class="k">class</span> <span class="nc">Trial</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;trial&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">config_uid</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">))</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">PickleType</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">PickleType</span><span class="p">)</span>
+    <span class="n">config_param</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">PickleType</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">PickleType</span><span class="p">)</span>
+    <span class="n">optuna_trial_num</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">PickleType</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">PickleType</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">TrialState</span><span class="o">.</span><span class="n">WAITING</span><span class="p">)</span>
+    <span class="n">runtime_errors</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Trial(id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">!r}</span><span class="s2">, config_uid=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config_uid</span><span class="si">!r}</span><span class="s2">, fullname=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config_param</span><span class="si">!r}</span><span class="s2">)&quot;</span></div>
+
+
+<div class="viewcode-block" id="OptunaState"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.OptunaState">[docs]</a><span class="k">class</span> <span class="nc">OptunaState</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to store the state of the Optuna study.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    optim_metrics: OrderedDict</span>
+<span class="sd">        The ordered dictionary containing the names of the metrics to optimize and their direction (minimize or maximize).</span>
+<span class="sd">    search_space: dict of str to SearchSpace</span>
+<span class="sd">        The search space containing the parameters to sample from.</span>
+<span class="sd">    optuna_study: optuna.study.Study</span>
+<span class="sd">        The Optuna study object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">storage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">study_name</span><span class="p">,</span>
+        <span class="n">optim_metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optim</span><span class="p">],</span>
+        <span class="n">search_algo</span><span class="p">,</span>
+        <span class="n">search_space</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">SearchSpace</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Optuna state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        storage : str</span>
+<span class="sd">            The path to the database URL or a database URL.</span>
+<span class="sd">        study_name : str</span>
+<span class="sd">            The name of the study.</span>
+<span class="sd">        optim_metrics : dict[str, Optim]</span>
+<span class="sd">            A dictionary of metric names and their optimization directions (either &#39;max&#39; or &#39;min&#39;).</span>
+<span class="sd">        search_algo : SearchAlgo</span>
+<span class="sd">            The search algorithm to use (&#39;random&#39; or &#39;tpe&#39;).</span>
+<span class="sd">        search_space : dict[str, SearchSpace]</span>
+<span class="sd">            A dictionary of parameter names and their corresponding SearchSpace instances.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If the specified search algorithm is not implemented.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If `optim_metrics` is None.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        For tuning, add an attribute to the searchspace whose name is the name of the hyperparameter and whose value is the search space</span>
+<span class="sd">        eg. search_space = {&quot;train_config.optimizer_config.arguments.lr&quot;: SearchSpace(value_range=[0, 0.1], value_type=&quot;float&quot;)}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">BaseSampler</span>
+
+        <span class="k">if</span> <span class="n">search_algo</span> <span class="o">==</span> <span class="n">SearchAlgo</span><span class="o">.</span><span class="n">random</span><span class="p">:</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">search_algo</span> <span class="o">==</span> <span class="n">SearchAlgo</span><span class="o">.</span><span class="n">tpe</span><span class="p">:</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">samplers</span><span class="o">.</span><span class="n">TPESampler</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">if</span> <span class="n">optim_metrics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must specify optim_metrics.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">optim_metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">search_space</span> <span class="o">=</span> <span class="n">search_space</span>
+        <span class="n">directions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">optuna</span><span class="o">.</span><span class="n">study</span><span class="o">.</span><span class="n">StudyDirection</span><span class="p">(</span>
+                <span class="mi">2</span> <span class="k">if</span> <span class="n">Optim</span><span class="p">(</span><span class="n">optim_metrics</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">==</span> <span class="n">Optim</span><span class="o">.</span><span class="n">max</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">optim_metrics</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>
+            <span class="n">study_name</span><span class="o">=</span><span class="n">study_name</span><span class="p">,</span>
+            <span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">,</span>
+            <span class="n">directions</span><span class="o">=</span><span class="n">directions</span><span class="p">,</span>
+            <span class="n">load_if_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_optuna_optim_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the input metrics dictionary to a list of metric values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metrics : dict[str, float]</span>
+<span class="sd">            A dictionary of metric names and their values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[float]</span>
+<span class="sd">            A list of metric values corresponding to the input metrics dictionary.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; optuna_state = OptunaState(storage=&quot;sqlite:///example.db&quot;, study_name=&quot;test_study&quot;, </span>
+<span class="sd">        ...                             optim_metrics={&quot;accuracy&quot;: Optim.max}, search_algo=SearchAlgo.tpe, </span>
+<span class="sd">        ...                             search_space = {&quot;train_config.optimizer_config.arguments.lr&quot;: SearchSpace(value_range=[0, 0.1], value_type=&quot;float&quot;)})</span>
+<span class="sd">        &gt;&gt;&gt; metrics = {&quot;accuracy&quot;: None}</span>
+<span class="sd">        &gt;&gt;&gt; optuna_optim_values = optuna_state._optuna_optim_values(metrics)</span>
+<span class="sd">        &gt;&gt;&gt; print(optuna_optim_values)</span>
+<span class="sd">        [-inf]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">parse_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+<div class="viewcode-block" id="OptunaState.update_trial"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.OptunaState.update_trial">[docs]</a>    <span class="k">def</span> <span class="nf">update_trial</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">trial_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">TrialState</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the state of a trial when it is completed with metrics.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trial_num : int</span>
+<span class="sd">            The trial number.</span>
+<span class="sd">        metrics : dict[str, float] or None</span>
+<span class="sd">            A dictionary of metric names and their corresponding values, or None if the trial is not complete.</span>
+<span class="sd">        state : TrialState</span>
+<span class="sd">            The state of the trial.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If `metrics` is None and `state` is COMPLETE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing metrics for complete trial </span><span class="si">{</span><span class="n">trial_num</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">state</span> <span class="o">!=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">optuna_state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">to_optuna_state</span><span class="p">()</span>
+        <span class="n">optuna_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optuna_optim_values</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+        <span class="c1"># TODO raises error for nan values in metrics. Fixme</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="o">.</span><span class="n">tell</span><span class="p">(</span><span class="n">trial_num</span><span class="p">,</span> <span class="n">optuna_metrics</span><span class="p">,</span> <span class="n">optuna_state</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OptunaState.sample_trial"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.OptunaState.sample_trial">[docs]</a>    <span class="k">def</span> <span class="nf">sample_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample a new set of trial parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple[int, dict[str, Any]]</span>
+<span class="sd">            A tuple of the trial number and a dictionary of parameter names and their corresponding values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">optuna_trial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_study</span><span class="o">.</span><span class="n">ask</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">optuna_trial</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+            <span class="n">sample_trial_params</span><span class="p">(</span><span class="n">optuna_trial</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_space</span><span class="p">),</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ExperimentState"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.ExperimentState">[docs]</a><span class="k">class</span> <span class="nc">ExperimentState</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">ParallelConfig</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">FileLogger</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the ExperimentState.</span>
+<span class="sd">        Initialize databases for storing training states and optuna states,create trials based on total num of trials specified in config </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        experiment_dir : Path</span>
+<span class="sd">            The directory where the experiment data will be stored.</span>
+<span class="sd">        config : ParallelConfig</span>
+<span class="sd">            The configuration object that defines the experiment settings.</span>
+<span class="sd">        logger : FileLogger, optional</span>
+<span class="sd">            The logger to use for outputting experiment logs. If not specified, a dummy logger will be used.</span>
+<span class="sd">        resume : bool, optional</span>
+<span class="sd">            Whether to resume a previously interrupted experiment. Default is False.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the specified `search_space` parameter is not found in the configuration.</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If `config.search_space` is empty.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            if the optuna database already exists and `resume` is False.        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_trial_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">optuna</span><span class="o">.</span><span class="n">Trial</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">FileLogger</span> <span class="o">=</span> <span class="n">logger</span> <span class="k">if</span> <span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">butils</span><span class="o">.</span><span class="n">Dummy</span><span class="p">()</span>
+        <span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">optuna</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+
+        <span class="n">default_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">make_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_space</span><span class="p">),</span> <span class="s2">&quot;Must specify a config.search_space.&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_space</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_vals</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;SearchSpace parameter </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> was not found in the configuration </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">default_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="n">study_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">uid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span> <span class="o">=</span> <span class="n">experiment_dir</span>
+
+        <span class="n">optuna_db_path</span> <span class="o">=</span> <span class="n">experiment_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">study_name</span><span class="si">}</span><span class="s2">_optuna.db&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">optuna_db_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">resume</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">optuna_db_path</span><span class="si">}</span><span class="s2"> exists. Please remove before starting a study.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_state</span> <span class="o">=</span> <span class="n">OptunaState</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><span class="n">optuna_db_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">study_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+            <span class="n">optim_metrics</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">optim_metrics</span><span class="p">,</span>
+            <span class="n">search_algo</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">search_algo</span><span class="p">,</span>
+            <span class="n">search_space</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">search_space</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">experiment_state_db</span> <span class="o">=</span> <span class="n">experiment_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">study_name</span><span class="si">}</span><span class="s2">_state.db&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:///</span><span class="si">{</span><span class="n">experiment_state_db</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">Trial</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_trials</span><span class="p">(</span><span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExperimentState.search_space_dot_path"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.ExperimentState.search_space_dot_path">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">search_space_dot_path</span><span class="p">(</span><span class="n">trial</span><span class="p">:</span> <span class="n">ParallelConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a dictionary of parameter names and their corresponding values for a given trial.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trial : ParallelConfig</span>
+<span class="sd">            The trial object to get the search space dot paths from.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, Any]</span>
+<span class="sd">            A dictionary of parameter names and their corresponding values.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; search_space = {&quot;train_config.optimizer_config.arguments.lr&quot;: SearchSpace(value_range=[0, 0.1], value_type=&quot;float&quot;)}</span>
+<span class="sd">        &gt;&gt;&gt; {&quot;train_config.optimizer_config.arguments.lr&quot;: 0.1}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">dot_path</span><span class="p">:</span> <span class="n">trial</span><span class="o">.</span><span class="n">get_val_with_dot_path</span><span class="p">(</span><span class="n">dot_path</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dot_path</span> <span class="ow">in</span> <span class="n">trial</span><span class="o">.</span><span class="n">search_space</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="ExperimentState.tune_trial_str"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.ExperimentState.tune_trial_str">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">tune_trial_str</span><span class="p">(</span><span class="n">trial</span><span class="p">:</span> <span class="n">ParallelConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a string representation of a trial object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trial : ParallelConfig</span>
+<span class="sd">            The trial object to generate a string representation for.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            A string representation of the trial object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trial_map</span> <span class="o">=</span> <span class="n">ExperimentState</span><span class="o">.</span><span class="n">search_space_dot_path</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s2">:</span><span class="se">\n\t</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dot_path</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="k">for</span> <span class="n">dot_path</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">trial_map</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">msg</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resume</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize trials for the experiment.</span>
+<span class="sd">        If resume is True, then load the trials from the database and create new trials for the remaining trials.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        resume : bool, optional, default=False</span>
+<span class="sd">            Whether to resume an existing experiment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[ParallelConfig]</span>
+<span class="sd">            The list of initialized trials.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If an experiment exists and `resume` is False.</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If no trials can be scheduled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_trials_conc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">concurrent_trials</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">total_trials</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">search_algo</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">SearchAlgo</span><span class="o">.</span><span class="n">random</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="n">trials_to_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_trials_remaining</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trials_to_sample</span> <span class="o">=</span> <span class="n">max_trials_conc</span>
+
+        <span class="c1"># if there are currently running trials, return those first and is resume. Otherwise</span>
+        <span class="c1"># ERROR</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">running_trials</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">resume</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Experiment exists. You need to use `resume = True` or use a different path.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">running_trials</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_trials</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">WAITING</span><span class="p">)</span>
+            <span class="n">running_trials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
+
+        <span class="n">trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sample_trials</span><span class="p">(</span>
+            <span class="n">trials_to_sample</span><span class="p">,</span>
+            <span class="n">running_trials</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pending_trials</span><span class="p">,</span>
+            <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ignore_invalid_params</span><span class="p">,</span>
+        <span class="p">)[:</span><span class="n">max_trials_conc</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">running_trials</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;No trials could be scheduled.&quot;</span>
+        <span class="k">return</span> <span class="n">trials</span>
+
+<div class="viewcode-block" id="ExperimentState.sample_trials"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.ExperimentState.sample_trials">[docs]</a>    <span class="k">def</span> <span class="nf">sample_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_trials_to_sample</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample n trials from the search space and update database.</span>
+<span class="sd">        Number n is the miniumn value of n_trials_to_sample and n_trials_remaining.</span>
+<span class="sd">        n_trials_remaining is the number of total_trials(defined in config) minus the number of trials that have been sampled.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_trials_to_sample : int</span>
+<span class="sd">            The number of trials to sample.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[ParallelConfig] | None</span>
+<span class="sd">            The list of sampled trials.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Return pending trials when sampling first.</span>
+        <span class="k">assert</span> <span class="n">n_trials_to_sample</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">n_trials_to_sample</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_trials_remaining</span><span class="p">,</span> <span class="n">n_trials_to_sample</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_trials_remaining</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Limit of trials to sample &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">total_trials</span><span class="si">}</span><span class="s2">&#39; reached.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sample_trials</span><span class="p">(</span>
+            <span class="n">n_trials_to_sample</span><span class="p">,</span>
+            <span class="n">prev_trials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pending_trials</span><span class="p">,</span>
+            <span class="n">ignore_errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ignore_invalid_params</span><span class="p">,</span>
+        <span class="p">)[:</span><span class="n">n_trials_to_sample</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trials</span></div>
+
+    <span class="k">def</span> <span class="nf">__append_trial</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">trial_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">optuna_trial_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">trial_state</span><span class="p">:</span> <span class="n">TrialState</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a trial to the experiment state database.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        trial_kwargs : dict[str, Any]</span>
+<span class="sd">            config dict with new sampled hyperparameters.</span>
+<span class="sd">        optuna_trial_num : int</span>
+<span class="sd">            The optuna trial number.</span>
+<span class="sd">        trial_state : TrialState</span>
+<span class="sd">            The state of the trial.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the trial state is not pruned, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">trial_state</span> <span class="ow">in</span> <span class="p">{</span><span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_INVALID</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_DUPLICATE</span><span class="p">}:</span>
+            <span class="c1"># self.optuna_state.update_trial(optuna_trial_num, None, trial_state)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__append_trial_internal</span><span class="p">(</span>
+                <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">trial_kwargs</span><span class="p">,</span> <span class="n">optuna_trial_num</span><span class="p">,</span> <span class="n">trial_state</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">trial_config</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)(</span><span class="o">**</span><span class="n">trial_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__append_trial_internal</span><span class="p">(</span>
+            <span class="n">trial_config</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">trial_kwargs</span><span class="p">,</span> <span class="n">optuna_trial_num</span><span class="p">,</span> <span class="n">trial_state</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__sample_trials</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n_trials</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">prev_trials</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Samples a specified number of trials from the search space and persists states to experiment database.</span>
+<span class="sd">        Previous trials can be reused to avoid sampling the same trials again.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_trials : int</span>
+<span class="sd">            The number of trials to sample.</span>
+<span class="sd">        prev_trials : list[ParallelConfig] | None, optional</span>
+<span class="sd">            A list of previously sampled trials, by default None.</span>
+<span class="sd">        ignore_errors : bool, optional</span>
+<span class="sd">            Whether to ignore invalid parameters and continue sampling, by default False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[ParallelConfig]</span>
+<span class="sd">            A list of the sampled trials.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If the number of invalid or duplicate trials exceeds the error_upper_bound.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">error_upper_bound</span> <span class="o">=</span> <span class="n">n_trials</span> <span class="o">*</span> <span class="mi">10</span>
+        <span class="n">sampled_trials</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[]</span> <span class="k">if</span> <span class="n">prev_trials</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prev_trials</span>
+        <span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampled_trials</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_trials</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruned_errored_trials</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruned_duplicate_trials</span><span class="p">)</span>
+                <span class="o">&gt;</span> <span class="n">error_upper_bound</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Reached maximum limit of misconfigured trials. </span><span class="si">{</span><span class="n">error_upper_bound</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruned_duplicate_trials</span><span class="p">)</span><span class="si">}</span><span class="s2"> duplicate and &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pruned_errored_trials</span><span class="p">)</span><span class="si">}</span><span class="s2"> invalid trials.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">trial_num</span><span class="p">,</span> <span class="n">parameter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optuna_state</span><span class="o">.</span><span class="n">sample_trial</span><span class="p">()</span>
+            <span class="n">trial_kwargs</span> <span class="o">=</span> <span class="n">augment_trial_kwargs</span><span class="p">(</span>
+                <span class="n">trial_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">augmentation</span><span class="o">=</span><span class="n">parameter</span>
+            <span class="p">)</span>
+
+            <span class="n">trial_state</span> <span class="o">=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">WAITING</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">trial_config</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)(</span><span class="o">**</span><span class="n">trial_kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">trial_config</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_trials_uid</span><span class="p">:</span>
+                    <span class="n">trial_state</span> <span class="o">=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_DUPLICATE</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ignore_errors</span><span class="p">:</span>
+                    <span class="n">trial_state</span> <span class="o">=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_INVALID</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ignoring: </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">. Error:</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid trial parameters </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__append_trial</span><span class="p">(</span><span class="n">trial_kwargs</span><span class="p">,</span> <span class="n">trial_num</span><span class="p">,</span> <span class="n">trial_state</span><span class="p">):</span>
+                <span class="n">sampled_trials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sampled_trials</span>
+
+<div class="viewcode-block" id="ExperimentState.update_trial_state"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.state.ExperimentState.update_trial_state">[docs]</a>    <span class="k">def</span> <span class="nf">update_trial_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">TrialState</span> <span class="o">=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the state of a trial in both the Experiment database and tell Optuna.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_uid : str</span>
+<span class="sd">            The uid of the trial to update.</span>
+<span class="sd">        metrics : dict[str, float] | None, optional</span>
+<span class="sd">            The metrics of the trial, by default None.</span>
+<span class="sd">        state : TrialState, optional</span>
+<span class="sd">            The state of the trial, by default TrialState.RUNNING</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; experiment.update_trial_state(&quot;fje_2211&quot;, {&quot;loss&quot;: 0.1}, TrialState.COMPLETED)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">RECOVERABLE_ERROR</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_inc_error_count</span><span class="p">(</span><span class="n">config_uid</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_internal_trial_state</span><span class="p">(</span><span class="n">config_uid</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="c1"># NOTE currently it is error prone to update the optuna state</span>
+        <span class="n">trial_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_optuna_trial_num</span><span class="p">(</span><span class="n">config_uid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_state</span><span class="o">.</span><span class="n">update_trial</span><span class="p">(</span><span class="n">trial_num</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_optuna_trial_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the optuna trial number from the database.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_uid : str</span>
+<span class="sd">            The uid of the trial </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The optuna trial number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">config_uid</span> <span class="o">==</span> <span class="n">config_uid</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">optuna_trial_num</span>
+
+    <span class="k">def</span> <span class="nf">_update_internal_trial_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">config_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TrialState</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the state of a trial in the Experiment state database.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_uid : str</span>
+<span class="sd">            The uid of the trial to update.</span>
+<span class="sd">        metrics : dict[str, float] | None</span>
+<span class="sd">            The metrics of the trial.</span>
+<span class="sd">        state : TrialState</span>
+<span class="sd">            The state of the trial.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the update was successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">internal_metrics</span> <span class="o">=</span> <span class="n">parse_metrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">optim_metrics</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">internal_metrics</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">config_uid</span> <span class="o">==</span> <span class="n">config_uid</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">internal_metrics</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">state</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_inc_error_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">TrialState</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">config_uid</span> <span class="o">==</span> <span class="n">config_uid</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">RECOVERABLE_ERROR</span>
+            <span class="n">runtime_errors</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">runtime_errors</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">runtime_errors</span> <span class="o">=</span> <span class="n">Trial</span><span class="o">.</span><span class="n">runtime_errors</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">runtime_errors</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config_uid</span><span class="si">}</span><span class="s2"> failed </span><span class="si">{</span><span class="n">runtime_errors</span><span class="si">}</span><span class="s2"> times.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span><span class="n">config_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">WAITING</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config_uid</span><span class="si">}</span><span class="s2"> failed </span><span class="si">{</span><span class="n">runtime_errors</span><span class="si">}</span><span class="s2"> times. Skipping.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span><span class="n">config_uid</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">FAIL</span><span class="p">)</span>
+
+    <span class="c1"># def _reset_trial_state(self, config_uid: str):</span>
+    <span class="c1">#     with Session(self.engine) as session:</span>
+    <span class="c1">#         stmt = select(Trial).where(Trial.config_uid == config_uid)</span>
+    <span class="c1">#         res = session.execute(stmt).scalar_one()</span>
+    <span class="c1">#         assert res.state == TrialState.RUNNING</span>
+    <span class="c1">#         res.state = TrialState.WAITING</span>
+    <span class="c1">#         _config = copy.deepcopy(res.config_param)</span>
+    <span class="c1">#         existing_checkpoints = len(</span>
+    <span class="c1">#             list(</span>
+    <span class="c1">#                 self.experiment_dir.joinpath(config_uid, &quot;checkpoints&quot;).glob(&quot;*.pt&quot;)</span>
+    <span class="c1">#             )</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#         if existing_checkpoints &gt; 0:</span>
+    <span class="c1">#             _config[&quot;train_config&quot;][&quot;resume&quot;] = True</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             self.logger.warn(</span>
+    <span class="c1">#                 f&quot;{config_uid} was interupted but no checkpoint was found. Will re-start training.&quot;</span>
+    <span class="c1">#             )</span>
+    <span class="c1">#             _config[&quot;train_config&quot;][&quot;resume&quot;] = False</span>
+
+    <span class="c1">#         res.config_param = _config</span>
+    <span class="c1">#         session.commit()</span>
+    <span class="c1">#         session.flush()</span>
+
+    <span class="c1">#     return True</span>
+
+    <span class="k">def</span> <span class="nf">__append_trial_internal</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">trial_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">optuna_trial_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">trial_state</span><span class="p">:</span> <span class="n">TrialState</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append a trial to the Experiment state database.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_uid : str</span>
+<span class="sd">            The uid of the trial to update.</span>
+<span class="sd">        trial_kwargs : dict[str, ty.Any]</span>
+<span class="sd">            config dict with new sampled hyperparameters.</span>
+<span class="sd">        optuna_trial_num : int</span>
+<span class="sd">            The optuna trial number.</span>
+<span class="sd">        trial_state : TrialState</span>
+<span class="sd">            The state of the trial.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">trial</span> <span class="o">=</span> <span class="n">Trial</span><span class="p">(</span>
+                <span class="n">config_uid</span><span class="o">=</span><span class="n">config_uid</span><span class="p">,</span>
+                <span class="n">config_param</span><span class="o">=</span><span class="n">trial_kwargs</span><span class="p">,</span>
+                <span class="n">optuna_trial_num</span><span class="o">=</span><span class="n">optuna_trial_num</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="n">trial_state</span><span class="p">,</span>
+                <span class="n">metrics</span><span class="o">=</span><span class="p">[],</span>
+            <span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_trials_by_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stmt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trial</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">trials</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trial</span><span class="p">]</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">trials</span>
+
+    <span class="k">def</span> <span class="nf">_get_trial_configs_by_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stmt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trials_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">:</span>
+            <span class="n">trial_config</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)(</span><span class="o">**</span><span class="n">trial</span><span class="o">.</span><span class="n">config_param</span><span class="p">)</span>
+            <span class="n">configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_config</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">trial_config</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">trial</span><span class="o">.</span><span class="n">config_uid</span>
+        <span class="k">return</span> <span class="n">configs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">all_trials_uid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_trials</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">all_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="c1"># (Trial.state != TrialState.WAITING)</span>
+            <span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_DUPLICATE</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_INVALID</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trial_configs_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pruned_errored_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        error trials can not be initialized to a configuration</span>
+<span class="sd">        and such as return the kwargs parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_INVALID</span><span class="p">))</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trials_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">config_param</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pruned_duplicate_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_DUPLICATE</span><span class="p">))</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trials_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">config_param</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">running_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trial_configs_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pending_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">WAITING</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trial_configs_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">complete_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trial_configs_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">failed_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]:</span>
+        <span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Trial</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Trial</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">FAIL</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trial_configs_by_stmt</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_trials_remaining</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        We get all trials as it can include, trials at different</span>
+<span class="sd">        states. We exclude the unscheduled trials (pending), and</span>
+<span class="sd">        the ones that are pruned during sampling.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_trials</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

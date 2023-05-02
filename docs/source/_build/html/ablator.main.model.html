@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.main.model package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.modules package" href="ablator.modules.html" />
+    <link rel="prev" title="ablator.main package" href="ablator.main.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ablator.main.html">ablator.main package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ablator.main.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ablator.main.model package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.main.model.main">ablator.main.model.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.main.model.wrapper">ablator.main.model.wrapper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.main.model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.html#module-ablator.main.configs">ablator.main.configs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.html#module-ablator.main.mp">ablator.main.mp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.html#module-ablator.main.proto">ablator.main.proto module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.html#module-ablator.main.state">ablator.main.state module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.main.html#module-ablator.main">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="ablator.main.html">ablator.main package</a> &raquo;</li>
+      <li>ablator.main.model package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.main.model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-main-model-package">
+<h1>ablator.main.model package<a class="headerlink" href="#ablator-main-model-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.main.model.main">
+<span id="ablator-main-model-main-module"></span><h2>ablator.main.model.main module<a class="headerlink" href="#module-ablator.main.model.main" title="Permalink to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="ablator.main.model.main.EvaluationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.model.main.</span></span><span class="sig-name descname"><span class="pre">EvaluationError</span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#EvaluationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.EvaluationError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ablator.main.model.main.LogStepError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.model.main.</span></span><span class="sig-name descname"><span class="pre">LogStepError</span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#LogStepError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.LogStepError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.model.main.</span></span><span class="sig-name descname"><span class="pre">ModelBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class that removes training boiler-plate code with extensible support
+for multiple use-cases. The class follows a stateful initialization paradigm.
+Requires the user to implement specific to their use-case load model and
+creation functionality.</p>
+<p class="rubric">Notes</p>
+<ol class="arabic simple">
+<li><p>Class properties are simply listed by name. Please check out property docstring for more information.</p></li>
+<li><p>Users must implement the abstract methods to customize the model’s behavior.</p></li>
+</ol>
+<p>3. Mixed precision training enables some operations to use the torch.float32 datatype and other operations use lower 
+precision floating point datatype torch.float16. This is for saving time and reducing memory usage. Ordinarily, 
+“automatic mixed precision training” means training with torch.autocast and torch.cuda.amp.GradScaler together.
+More information: <a class="reference external" href="https://pytorch.org/docs/stable/amp.html">https://pytorch.org/docs/stable/amp.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model_class</strong><span class="classifier">Type[nn.Module]</span></dt><dd><p>The class definition of the model’s structure, which is a subclass of nn.Module.</p>
+</dd>
+<dt><strong>run_config</strong><span class="classifier">RunConfig</span></dt><dd><p>An instance of RunConfig containing configuration details.</p>
+</dd>
+<dt><strong>train_dataloader</strong><span class="classifier">DataLoader</span></dt><dd><p>A DataLoader object responsible for model training.</p>
+</dd>
+<dt><strong>val_dataloader</strong><span class="classifier">Optional[DataLoader]</span></dt><dd><p>An optional DataLoader object used for model evaluation.</p>
+</dd>
+<dt><strong>test_dataloader</strong><span class="classifier">Optional[DataLoader]</span></dt><dd><p>An optional DataLoader object used for model testing.</p>
+</dd>
+<dt><strong>logger</strong><span class="classifier">Union[SummaryLogger, tutils.Dummy]</span></dt><dd><p>Records information on the program’s operation and model training, such as progress and performance metrics.</p>
+</dd>
+<dt><strong>device</strong><span class="classifier">str</span></dt><dd><p>The type of device used for running the experiment. i.e. “cuda”, “cpu”, “cuda:0”.</p>
+</dd>
+<dt><strong>model_dir</strong><span class="classifier">Path</span></dt><dd><p>The model directory.</p>
+</dd>
+<dt><strong>experiment_dir</strong><span class="classifier">Path</span></dt><dd><p>The experiment directory.</p>
+</dd>
+<dt><strong>autocast</strong><span class="classifier">torch.autocast</span></dt><dd><p>Enables autocasting for chosen regions. Autocasting automatically chooses the precision for GPU operations 
+to improve performance while maintaining accuracy.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool</span></dt><dd><p>If True, prints additional information while training. Only applied for the master process.</p>
+</dd>
+<dt><strong>amp</strong><span class="classifier">bool</span></dt><dd><p>If True, apply automatic mixed precision training, otherwise default precision.</p>
+</dd>
+<dt><strong>random_seed</strong><span class="classifier">Optional[int]</span></dt><dd><p>Sets the seed for generating random numbers.</p>
+</dd>
+<dt><strong>train_tqdm</strong><span class="classifier">tqdm, optional</span></dt><dd><p>An optional instance of <cite>tqdm</cite> that creates progress bars and displays real-time information during training. 
+i.e. time remaining. Only applied for the master proces</p>
+</dd>
+<dt><strong>current_checkpoint</strong><span class="classifier">Optional[Path]</span></dt><dd><p>Directory for the current checkpoint file, by default None.</p>
+</dd>
+<dt><strong>metrics</strong><span class="classifier">Metrics</span></dt><dd><p>Training metrics including model information. i.e. learning rate and loss value.</p>
+</dd>
+<dt><strong>current_state</strong><span class="classifier">dict</span></dt><dd><p>The currrent state of the model, including run_config, metrics and other necessary states.</p>
+</dd>
+<dt><strong>learning_rate</strong><span class="classifier">float</span></dt><dd><p>The current learning rate.</p>
+</dd>
+<dt><strong>total_steps</strong><span class="classifier">int</span></dt><dd><p>The total steps for the training process.</p>
+</dd>
+<dt><strong>epochs</strong><span class="classifier">int</span></dt><dd><p>The total epochs for the training process.</p>
+</dd>
+<dt><strong>current_iteration</strong><span class="classifier">int</span></dt><dd><p>The current iteration of training.</p>
+</dd>
+<dt><strong>best_iteration</strong><span class="classifier">int</span></dt><dd><p>The iteration with the best loss value.</p>
+</dd>
+<dt><strong>best_loss</strong><span class="classifier">float</span></dt><dd><p>The lowest loss value encountered during training.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.checkpoint">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_best</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to save a checkpoint of the model. Must be implemented by subclasses.
+Example implementation: Please see the <cite>checkpoint</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>is_best</strong><span class="classifier">bool, optional</span></dt><dd><p>Indicates if the current checkpoint is the best model so far, by default False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.config_parser">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.config_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.config_parser" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to parse the provided configuration.</p>
+<p>Must be implemented by subclasses.
+Example implementation: Please see the <cite>make_dataloaders</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>run_config</strong><span class="classifier">RunConfig</span></dt><dd><p>An instance of RunConfig containing configuration details.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.create_model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.create_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.create_model" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to create and initialize the model. Must be implemented by subclasses.
+Example implementation: Please see the <cite>create_model</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>save_dict</strong><span class="classifier">dict[str, ty.Any] | None, optional</span></dt><dd><p>A dictionary containing saved model data, such as weights, optimizer state, etc.,
+to be loaded into the model, by default None.</p>
+</dd>
+<dt><strong>strict_load</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, the model will be loaded strictly, ensuring that the saved state
+matches the model’s structure exactly. If False, the model can be loaded
+with a partially matching state, by default True.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.current_epoch">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current_epoch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ablator.main.model.main.ModelBase.current_epoch" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates and returns the current epoch during training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>int</dt><dd><p>The current epoch number.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.epoch_len">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">epoch_len</span></span><a class="headerlink" href="#ablator.main.model.main.ModelBase.epoch_len" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the length of an epoch, which is the number of batches in the train_dataloader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>int</dt><dd><p>The length of an epoch, represented as the number of batches in the train_dataloader.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the train_dataloader is not defined or its length is 0.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.eval_itr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval_itr</span></span><a class="headerlink" href="#ablator.main.model.main.ModelBase.eval_itr" title="Permalink to this definition"></a></dt>
+<dd><p>calculate the interval between evaluations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>int</dt><dd><p>The interval between evaluations.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.evaluate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to evaluate the model. Must be implemented by subclasses.
+Example implementation: Please see the <cite>evaluate</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>run_config</strong><span class="classifier">RunConfig</span></dt><dd><p>An instance of RunConfig containing configuration details.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.evaluation_functions">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluation_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Callable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.evaluation_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.evaluation_functions" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to create and return a dictionary of evaluation functions used during
+training and validation.</p>
+<p>Must be implemented by subclasses.
+Example implementation: Please see the <cite>evaluation_functions</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>dict[str, Callable] | None</dt><dd><p>A dictionary containing evaluation functions as values and their names as keys.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.load_checkpoint">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.load_checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to load the model and its state from a given save dictionary.</p>
+<p>Must be implemented by subclasses.
+Example implementation: Please see the <cite>load_checkpoint</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>save_dict</strong><span class="classifier">dict[str, ty.Any]</span></dt><dd><p>A dictionary containing the saved model state and other necessary information.</p>
+</dd>
+<dt><strong>model_only</strong><span class="classifier">bool, optional, default=False</span></dt><dd><p>If True, only the model’s weights will be loaded, ignoring other state information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.log_itr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_itr</span></span><a class="headerlink" href="#ablator.main.model.main.ModelBase.log_itr" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the interval between logging steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>int</dt><dd><p>The interval between logging steps.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.make_dataloaders">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_dataloaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.make_dataloaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.make_dataloaders" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to create dataloaders for the training, validation, and testing datasets.</p>
+<p>This method should define the process of loading the data and creating dataloaders
+for the training, validation, and testing datasets based on the provided run_config.</p>
+<p>Must be implemented by subclasses.
+Example implementation: Please see the <cite>make_dataloaders</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>run_config</strong><span class="classifier">RunConfig</span></dt><dd><p>An instance of RunConfig containing configuration details.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.save_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.save_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.save_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to create and return a save dictionary containing the model’s state
+and other necessary information.</p>
+<p>Must be implemented by subclasses.
+Example implementation: Please see the <cite>save_dict</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>dict[str, ty.Any] | None</dt><dd><p>A dictionary containing the saved model state and other necessary information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.train">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoke_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/main.html#ModelBase.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.ModelBase.train" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to train the model. Must be implemented by subclasses.
+Example implementation: Please see the <cite>train</cite> method in the <cite>ModelWrapper</cite> class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>run_config</strong><span class="classifier">RunConfig</span></dt><dd><p>An instance of RunConfig containing configuration details.</p>
+</dd>
+<dt><strong>smoke_test</strong><span class="classifier">bool, optional</span></dt><dd><p>Whether to run as a smoke test, by default False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.train_stats">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train_stats</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">OrderedDict</span></em><a class="headerlink" href="#ablator.main.model.main.ModelBase.train_stats" title="Permalink to this definition"></a></dt>
+<dd><p>Returns an ordered dictionary containing the current training statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>OrderedDict</dt><dd><p>An ordered dictionary with the following keys and values:
+- learning_rate: The current learning rate.
+- total_steps: The total steps for the training process.
+- epochs: The number of epochs for training.
+- current_epoch: The current epoch during training.
+- current_iteration: The current iteration during training.
+- best_iteration: The iteration with the best loss value so far.
+- best_loss: The best (lowest) loss value achieved during training.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.main.ModelBase.uid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#ablator.main.model.main.ModelBase.uid" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a unique identifier (UID) for the current run configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>str</dt><dd><p>A string representing the unique identifier of the current run configuration.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="ablator.main.model.main.TrainPlateauError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.model.main.</span></span><span class="sig-name descname"><span class="pre">TrainPlateauError</span></span><a class="reference internal" href="_modules/ablator/main/model/main.html#TrainPlateauError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.main.TrainPlateauError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-ablator.main.model.wrapper">
+<span id="ablator-main-model-wrapper-module"></span><h2>ablator.main.model.wrapper module<a class="headerlink" href="#module-ablator.main.model.wrapper" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.main.model.wrapper.</span></span><span class="sig-name descname"><span class="pre">ModelWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.main.model.main.ModelBase" title="ablator.main.model.main.ModelBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelBase</span></code></a></p>
+<p>A wrapper around model_class that removes training boiler-plate code, with over-writable functions
+with support for custom use-cases.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.apply_loss">
+<span class="sig-name descname"><span class="pre">apply_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GradScaler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_LRScheduler</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ReduceLROnPlateau</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.apply_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.apply_loss" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the loss and apply the gradients, call optimizer.step() and scheduler.step().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.aux_metrics">
+<span class="sig-name descname"><span class="pre">aux_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.aux_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.aux_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Auxiliary metrics to be computed during training.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.checkpoint">
+<span class="sig-name descname"><span class="pre">checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_best</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Save a checkpoint of the model.It will use the class name of the model as the filename.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.config_parser">
+<span class="sig-name descname"><span class="pre">config_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.config_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.config_parser" title="Permalink to this definition"></a></dt>
+<dd><p>Used to initialize Derived properties</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.create_model">
+<span class="sig-name descname"><span class="pre">create_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.create_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.create_model" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the model, optimizer, scheduler and scaler from the save dict or from config.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.create_optimizer">
+<span class="sig-name descname"><span class="pre">create_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.html#ablator.modules.optimizer.OptimizerConfig" title="ablator.modules.optimizer.OptimizerConfig"><span class="pre">OptimizerConfig</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optimizer</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.create_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.create_optimizer" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the optimizer from the saved state or from config.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.create_scaler">
+<span class="sig-name descname"><span class="pre">create_scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scaler_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GradScaler</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.create_scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.create_scaler" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the scaler from the saved state or from config.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.create_scheduler">
+<span class="sig-name descname"><span class="pre">create_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.html#ablator.modules.scheduler.SchedulerConfig" title="ablator.modules.scheduler.SchedulerConfig"><span class="pre">SchedulerConfig</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_LRScheduler</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ReduceLROnPlateau</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.create_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.create_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the scheduler from the saved state or from config.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.custom_evaluation">
+<span class="sig-name descname"><span class="pre">custom_evaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.custom_evaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.custom_evaluation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.eval">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smoke_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.eval" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the model then update scheduler and save checkpoint if the current iteration is an evaluation step.
+It also check if it is early stopping.(check configs for more details)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.evaluate">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the model after training on the test and validation sets.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.evaluation_functions">
+<span class="sig-name descname"><span class="pre">evaluation_functions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">collections.abc.Callable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.evaluation_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.evaluation_functions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.load_checkpoint">
+<span class="sig-name descname"><span class="pre">load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.load_checkpoint" title="Permalink to this definition"></a></dt>
+<dd><p>Loads the checkpoint from the save dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.log" title="Permalink to this definition"></a></dt>
+<dd><p>Log if the current iteration is a logging step. It also evaluate training metrics for logging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.log_step">
+<span class="sig-name descname"><span class="pre">log_step</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.log_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.log_step" title="Permalink to this definition"></a></dt>
+<dd><p>A single step for logging.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.make_dataloader_test">
+<span class="sig-name descname"><span class="pre">make_dataloader_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.make_dataloader_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.make_dataloader_test" title="Permalink to this definition"></a></dt>
+<dd><p>Function to make the test dataloader.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.make_dataloader_train">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_dataloader_train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataLoader</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.make_dataloader_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.make_dataloader_train" title="Permalink to this definition"></a></dt>
+<dd><p>Function to make the training dataloader.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.make_dataloader_val">
+<span class="sig-name descname"><span class="pre">make_dataloader_val</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.make_dataloader_val"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.make_dataloader_val" title="Permalink to this definition"></a></dt>
+<dd><p>Function to make the validation dataloader.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.make_dataloaders">
+<span class="sig-name descname"><span class="pre">make_dataloaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.make_dataloaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.make_dataloaders" title="Permalink to this definition"></a></dt>
+<dd><p>This function is done post-initialization because otherwise the
+dataloaders are pickled with the object when running distributed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.mock_train">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mock_train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_async</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">multiprocessing.context.Process</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics" title="ablator.modules.metrics.main.TrainMetrics"><span class="pre">ablator.modules.metrics.main.TrainMetrics</span></a></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.mock_train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.mock_train" title="Permalink to this definition"></a></dt>
+<dd><p>Mock train the model as a smoke test</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.model_config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.main.html#ablator.main.configs.ModelConfig" title="ablator.main.configs.ModelConfig"><span class="pre">ModelConfig</span></a></em><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.model_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.model_step">
+<span class="sig-name descname"><span class="pre">model_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.model_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.model_step" title="Permalink to this definition"></a></dt>
+<dd><p>A single inference step for the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.reset_optimizer_scheduler">
+<span class="sig-name descname"><span class="pre">reset_optimizer_scheduler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.reset_optimizer_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.reset_optimizer_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Resets the optimizer and scheduler by recreating them.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.save_dict">
+<span class="sig-name descname"><span class="pre">save_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.save_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.save_dict" title="Permalink to this definition"></a></dt>
+<dd><p>Save the current state of the trainer, including  model parameters, and current states of the optimizer, the scaler, and the scheduler</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.status_message">
+<span class="sig-name descname"><span class="pre">status_message</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.status_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.status_message" title="Permalink to this definition"></a></dt>
+<dd><p>Return a string generated from dictinoary of current metrics,including all the static metrics and moving average metrics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.to_device">
+<span class="sig-name descname"><span class="pre">to_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.to_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.to_device" title="Permalink to this definition"></a></dt>
+<dd><p>Moves the data to the specified device.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.total_steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">total_steps</span></span><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.total_steps" title="Permalink to this definition"></a></dt>
+<dd><p>The total number of steps for training.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.train">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.main.html#ablator.main.configs.RunConfig" title="ablator.main.configs.RunConfig"><span class="pre">RunConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoke_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics" title="ablator.modules.metrics.main.TrainMetrics"><span class="pre">TrainMetrics</span></a></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.train" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize states and train the model.
+When keyboard interrupts, saves a checkpoint</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.train_config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.main.html#ablator.main.configs.TrainConfig" title="ablator.main.configs.TrainConfig"><span class="pre">TrainConfig</span></a></em><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.train_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.train_loop">
+<span class="sig-name descname"><span class="pre">train_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smoke_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.train_loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.train_loop" title="Permalink to this definition"></a></dt>
+<dd><p>Train the model in many steps, evaluate the model and log the metrics for each iteration.
+metrics including static metrics like learning rate, along with validation and training metrics like loss and mean.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.train_step">
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.train_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.train_step" title="Permalink to this definition"></a></dt>
+<dd><p>A single step for training.
+It also updates learning rate with scheduler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.update_status">
+<span class="sig-name descname"><span class="pre">update_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.update_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.update_status" title="Permalink to this definition"></a></dt>
+<dd><p>Update the metrics with current training stats, and then all metrics (static and moving average) will be set as description for the tqdm progress.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.main.model.wrapper.ModelWrapper.validation_loop">
+<span class="sig-name descname"><span class="pre">validation_loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics" title="ablator.modules.metrics.main.TrainMetrics"><span class="pre">TrainMetrics</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'train'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'test'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'val'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smoke_test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/main/model/wrapper.html#ModelWrapper.validation_loop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.main.model.wrapper.ModelWrapper.validation_loop" title="Permalink to this definition"></a></dt>
+<dd><p>Validate the model on data in dataloader (which can either be val dataloader - so tag is val, or test dataloader - so tag is test)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.main.model">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.main.model" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.main.html" class="btn btn-neutral float-left" title="ablator.main package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.modules.html" class="btn btn-neutral float-right" title="ablator.modules package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

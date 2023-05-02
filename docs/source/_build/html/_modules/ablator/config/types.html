@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.config.types &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.config.types</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.config.types</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Custom types for runtime checking</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Dict"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Dict">[docs]</a><span class="k">class</span> <span class="nc">Dict</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="p">]):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Tuple"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Tuple">[docs]</a><span class="k">class</span> <span class="nc">Tuple</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Optional"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Optional">[docs]</a><span class="k">class</span> <span class="nc">Optional</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">Type</span> <span class="o">=</span> <span class="nb">type</span>
+<span class="n">Literal</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">Literal</span>
+
+
+<div class="viewcode-block" id="Enum"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Enum">[docs]</a><span class="k">class</span> <span class="nc">Enum</span><span class="p">(</span><span class="n">_Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A custom Enum class that provides additional equality and hashing methods.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __eq__(self, __o: object) -&gt; bool:</span>
+<span class="sd">        Checks for equality between the Enum instance and another object.</span>
+
+<span class="sd">    __hash__(self) -&gt; int:</span>
+<span class="sd">        Calculates the hash of the Enum instance.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from enum import Enum as _Enum</span>
+<span class="sd">    &gt;&gt;&gt; class Color(Enum):</span>
+<span class="sd">    ...     RED = 1</span>
+<span class="sd">    ...     GREEN = 2</span>
+<span class="sd">    ...     BLUE = 3</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; Color.RED == Color.RED</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; Color.RED == 1</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; hash(Color.RED) == hash(Color.RED)</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__o</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks for equality between the Enum instance and another object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        __o : object</span>
+<span class="sd">            The object to compare with the Enum instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the objects are equal, False otherwise.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Color.RED == Color.RED</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; Color.RED == 1</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">__o</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the hash of the Enum instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The hash value of the Enum instance.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; hash(Color.RED) == hash(Color.RED)</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_Enum</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<span class="c1"># ALLOWED_COLLECTIONS is meant to only support collections that can be</span>
+<span class="c1"># expressed in a yaml file in an unambigious manner and using primitives</span>
+<span class="c1"># int, float and str (ALLOWED_TYPES)</span>
+<span class="c1"># Extending the type system should be intuitive.</span>
+<span class="c1"># Each annotation is of the format</span>
+<span class="c1"># &quot;STATE&quot;, &quot;OPTIONAL&quot;, &quot;COLLECTION&quot;, &quot;TYPE&quot;</span>
+
+<span class="n">ALLOWED_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="n">ALLOWED_COLLECTIONS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="kc">None</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Type</span><span class="p">,</span>
+    <span class="n">Enum</span><span class="p">,</span>
+    <span class="n">Literal</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">Annotation</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;Annotation&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="s2">&quot;collection&quot;</span><span class="p">,</span> <span class="s2">&quot;variable_type&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="n">doc_type_hint_structure</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">[Derived,Stateless, None][Optional,None][</span><span class="si">{</span><span class="n">ALLOWED_COLLECTIONS</span><span class="si">}</span><span class="s2">][</span><span class="si">{</span><span class="n">ALLOWED_TYPES</span><span class="si">}</span><span class="s2">*]</span>
+
+<span class="s2">Only Tuple allows non-homogenous types (must be of fixed length)</span>
+<span class="s2">For more flexibility you can define another &quot;Type&quot; which is a class</span>
+<span class="s2">and supply a dictionary in the yaml file, i.e.</span>
+
+<span class="s2">class MyClass:</span>
+<span class="s2">    def __init__(self, arg1:int, arg2:str):</span>
+<span class="s2">        pass</span>
+
+<span class="s2">TODO</span>
+<span class="s2">Parsing the dictionary however can be error prone if you have complex arguments</span>
+<span class="s2">and is not advised.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_strip_hint_state</span><span class="p">(</span><span class="n">type_hint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strips the hint state from a type hint.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    type_hint : Type</span>
+<span class="sd">        The input type hint to strip the state from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple containing the state and the remaining type hint.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; _strip_hint_state(Stateful[int])</span>
+<span class="sd">    (Stateful, int)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origin</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Stateful</span><span class="p">,</span> <span class="n">type_hint</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Derived</span><span class="p">,</span> <span class="n">Stateless</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">type_hint</span><span class="o">.</span><span class="n">__args__</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">origin</span><span class="p">,</span> <span class="n">type_hint</span><span class="o">.</span><span class="n">__args__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">Stateful</span><span class="p">,</span> <span class="n">type_hint</span>
+
+
+<span class="k">def</span> <span class="nf">_strip_hint_optional</span><span class="p">(</span><span class="n">type_hint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strips the optional part of a type hint.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    type_hint : Type</span>
+<span class="sd">        The input type hint to strip the optional part from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple containing a boolean indicating if the type hint is optional and the remaining type hint.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; _strip_hint_optional(Optional[int])</span>
+<span class="sd">    (True, int)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span> <span class="o">==</span> <span class="n">Optional</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="n">type_hint</span>
+
+
+<span class="k">def</span> <span class="nf">_strip_hint_collection</span><span class="p">(</span><span class="n">type_hint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strips the collection from a type hint.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    type_hint : Type</span>
+<span class="sd">        The input type hint to strip the collection from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple containing the collection and the variable type.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    NotImplementedError</span>
+<span class="sd">        If the type hint is not valid or custom classes don&#39;t implement __dict__.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; _strip_hint_collection(List[int])</span>
+<span class="sd">    (List, int)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origin</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">origin</span> <span class="ow">in</span> <span class="n">ALLOWED_COLLECTIONS</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid collection </span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s2">. type_hints must be structured as:&quot;</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">type_hint</span> <span class="ow">in</span> <span class="n">ALLOWED_TYPES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">type_hint</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">]:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="c1"># Dict and list annotations only support a single type</span>
+        <span class="k">assert</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">ALLOWED_TYPES</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="n">Enum</span><span class="p">,</span> <span class="n">Type</span><span class="p">)</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Invalid type_hint: </span><span class="si">{</span><span class="n">type_hint</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">collection</span> <span class="o">=</span> <span class="n">Dict</span> <span class="k">if</span> <span class="n">origin</span> <span class="o">==</span> <span class="n">Dict</span> <span class="k">else</span> <span class="n">List</span>
+        <span class="k">return</span> <span class="n">collection</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="o">==</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+        <span class="c1"># if the user requires support for multiple types they should use tuple</span>
+        <span class="k">return</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">args</span>
+
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="n">Literal</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">type_hint</span><span class="o">.</span><span class="n">__args__</span>
+    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+        <span class="n">valid_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">_v</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">_v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">type_hint</span><span class="p">,</span> <span class="n">valid_values</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">type_hint</span><span class="p">),</span> <span class="n">Type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="s2">&quot;__dict__&quot;</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Type</span><span class="p">,</span> <span class="n">type_hint</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">type_hint</span><span class="si">}</span><span class="s2"> is not a valid hint. Custom classes must implement __dict__.&quot;</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_type_hint"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.parse_type_hint">[docs]</a><span class="k">def</span> <span class="nf">parse_type_hint</span><span class="p">(</span><span class="n">type_hint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a type hint and returns a parsed annotation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    type_hint : Type</span>
+<span class="sd">        The input type hint to parse.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Annotation</span>
+<span class="sd">        A namedtuple containing state, optional, collection, and variable_type information.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; parse_type_hint(Optional[List[int]])</span>
+<span class="sd">    Annotation(state=Stateful, optional=True, collection=List, variable_type=int)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">_type_hint</span> <span class="o">=</span> <span class="n">_strip_hint_state</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+
+    <span class="n">optional</span><span class="p">,</span> <span class="n">_type_hint</span> <span class="o">=</span> <span class="n">_strip_hint_optional</span><span class="p">(</span><span class="n">_type_hint</span><span class="p">)</span>
+
+    <span class="n">collection</span><span class="p">,</span> <span class="n">variable_type</span> <span class="o">=</span> <span class="n">_strip_hint_collection</span><span class="p">(</span><span class="n">_type_hint</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Annotation</span><span class="p">(</span>
+        <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
+        <span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span>
+        <span class="n">collection</span><span class="o">=</span><span class="n">collection</span><span class="p">,</span>
+        <span class="n">variable_type</span><span class="o">=</span><span class="n">variable_type</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse values whose types are not  a collection or in ALLOWED_TYPES</span>
+<span class="sd">    eg. bool, added dict(tune configs)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cls : Type</span>
+<span class="sd">        The input Type</span>
+<span class="sd">    kwargs : dict or object</span>
+<span class="sd">        The keyword arguments or object to parse with the given type</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    object</span>
+<span class="sd">        Parsed object</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If the input kwargs is incompatible</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># This is when initializing directly from config</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># This is when initializing from a dictionary</span>
+        <span class="c1"># TODO or not, is to assert that kwargs is composed of primitives?</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># not sure what to do.....</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Incompatible kwargs </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="se">\n</span><span class="s2">and </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kwargs</span>
+
+
+<div class="viewcode-block" id="parse_value"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.parse_value">[docs]</a><span class="k">def</span> <span class="nf">parse_value</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">annot</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a value based on the given annotation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : Any</span>
+<span class="sd">        The input value to parse.</span>
+<span class="sd">    annot : Annotation</span>
+<span class="sd">        The annotation namedtuple to guide the parsing.</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        The name of the value, by default None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Any</span>
+<span class="sd">        The parsed value.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If the required value is missing and it is not optional or derived or stateless.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; annotation = parse_type_hint(Optional[List[int]])</span>
+<span class="sd">    &gt;&gt;&gt; parse_value([1, 2, 3], annotation)</span>
+<span class="sd">    [1, 2, 3]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># annot = parse_type_hint(type_hint)</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Derived</span><span class="p">,</span> <span class="n">Stateless</span><span class="p">]</span> <span class="ow">or</span> <span class="n">annot</span><span class="o">.</span><span class="n">optional</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required value for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="ow">is</span> <span class="n">Literal</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">val</span> <span class="ow">in</span> <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> is not a valid Literal </span><span class="si">{</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">val</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="o">==</span> <span class="n">Dict</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span> <span class="ow">in</span> <span class="n">ALLOWED_TYPES</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">_k</span><span class="p">):</span> <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">_k</span><span class="p">,</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="o">==</span> <span class="n">Dict</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">),</span> <span class="n">Type</span><span class="p">):</span>
+        <span class="n">return_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_k</span><span class="p">,</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">return_dictionary</span><span class="p">[</span><span class="n">_k</span><span class="p">]</span> <span class="o">=</span> <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">(</span><span class="o">**</span><span class="n">_v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_v</span><span class="p">,</span> <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">):</span>
+                <span class="n">return_dictionary</span><span class="p">[</span><span class="n">_k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">_k</span><span class="si">}</span><span class="s2"> and field </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">return_dictionary</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="o">==</span> <span class="n">List</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="o">==</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Incompatible lengths for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> between </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> and type_hint: </span><span class="si">{</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">tp</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">tp</span><span class="p">,</span> <span class="n">_v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">,</span> <span class="n">val</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="o">==</span> <span class="n">Type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_parse_class</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">annot</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">val</span> <span class="ow">in</span> <span class="n">annot</span><span class="o">.</span><span class="n">variable_type</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2"> is not supported by </span><span class="si">{</span><span class="n">annot</span><span class="o">.</span><span class="n">collection</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">annot</span><span class="o">.</span><span class="n">collection</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="get_annotation_state"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.get_annotation_state">[docs]</a><span class="k">def</span> <span class="nf">get_annotation_state</span><span class="p">(</span><span class="n">annotation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get state of an annotation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    annotation:</span>
+<span class="sd">        type annotation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Stateful, Derived, Stateless, or None</span>
+<span class="sd">    (Stateful is the default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origin</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Stateful</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Derived</span><span class="p">,</span> <span class="n">Stateless</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">annotation</span>
+
+    <span class="k">return</span> <span class="n">Stateful</span></div>
+
+
+<div class="viewcode-block" id="Stateful"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Stateful">[docs]</a><span class="k">class</span> <span class="nc">Stateful</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is for attributes that are fixed between experiments. By default</span>
+<span class="sd">    all type_hints are stateful. Do not need to use.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="Derived"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Derived">[docs]</a><span class="k">class</span> <span class="nc">Derived</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This type is for attributes are derived during the experiment.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="Stateless"><a class="viewcode-back" href="../../../ablator.config.html#ablator.config.types.Stateless">[docs]</a><span class="k">class</span> <span class="nc">Stateless</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This type is for attributes that can take different value assignments</span>
+<span class="sd">    between experiments</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

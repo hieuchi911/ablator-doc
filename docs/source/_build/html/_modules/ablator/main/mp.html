@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.main.mp &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>ablator.main.mp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.main.mp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">types</span> <span class="k">as</span> <span class="nn">tys</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">ray</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">ablator</span> <span class="k">as</span> <span class="nn">ablator_module</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="n">ParallelConfig</span>
+<span class="kn">from</span> <span class="nn">ablator.main.model.main</span> <span class="kn">import</span> <span class="n">TrainPlateauError</span>
+<span class="kn">from</span> <span class="nn">ablator.main.model.wrapper</span> <span class="kn">import</span> <span class="n">ModelWrapper</span>
+<span class="kn">from</span> <span class="nn">ablator.main.proto</span> <span class="kn">import</span> <span class="n">ProtoTrainer</span>
+<span class="kn">from</span> <span class="nn">ablator.main.state</span> <span class="kn">import</span> <span class="n">ExperimentState</span><span class="p">,</span> <span class="n">TrialState</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.loggers.file</span> <span class="kn">import</span> <span class="n">FileLogger</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">LossDivergedError</span>
+<span class="kn">from</span> <span class="nn">ablator.utils.base</span> <span class="kn">import</span> <span class="n">get_gpu_max_mem</span>
+
+<span class="c1"># The exceptions that are unrecoverable i.e.  [DuplicateRunError]</span>
+<span class="n">CRASH_EXCEPTION_TYPES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="parse_rsync_paths"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.parse_rsync_paths">[docs]</a><span class="k">def</span> <span class="nf">parse_rsync_paths</span><span class="p">(</span>
+    <span class="n">rsynced_folder</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">root_folder</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse the experiment directory that&#39;s being in sync with remote servers (Google cloud storage, other</span>
+<span class="sd">    remote nodes) and the root folder.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rsynced_folder : Path, str</span>
+<span class="sd">        The experiment directory that&#39;s being in sync with remote servers.</span>
+<span class="sd">    root_folder : Path, str, None, default=None</span>
+<span class="sd">        The root folder that contains all experiment directories.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, Path]</span>
+<span class="sd">        A dictionary with 2 keys: `local_path` and `remote_path`, which specifies the local directory</span>
+<span class="sd">        and the remote path that will be in sync.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rsync_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rsynced_folder</span><span class="p">)</span>
+    <span class="n">root_path</span> <span class="o">=</span> <span class="n">rsync_path</span> <span class="k">if</span> <span class="n">root_folder</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">root_folder</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;local_path&quot;</span><span class="p">:</span> <span class="n">rsync_path</span><span class="p">,</span>
+        <span class="s2">&quot;remote_path&quot;</span><span class="p">:</span> <span class="n">rsync_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">root_path</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="parse_metrics"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.parse_metrics">[docs]</a><span class="k">def</span> <span class="nf">parse_metrics</span><span class="p">(</span><span class="n">optim_direction</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve metrics to be optimized.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    optim_direction: list[str]</span>
+<span class="sd">        The metrics to be optimized, defined in the ParallelConfig.</span>
+<span class="sd">    metrics: dict[str, float]</span>
+<span class="sd">        The metrics returned after a ray job finishes.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, float]</span>
+<span class="sd">        A dictionary of metric names and their corresponding metric values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">optim_direction</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">metrics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="train_main_remote"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.train_main_remote">[docs]</a><span class="k">def</span> <span class="nf">train_main_remote</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">ModelWrapper</span><span class="p">,</span>
+    <span class="n">run_config</span><span class="p">:</span> <span class="n">ParallelConfig</span><span class="p">,</span>
+    <span class="n">mp_logger</span><span class="p">:</span> <span class="n">FileLogger</span><span class="p">,</span>
+    <span class="n">root_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">fault_tollerant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">crash_exceptions_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The trial job that will be executed remotely at a ray node. This is where model training happens.</span>
+<span class="sd">    In addition, experiment directory will be synchronized to the Google Cloud storage and remote nodes.</span>
+<span class="sd">    Synchronization is done via GcpConfig and RemoteConfig `rsync_up()` methods. Refer to documentation of</span>
+<span class="sd">    these 2 classes for more details.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ModelWrapper</span>
+<span class="sd">        The ModelWrapper that is used to train a model.</span>
+<span class="sd">    run_config : ParallelConfig</span>
+<span class="sd">        Runtime configuration for this trial.</span>
+<span class="sd">    mp_logger : FileLogger</span>
+<span class="sd">        The file logger that&#39;s used to log training progress.</span>
+<span class="sd">    root_dir : Path</span>
+<span class="sd">        The root directory that stores experiment states (experiment directory).</span>
+<span class="sd">    fault_tollerant : bool, optional, default=True</span>
+<span class="sd">        Whether to tollerate crashes, aka to cease execution when the ray job crashes.</span>
+<span class="sd">    crash_exceptions_types : list[type], None, optional, default=None</span>
+<span class="sd">        Types of exceptions that are considered as crashes.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    run_config : ParallelConfig</span>
+<span class="sd">        Running configuration of the trial.</span>
+<span class="sd">    dict[str, float], None</span>
+<span class="sd">        If exception raised (Except for LossDivergedError and TrainPlateauError),</span>
+<span class="sd">        this will be None object. Otherwise, this will be a dictionary of metrics.</span>
+<span class="sd">    TrialState</span>
+<span class="sd">        A TrialState object indicating the state of the trial job.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">crash_exceptions_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">crash_exceptions_types</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">handle_exception</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+        <span class="n">exception_str</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;logger&quot;</span><span class="p">):</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exception_str</span><span class="p">)</span>
+        <span class="n">mp_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error Occured </span><span class="si">{</span><span class="n">run_config</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fault_tollerant</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">crash_exceptions_types</span><span class="p">)):</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Error </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> in&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">crash_exceptions_types</span><span class="p">])</span><span class="si">}</span><span class="s2">. Exiting.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">mp_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">run_config</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">FAIL</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+        <span class="n">mp_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Finished training - </span><span class="si">{</span><span class="n">run_config</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">run_config</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">TrialState</span><span class="o">.</span><span class="n">COMPLETE</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">LossDivergedError</span><span class="p">,</span> <span class="n">TrainPlateauError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">run_config</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="n">TrialState</span><span class="o">.</span><span class="n">PRUNED_POOR_PERFORMANCE</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;CUDA out of memory.&quot;</span><span class="p">):</span>
+            <span class="n">mp_logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cuda out of memory for </span><span class="si">{</span><span class="n">run_config</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s2">. Restarting...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">run_config</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="n">TrialState</span><span class="o">.</span><span class="n">RECOVERABLE_ERROR</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">handle_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">handle_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_rsync_paths</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span><span class="o">.</span><span class="n">rsync_up</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">mp_logger</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">run_config</span><span class="o">.</span><span class="n">remote_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">run_config</span><span class="o">.</span><span class="n">remote_config</span><span class="o">.</span><span class="n">rsync_up</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">mp_logger</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ParallelTrainer"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.ParallelTrainer">[docs]</a><span class="k">class</span> <span class="nc">ParallelTrainer</span><span class="p">(</span><span class="n">ProtoTrainer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for parallelizing training of models of different configurations with ray.</span>
+<span class="sd">    Performance of these models (metrics) are for optuna to tune hyperparameters. They are also logged to optuna storage.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_config : ParallelConfig</span>
+<span class="sd">        Running configuration for parallel training.</span>
+<span class="sd">    device : str</span>
+<span class="sd">        The device to use for training.</span>
+<span class="sd">    experiment_dir : Path</span>
+<span class="sd">        The directory that stores experiment information (optuna storage, experiment state database).</span>
+<span class="sd">    logger : FileLogger</span>
+<span class="sd">        The logger that writes messages to a file and prints them to the console.</span>
+<span class="sd">    experiment_state : ExperimentState</span>
+<span class="sd">        This attribute manages optuna trials.</span>
+<span class="sd">    total_trials : int</span>
+<span class="sd">        Number of trials to run.</span>
+<span class="sd">    gpu_mem_bottleneck : int</span>
+<span class="sd">        The minimum memory capacity of all available gpus.</span>
+<span class="sd">    cpu : float</span>
+<span class="sd">        The number of cpu used per trial.</span>
+<span class="sd">    gpu : float</span>
+<span class="sd">        The number of gpu used per trial.</span>
+<span class="sd">    total_mem_usage : int</span>
+<span class="sd">        Total amount of memory usage.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">ParallelConfig</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize ParallelTrainer using config from `run_config`.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_config : ParallelConfig</span>
+<span class="sd">            The runtime configuration for this trainer.</span>
+<span class="sd">        *args : tuple</span>
+<span class="sd">            Extra arguments used for ProtoTrainer</span>
+<span class="sd">        **kwargs : dict, optional</span>
+<span class="sd">            Extra arguments to  ProtoTrainer, this can be {&#39;wrapper&#39;: ModelWrapper}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Distributed config parser</span>
+        <span class="n">run_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+        <span class="n">run_config</span><span class="o">.</span><span class="n">experiment_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">run_config</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;experiment_</span><span class="si">{</span><span class="n">run_config</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">run_config</span><span class="o">=</span><span class="n">run_config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="p">),</span> <span class="n">ParallelConfig</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;run_config must be of a type - </span><span class="si">{</span> <span class="n">ParallelConfig</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> received </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="p">:</span> <span class="n">ParallelConfig</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span> <span class="o">=</span> <span class="n">run_config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_config</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">FileLogger</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span> <span class="o">/</span> <span class="s2">&quot;mp.log&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="p">:</span> <span class="n">ExperimentState</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">total_trials</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gpu_mem_bottleneck</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">get_gpu_max_mem</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">get_gpu_max_mem</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">max</span><span class="p">(</span><span class="n">get_gpu_max_mem</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Bottlenecked memory utilization by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gpu_mem_bottleneck</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_cpu</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gpu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_gpu</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;default_config.yaml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_mem_usage</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_make_gpu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">gpu</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gpu_mb_per_experiment</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_mem_bottleneck</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span>
+            <span class="p">),</span> <span class="s2">&quot;Device must be set to &#39;cuda&#39; if `gpu_mb_per_experiment` &gt; 0&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span>
+            <span class="p">),</span> <span class="s2">&quot;Could not find a torch.cuda installation on your system.&quot;</span>
+            <span class="n">mem_util</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gpu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">concurrent_trials</span><span class="p">)</span>
+            <span class="n">sys_mem</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">get_gpu_max_mem</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="n">mem_util</span> <span class="o">&gt;</span> <span class="n">sys_mem</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Expected GPU memory utilization </span><span class="si">{</span><span class="n">mem_util</span><span class="si">}</span><span class="s2">MiB &gt; 80% &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;of system available memory </span><span class="si">{</span><span class="n">sys_mem</span><span class="si">}</span><span class="s2">MiB.&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Consider adjusting `concurrent_trials` or `gpu_mb_per_experiment`.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">gpu</span>
+
+    <span class="k">def</span> <span class="nf">_make_cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cpu</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">cpus_per_experiment</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cpu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">cpu</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">cpu</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Invalid experiment_per_cpu count&quot;</span>
+
+        <span class="k">if</span> <span class="n">cpu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">concurrent_trials</span> <span class="o">&gt;</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected CPU core util. exceed system capacity </span><span class="si">{</span><span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Consider adjusting `concurrent_trials` or `cpus_per_experiment`.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cpu</span>
+
+<div class="viewcode-block" id="ParallelTrainer.kill_idle"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.ParallelTrainer.kill_idle">[docs]</a>    <span class="k">def</span> <span class="nf">kill_idle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kill any ray processes that are idle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;ps aux | grep ray::IDLE | grep -v grep | awk &#39;{print $2}&#39; | xargs kill -9&quot;</span>
+            <span class="p">],</span>
+            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_remote_fn</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">max_error_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ray</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span>
+            <span class="n">num_gpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gpu</span><span class="p">,</span>
+            <span class="n">num_cpus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu</span><span class="p">,</span>
+            <span class="n">max_calls</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">max_retries</span><span class="o">=</span><span class="n">max_error_retries</span><span class="p">,</span>
+        <span class="p">)(</span><span class="n">train_main_remote</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_remotes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">trials</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">],</span>
+    <span class="p">):</span>
+        <span class="n">model_obj</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="p">))</span>
+        <span class="n">mp_logger</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">))</span>
+        <span class="n">remotes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">run_config</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">:</span>
+            <span class="n">diffs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">diff_str</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+            <span class="n">diffs</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">diffs</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Scheduling uid: </span><span class="si">{</span><span class="n">run_config</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="se">\n</span><span class="s2">Parameters: </span><span class="se">\n\t</span><span class="si">{</span><span class="n">diffs</span><span class="si">}</span><span class="se">\n</span><span class="s2">-----&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">remote_fn</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_remote_fn</span><span class="p">())</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">remotes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">remote_fn</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span>
+                        <span class="n">model_obj</span><span class="p">,</span>
+                        <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">run_config</span><span class="p">),</span>
+                        <span class="n">mp_logger</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">remotes</span>
+
+    <span class="k">def</span> <span class="nf">_init_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">working_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">modules</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">tys</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ray</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">modules</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">ablator_module</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ablator_module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+                <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ablator_module</span><span class="p">)</span>
+            <span class="n">runtime_env</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;working_dir&quot;</span><span class="p">:</span> <span class="n">working_dir</span><span class="p">,</span>
+                <span class="s2">&quot;py_modules&quot;</span><span class="p">:</span> <span class="n">modules</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">ray</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+                <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+                <span class="n">runtime_env</span><span class="o">=</span><span class="n">runtime_env</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sync_down</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span> <span class="o">=</span> <span class="n">ExperimentState</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_rsync_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">node_hostnames</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;NodeManagerHostname&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ray</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;NodeManagerHostname&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">hostname</span> <span class="ow">in</span> <span class="n">node_hostnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span><span class="o">.</span><span class="n">rsync_down_node</span><span class="p">(</span>
+                <span class="n">hostname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_rsync_remote_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">remote_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_rsync_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">remote_config</span><span class="o">.</span><span class="n">rsync_up</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_rsync_remote_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">remote_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_rsync_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">remote_config</span><span class="o">.</span><span class="n">rsync_down</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_rsync_gcp_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_rsync_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span><span class="o">.</span><span class="n">rsync_up</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_rsync_gcp_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="n">parse_rsync_paths</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">gcp_config</span><span class="o">.</span><span class="n">rsync_down</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__make_remotes_from_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trials</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">trials</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Making </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span><span class="si">}</span><span class="s2"> trials.&quot;</span><span class="p">)</span>
+        <span class="n">futures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_remotes</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">futures</span>
+
+<div class="viewcode-block" id="ParallelTrainer.sync_down"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.ParallelTrainer.sync_down">[docs]</a>    <span class="k">def</span> <span class="nf">sync_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize content of Google cloud storage to current working directory and to all GCP nodes.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        GCP nodes names should be equal to ray node names.</span>
+<span class="sd">        Can be previously run trials if we are resuming the state.</span>
+<span class="sd">        First sync down from the remote</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Can be previously run trials if we are resuming the state.</span>
+        <span class="c1"># First sync down from the remote</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync_gcp_down</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync_nodes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ParallelTrainer.sync_up"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.ParallelTrainer.sync_up">[docs]</a>    <span class="k">def</span> <span class="nf">sync_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchronize content of current experiment directory to Google cloud storage and</span>
+<span class="sd">        other remote servers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync_gcp_up</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rsync_remote_up</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ParallelTrainer.evaluate"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.ParallelTrainer.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate model performance in trials that are completed, using evaluation functions defined</span>
+<span class="sd">        in the model wrapper. Evaluation results will be logged to the console and log files in the</span>
+<span class="sd">        experiment directory. This method also synchronizes the experiment directory to Google cloud</span>
+<span class="sd">        storage and remote servers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eval_configs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trial_uids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">complete_trials</span>
+        <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">trial_uids</span><span class="p">:</span>
+            <span class="n">model_config</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">experiment_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">eval_configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>
+
+        <span class="c1"># TODO evaluate in parallel</span>
+        <span class="k">for</span> <span class="n">model_config</span> <span class="ow">in</span> <span class="n">eval_configs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sync_up</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ParallelTrainer.launch"><a class="viewcode-back" href="../../../ablator.main.html#ablator.main.mp.ParallelTrainer.launch">[docs]</a>    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">working_directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">auxilary_modules</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">tys</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ray_head_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up and launch the parallel training and tuning process. This includes:</span>
+<span class="sd">        prepare ray cluster for running optuna trials to tune hyperparameters; if available,</span>
+<span class="sd">        synchronize Google Cloud storage buckets to working directory defined in runtime configuration;</span>
+<span class="sd">        initialize optuna trials and add them to optuna storage and experiment state</span>
+<span class="sd">        database for tracking training progress (or retrieve existing trials from optuna</span>
+<span class="sd">        storage). Trials initialized (or retrieved), `self.experiment_state.running_trials`,</span>
+<span class="sd">        will be pushed to ray nodes so they can be executed in parallel.</span>
+<span class="sd">        After all trials have finished and progress is recorded in sqlite databases in</span>
+<span class="sd">        the working directory, these changes will be synchronized back to the GCP nodes via `rsync_up()` method.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        working_directory : str</span>
+<span class="sd">            The working directory that stores codes, modules that will be used by ray. </span>
+<span class="sd">        auxilary_modules : list[tys.ModuleType], None</span>
+<span class="sd">            A list of modules to be used as ray clusters&#39; working environment.</span>
+<span class="sd">        ray_head_address : str, default=&#39;auto&#39;</span>
+<span class="sd">            Ray cluster address.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">)</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">set_start_method</span><span class="p">(</span><span class="s2">&quot;spawn&quot;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_state</span><span class="p">(</span>
+            <span class="n">working_dir</span><span class="o">=</span><span class="n">working_directory</span><span class="p">,</span>
+            <span class="n">address</span><span class="o">=</span><span class="n">ray_head_address</span><span class="p">,</span>
+            <span class="n">modules</span><span class="o">=</span><span class="n">auxilary_modules</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">futures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trials</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">running_trials</span>
+        <span class="n">futures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_remotes_from_trials</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">ParallelConfig</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+        <span class="n">trial_state</span><span class="p">:</span> <span class="n">TrialState</span>
+        <span class="n">n_trials_to_sample</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">futures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">done_id</span><span class="p">,</span> <span class="n">futures</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span>
+                    <span class="n">futures</span><span class="p">,</span> <span class="n">num_returns</span><span class="o">=</span><span class="n">n_trials_to_sample</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">done_id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">config</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">trial_state</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">done_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">metrics</span> <span class="o">=</span> <span class="n">parse_metrics</span><span class="p">(</span>
+                        <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_config</span><span class="o">.</span><span class="n">optim_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">metrics</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">update_trial_state</span><span class="p">(</span>
+                        <span class="n">config</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">trial_state</span>
+                    <span class="p">)</span>
+                    <span class="n">trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">sample_trials</span><span class="p">(</span><span class="n">n_trials_to_sample</span><span class="p">)</span>
+                    <span class="n">futures</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_remotes_from_trials</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Waiting for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">futures</span><span class="p">)</span><span class="si">}</span><span class="s2"> trials to finish running.&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="c1"># NOTE we do not know which trial caused the error, only</span>
+                <span class="c1"># the pending trials (which we can assume one is the errored)</span>
+                <span class="n">exception</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+                    <span class="n">pending_trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">pending_trials</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pending_trials</span><span class="p">)</span><span class="si">}</span><span class="s2"> unfinished trials. with ids: </span><span class="si">{</span><span class="n">pending_trials</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">complete_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">complete_trials</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">complete_trials</span><span class="p">)</span><span class="si">}</span><span class="s2"> complete trials. with ids: </span><span class="si">{</span><span class="n">complete_ids</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">errored</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ParallelConfig</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">pending_trials</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_state</span><span class="o">.</span><span class="n">failed_trials</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errored</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">errored_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">uid</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">errored</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;There are </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">errored</span><span class="p">)</span><span class="si">}</span><span class="s2"> unfinished trials. with ids: </span><span class="si">{</span><span class="n">errored_ids</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sync_up</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

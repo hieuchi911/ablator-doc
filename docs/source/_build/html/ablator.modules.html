@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.modules.loggers package" href="ablator.modules.loggers.html" />
+    <link rel="prev" title="ablator.main.model package" href="ablator.main.model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ablator.modules package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html">ablator.modules.loggers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html">ablator.modules.metrics package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.storage.html">ablator.modules.storage package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.modules.optimizer">ablator.modules.optimizer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.AdamConfig"><code class="docutils literal notranslate"><span class="pre">AdamConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamConfig.betas"><code class="docutils literal notranslate"><span class="pre">AdamConfig.betas</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamConfig.config_class"><code class="docutils literal notranslate"><span class="pre">AdamConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamConfig.init_optimizer"><code class="docutils literal notranslate"><span class="pre">AdamConfig.init_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamConfig.weight_decay"><code class="docutils literal notranslate"><span class="pre">AdamConfig.weight_decay</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig"><code class="docutils literal notranslate"><span class="pre">AdamWConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig.betas"><code class="docutils literal notranslate"><span class="pre">AdamWConfig.betas</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig.config_class"><code class="docutils literal notranslate"><span class="pre">AdamWConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig.eps"><code class="docutils literal notranslate"><span class="pre">AdamWConfig.eps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig.init_optimizer"><code class="docutils literal notranslate"><span class="pre">AdamWConfig.init_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig.weight_decay"><code class="docutils literal notranslate"><span class="pre">AdamWConfig.weight_decay</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs"><code class="docutils literal notranslate"><span class="pre">OptimizerArgs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs.config_class"><code class="docutils literal notranslate"><span class="pre">OptimizerArgs.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs.init_optimizer"><code class="docutils literal notranslate"><span class="pre">OptimizerArgs.init_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs.lr"><code class="docutils literal notranslate"><span class="pre">OptimizerArgs.lr</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerConfig"><code class="docutils literal notranslate"><span class="pre">OptimizerConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerConfig.arguments"><code class="docutils literal notranslate"><span class="pre">OptimizerConfig.arguments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerConfig.config_class"><code class="docutils literal notranslate"><span class="pre">OptimizerConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerConfig.make_optimizer"><code class="docutils literal notranslate"><span class="pre">OptimizerConfig.make_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.OptimizerConfig.name"><code class="docutils literal notranslate"><span class="pre">OptimizerConfig.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.SGDConfig"><code class="docutils literal notranslate"><span class="pre">SGDConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.SGDConfig.config_class"><code class="docutils literal notranslate"><span class="pre">SGDConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.SGDConfig.init_optimizer"><code class="docutils literal notranslate"><span class="pre">SGDConfig.init_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.SGDConfig.momentum"><code class="docutils literal notranslate"><span class="pre">SGDConfig.momentum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.optimizer.SGDConfig.weight_decay"><code class="docutils literal notranslate"><span class="pre">SGDConfig.weight_decay</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.get_optim_parameters"><code class="docutils literal notranslate"><span class="pre">get_optim_parameters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.optimizer.get_parameter_names"><code class="docutils literal notranslate"><span class="pre">get_parameter_names()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.modules.scheduler">ablator.modules.scheduler module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig"><code class="docutils literal notranslate"><span class="pre">OneCycleConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig.config_class"><code class="docutils literal notranslate"><span class="pre">OneCycleConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig.init_scheduler"><code class="docutils literal notranslate"><span class="pre">OneCycleConfig.init_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig.max_lr"><code class="docutils literal notranslate"><span class="pre">OneCycleConfig.max_lr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig.step_when"><code class="docutils literal notranslate"><span class="pre">OneCycleConfig.step_when</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig.total_steps"><code class="docutils literal notranslate"><span class="pre">OneCycleConfig.total_steps</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.config_class"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.factor"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.factor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.init_scheduler"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.init_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.min_lr"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.min_lr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.mode"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.patience"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.patience</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.step_when"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.step_when</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.threshold"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.threshold</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig.verbose"><code class="docutils literal notranslate"><span class="pre">PlateuaConfig.verbose</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs"><code class="docutils literal notranslate"><span class="pre">SchedulerArgs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs.config_class"><code class="docutils literal notranslate"><span class="pre">SchedulerArgs.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs.init_scheduler"><code class="docutils literal notranslate"><span class="pre">SchedulerArgs.init_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs.step_when"><code class="docutils literal notranslate"><span class="pre">SchedulerArgs.step_when</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerConfig"><code class="docutils literal notranslate"><span class="pre">SchedulerConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerConfig.arguments"><code class="docutils literal notranslate"><span class="pre">SchedulerConfig.arguments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerConfig.config_class"><code class="docutils literal notranslate"><span class="pre">SchedulerConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerConfig.make_scheduler"><code class="docutils literal notranslate"><span class="pre">SchedulerConfig.make_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.SchedulerConfig.name"><code class="docutils literal notranslate"><span class="pre">SchedulerConfig.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig"><code class="docutils literal notranslate"><span class="pre">StepLRConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig.config_class"><code class="docutils literal notranslate"><span class="pre">StepLRConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig.gamma"><code class="docutils literal notranslate"><span class="pre">StepLRConfig.gamma</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig.init_scheduler"><code class="docutils literal notranslate"><span class="pre">StepLRConfig.init_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig.step_size"><code class="docutils literal notranslate"><span class="pre">StepLRConfig.step_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig.step_when"><code class="docutils literal notranslate"><span class="pre">StepLRConfig.step_when</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-ablator.modules">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>ablator.modules package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-modules-package">
+<h1>ablator.modules package<a class="headerlink" href="#ablator-modules-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.loggers.html">ablator.modules.loggers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.loggers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.loggers.html#module-ablator.modules.loggers.file">ablator.modules.loggers.file module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger"><code class="docutils literal notranslate"><span class="pre">FileLogger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.ENDC"><code class="docutils literal notranslate"><span class="pre">FileLogger.ENDC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.FAIL"><code class="docutils literal notranslate"><span class="pre">FileLogger.FAIL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.WARNING"><code class="docutils literal notranslate"><span class="pre">FileLogger.WARNING</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.error"><code class="docutils literal notranslate"><span class="pre">FileLogger.error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.info"><code class="docutils literal notranslate"><span class="pre">FileLogger.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.set_path"><code class="docutils literal notranslate"><span class="pre">FileLogger.set_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.set_prefix"><code class="docutils literal notranslate"><span class="pre">FileLogger.set_prefix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger.warn"><code class="docutils literal notranslate"><span class="pre">FileLogger.warn()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.loggers.html#module-ablator.modules.loggers.main">ablator.modules.loggers.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.DuplicateRunError"><code class="docutils literal notranslate"><span class="pre">DuplicateRunError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger"><code class="docutils literal notranslate"><span class="pre">SummaryLogger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.CHKPT_DIRS"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.CHKPT_DIRS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.CHKPT_DIR_NAMES"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.CHKPT_DIR_NAMES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.CHKPT_DIR_VALUES"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.CHKPT_DIR_VALUES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.CONFIG_FILE_NAME"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.CONFIG_FILE_NAME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.LOG_FILE_NAME"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.LOG_FILE_NAME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.METADATA_JSON"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.METADATA_JSON</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.RESULTS_JSON_NAME"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.RESULTS_JSON_NAME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.SUMMARY_DIR_NAME"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.SUMMARY_DIR_NAME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.checkpoint"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.clean_checkpoints"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.clean_checkpoints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.error"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.info"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.update"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.warn"><code class="docutils literal notranslate"><span class="pre">SummaryLogger.warn()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.loggers.html#module-ablator.modules.loggers.tensor">ablator.modules.loggers.tensor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger.add_image"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger.add_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger.add_scalar"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger.add_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger.add_scalars"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger.add_scalars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger.add_table"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger.add_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger.add_text"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger.add_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.tensor.TensorboardLogger.write_config"><code class="docutils literal notranslate"><span class="pre">TensorboardLogger.write_config()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.loggers.html#module-ablator.modules.loggers">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase"><code class="docutils literal notranslate"><span class="pre">LoggerBase</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase.add_image"><code class="docutils literal notranslate"><span class="pre">LoggerBase.add_image()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase.add_scalar"><code class="docutils literal notranslate"><span class="pre">LoggerBase.add_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase.add_scalars"><code class="docutils literal notranslate"><span class="pre">LoggerBase.add_scalars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase.add_table"><code class="docutils literal notranslate"><span class="pre">LoggerBase.add_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase.add_text"><code class="docutils literal notranslate"><span class="pre">LoggerBase.add_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerBase.write_config"><code class="docutils literal notranslate"><span class="pre">LoggerBase.write_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerConfig"><code class="docutils literal notranslate"><span class="pre">LoggerConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerConfig.config_class"><code class="docutils literal notranslate"><span class="pre">LoggerConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.LoggerConfig.make_logger"><code class="docutils literal notranslate"><span class="pre">LoggerConfig.make_logger()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.metrics.html">ablator.modules.metrics package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.metrics.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.metrics.html#module-ablator.modules.metrics.main">ablator.modules.metrics.main module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.LossDivergedError"><code class="docutils literal notranslate"><span class="pre">LossDivergedError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics"><code class="docutils literal notranslate"><span class="pre">TrainMetrics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.append_batch"><code class="docutils literal notranslate"><span class="pre">TrainMetrics.append_batch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.evaluate"><code class="docutils literal notranslate"><span class="pre">TrainMetrics.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.reset"><code class="docutils literal notranslate"><span class="pre">TrainMetrics.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.to_dict"><code class="docutils literal notranslate"><span class="pre">TrainMetrics.to_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.update_ma_metrics"><code class="docutils literal notranslate"><span class="pre">TrainMetrics.update_ma_metrics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.main.TrainMetrics.update_static_metrics"><code class="docutils literal notranslate"><span class="pre">TrainMetrics.update_static_metrics()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.metrics.html#module-ablator.modules.metrics.stores">ablator.modules.metrics.stores module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore"><code class="docutils literal notranslate"><span class="pre">ArrayStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore.append"><code class="docutils literal notranslate"><span class="pre">ArrayStore.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore.get"><code class="docutils literal notranslate"><span class="pre">ArrayStore.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.ArrayStore.reset"><code class="docutils literal notranslate"><span class="pre">ArrayStore.reset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.MovingAverage"><code class="docutils literal notranslate"><span class="pre">MovingAverage</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.MovingAverage.append"><code class="docutils literal notranslate"><span class="pre">MovingAverage.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.MovingAverage.value"><code class="docutils literal notranslate"><span class="pre">MovingAverage.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore"><code class="docutils literal notranslate"><span class="pre">PredictionStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore.append"><code class="docutils literal notranslate"><span class="pre">PredictionStore.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore.evaluate"><code class="docutils literal notranslate"><span class="pre">PredictionStore.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.metrics.html#ablator.modules.metrics.stores.PredictionStore.reset"><code class="docutils literal notranslate"><span class="pre">PredictionStore.reset()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.metrics.html#module-ablator.modules.metrics">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.modules.storage.html">ablator.modules.storage package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.storage.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.storage.html#module-ablator.modules.storage.cloud">ablator.modules.storage.cloud module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig"><code class="docutils literal notranslate"><span class="pre">GcpConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.bucket"><code class="docutils literal notranslate"><span class="pre">GcpConfig.bucket</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.config_class"><code class="docutils literal notranslate"><span class="pre">GcpConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.exclude_chkpts"><code class="docutils literal notranslate"><span class="pre">GcpConfig.exclude_chkpts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.exclude_glob"><code class="docutils literal notranslate"><span class="pre">GcpConfig.exclude_glob</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.list_bucket"><code class="docutils literal notranslate"><span class="pre">GcpConfig.list_bucket()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.rsync_down"><code class="docutils literal notranslate"><span class="pre">GcpConfig.rsync_down()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.rsync_down_nodes"><code class="docutils literal notranslate"><span class="pre">GcpConfig.rsync_down_nodes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.cloud.GcpConfig.rsync_up"><code class="docutils literal notranslate"><span class="pre">GcpConfig.rsync_up()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.storage.html#module-ablator.modules.storage.remote">ablator.modules.storage.remote module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig"><code class="docutils literal notranslate"><span class="pre">RemoteConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.config_class"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.config_class</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.exclude_chkpts"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.exclude_chkpts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.exclude_glob"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.exclude_glob</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.hostname"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.port"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.remote_path"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.remote_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.rsync_down"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.rsync_down()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.rsync_up"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.rsync_up()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.RemoteConfig.username"><code class="docutils literal notranslate"><span class="pre">RemoteConfig.username</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.storage.html#ablator.modules.storage.remote.run_cmd_wait"><code class="docutils literal notranslate"><span class="pre">run_cmd_wait()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.storage.html#module-ablator.modules.storage">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.modules.optimizer">
+<span id="ablator-modules-optimizer-module"></span><h2>ablator.modules.optimizer module<a class="headerlink" href="#module-ablator.modules.optimizer" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">AdamConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#AdamConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.AdamConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs" title="ablator.modules.optimizer.OptimizerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptimizerArgs</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamConfig.betas">
+<span class="sig-name descname"><span class="pre">betas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Tuple" title="ablator.config.types.Tuple"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.5,</span> <span class="pre">0.9)</span></em><a class="headerlink" href="#ablator.modules.optimizer.AdamConfig.betas" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.optimizer.AdamConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.optimizer.AdamConfig" title="ablator.modules.optimizer.AdamConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdamConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamConfig.init_optimizer">
+<span class="sig-name descname"><span class="pre">init_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#AdamConfig.init_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.AdamConfig.init_optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamConfig.weight_decay">
+<span class="sig-name descname"><span class="pre">weight_decay</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#ablator.modules.optimizer.AdamConfig.weight_decay" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamWConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">AdamWConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#AdamWConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.AdamWConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs" title="ablator.modules.optimizer.OptimizerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptimizerArgs</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamWConfig.betas">
+<span class="sig-name descname"><span class="pre">betas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Tuple" title="ablator.config.types.Tuple"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.9,</span> <span class="pre">0.999)</span></em><a class="headerlink" href="#ablator.modules.optimizer.AdamWConfig.betas" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamWConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.optimizer.AdamWConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.optimizer.AdamWConfig" title="ablator.modules.optimizer.AdamWConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdamWConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamWConfig.eps">
+<span class="sig-name descname"><span class="pre">eps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-08</span></em><a class="headerlink" href="#ablator.modules.optimizer.AdamWConfig.eps" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamWConfig.init_optimizer">
+<span class="sig-name descname"><span class="pre">init_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#AdamWConfig.init_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.AdamWConfig.init_optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.AdamWConfig.weight_decay">
+<span class="sig-name descname"><span class="pre">weight_decay</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#ablator.modules.optimizer.AdamWConfig.weight_decay" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerArgs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">OptimizerArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#OptimizerArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.OptimizerArgs" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerArgs.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.optimizer.OptimizerArgs.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs" title="ablator.modules.optimizer.OptimizerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptimizerArgs</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerArgs.init_optimizer">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#OptimizerArgs.init_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.OptimizerArgs.init_optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerArgs.lr">
+<span class="sig-name descname"><span class="pre">lr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ablator.modules.optimizer.OptimizerArgs.lr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">OptimizerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#OptimizerConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.OptimizerConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerConfig.arguments">
+<span class="sig-name descname"><span class="pre">arguments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs" title="ablator.modules.optimizer.OptimizerArgs"><span class="pre">OptimizerArgs</span></a></em><a class="headerlink" href="#ablator.modules.optimizer.OptimizerConfig.arguments" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.optimizer.OptimizerConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.optimizer.OptimizerConfig" title="ablator.modules.optimizer.OptimizerConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptimizerConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerConfig.make_optimizer">
+<span class="sig-name descname"><span class="pre">make_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optimizer</span></span></span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#OptimizerConfig.make_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.OptimizerConfig.make_optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.OptimizerConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.modules.optimizer.OptimizerConfig.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.SGDConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">SGDConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#SGDConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.SGDConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.optimizer.OptimizerArgs" title="ablator.modules.optimizer.OptimizerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">OptimizerArgs</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.SGDConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.optimizer.SGDConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.optimizer.SGDConfig" title="ablator.modules.optimizer.SGDConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">SGDConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.SGDConfig.init_optimizer">
+<span class="sig-name descname"><span class="pre">init_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#SGDConfig.init_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.SGDConfig.init_optimizer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.SGDConfig.momentum">
+<span class="sig-name descname"><span class="pre">momentum</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#ablator.modules.optimizer.SGDConfig.momentum" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.SGDConfig.weight_decay">
+<span class="sig-name descname"><span class="pre">weight_decay</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#ablator.modules.optimizer.SGDConfig.weight_decay" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.get_optim_parameters">
+<span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">get_optim_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_requires_grad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#get_optim_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.get_optim_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Setup the optimizer.
+We provide a reasonable default that works well. If you want to use something else, you can pass a tuple in the
+Trainer’s init through <code class="xref py py-obj docutils literal notranslate"><span class="pre">optimizers</span></code>, or subclass and override this method in a subclass.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.modules.optimizer.get_parameter_names">
+<span class="sig-prename descclassname"><span class="pre">ablator.modules.optimizer.</span></span><span class="sig-name descname"><span class="pre">get_parameter_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forbidden_layer_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/optimizer.html#get_parameter_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.optimizer.get_parameter_names" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the names of the model parameters that are not inside a forbidden layer.</p>
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.scheduler">
+<span id="ablator-modules-scheduler-module"></span><h2>ablator.modules.scheduler module<a class="headerlink" href="#module-ablator.modules.scheduler" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.OneCycleConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.scheduler.</span></span><span class="sig-name descname"><span class="pre">OneCycleConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#OneCycleConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.OneCycleConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs" title="ablator.modules.scheduler.SchedulerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchedulerArgs</span></code></a></p>
+<p>Configuration class for the OneCycleLR scheduler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>max_lr</strong><span class="classifier">float</span></dt><dd><p>Upper learning rate boundaries in the cycle.</p>
+</dd>
+<dt><strong>total_steps</strong><span class="classifier">Derived[int]</span></dt><dd><p>The total number of steps to run the scheduler in a cycle.</p>
+</dd>
+<dt><strong>step_when</strong><span class="classifier">StepType</span></dt><dd><p>The step type at which the scheduler.step() should be invoked: ‘train’, ‘val’, or ‘epoch’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.OneCycleConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.scheduler.OneCycleConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.scheduler.OneCycleConfig" title="ablator.modules.scheduler.OneCycleConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneCycleConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.OneCycleConfig.init_scheduler">
+<span class="sig-name descname"><span class="pre">init_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#OneCycleConfig.init_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.OneCycleConfig.init_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the OneCycleLR scheduler.
+Creates and returns a OneCycleLR scheduler that monitors optimizer’s learning rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model</strong><span class="classifier">nn.Module</span></dt><dd><p>The model.</p>
+</dd>
+<dt><strong>optimizer</strong><span class="classifier">nn.Module</span></dt><dd><p>The optimizer used to update the model parameters, whose learning rate we want to monitor.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>OneCycleLR</dt><dd><p>The OneCycleLR scheduler, initialized with arguments defined as attributes of this class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">OneCycleConfig</span><span class="p">(</span><span class="n">max_lr</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">total_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span><span class="o">.</span><span class="n">init_scheduler</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.OneCycleConfig.max_lr">
+<span class="sig-name descname"><span class="pre">max_lr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ablator.modules.scheduler.OneCycleConfig.max_lr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.OneCycleConfig.step_when">
+<span class="sig-name descname"><span class="pre">step_when</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'train'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'val'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'epoch'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'train'</span></em><a class="headerlink" href="#ablator.modules.scheduler.OneCycleConfig.step_when" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.OneCycleConfig.total_steps">
+<span class="sig-name descname"><span class="pre">total_steps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="ablator.config.html#ablator.config.types.Derived" title="ablator.config.types.Derived"><span class="pre">Derived</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.modules.scheduler.OneCycleConfig.total_steps" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.scheduler.</span></span><span class="sig-name descname"><span class="pre">PlateuaConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#PlateuaConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs" title="ablator.modules.scheduler.SchedulerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchedulerArgs</span></code></a></p>
+<p>Configuration class for ReduceLROnPlateau scheduler.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><dl class="simple">
+<dt>patience<span class="classifier">int</span></dt><dd><p>Number of epochs with no improvement after which learning rate will be reduced.</p>
+</dd>
+<dt>min_lr<span class="classifier">float</span></dt><dd><p>A lower bound on the learning rate.</p>
+</dd>
+<dt>mode<span class="classifier">str</span></dt><dd><p>One of ‘min’, ‘max’, or ‘auto’, which defines the direction of optimization, so as
+to adjust the learning rate accordingly, i.e when a certain metric ceases improving.</p>
+</dd>
+<dt>factor<span class="classifier">float</span></dt><dd><p>Factor by which the learning rate will be reduced. new_lr = lr * factor.</p>
+</dd>
+<dt>threshold<span class="classifier">float</span></dt><dd><p>Threshold for measuring the new optimum, to only focus on significant changes.</p>
+</dd>
+<dt>verbose<span class="classifier">bool</span></dt><dd><p>If True, prints a message to stdout for each update.</p>
+</dd>
+<dt>step_when<span class="classifier">StepType</span></dt><dd><p>The step type at which the scheduler should be invoked: ‘train’, ‘val’, or ‘epoch’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.scheduler.PlateuaConfig" title="ablator.modules.scheduler.PlateuaConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlateuaConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.factor">
+<span class="sig-name descname"><span class="pre">factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.factor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.init_scheduler">
+<span class="sig-name descname"><span class="pre">init_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#PlateuaConfig.init_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.init_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the ReduceLROnPlateau scheduler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model</strong><span class="classifier">nn.Module</span></dt><dd><p>The model being optimized.</p>
+</dd>
+<dt><strong>optimizer</strong><span class="classifier">nn.Module</span></dt><dd><p>The optimizer used to update the model parameters, whose learning
+rate we want to monitor.</p>
+</dd>
+<dt><strong>Returns:</strong></dt><dd></dd>
+<dt><strong>ReduceLROnPlateau</strong></dt><dd><p>The ReduceLROnPlateau scheduler, initialized with arguments defined as
+attributes of this class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">PlateuaConfig</span><span class="p">(</span><span class="n">min_lr</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span><span class="o">.</span><span class="n">init_scheduler</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.min_lr">
+<span class="sig-name descname"><span class="pre">min_lr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-05</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.min_lr" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.mode">
+<span class="sig-name descname"><span class="pre">mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'min'</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.mode" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.patience">
+<span class="sig-name descname"><span class="pre">patience</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.patience" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.step_when">
+<span class="sig-name descname"><span class="pre">step_when</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'train'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'val'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'epoch'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'val'</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.step_when" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.threshold">
+<span class="sig-name descname"><span class="pre">threshold</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0001</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.threshold" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.PlateuaConfig.verbose">
+<span class="sig-name descname"><span class="pre">verbose</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#ablator.modules.scheduler.PlateuaConfig.verbose" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerArgs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.scheduler.</span></span><span class="sig-name descname"><span class="pre">SchedulerArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#SchedulerArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.SchedulerArgs" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>Abstract base class for defining arguments to initialize a learning rate scheduler.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerArgs.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.scheduler.SchedulerArgs.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs" title="ablator.modules.scheduler.SchedulerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchedulerArgs</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerArgs.init_scheduler">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#SchedulerArgs.init_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.SchedulerArgs.init_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Abstract method to be implemented by derived classes, which creates and returns a scheduler object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerArgs.step_when">
+<span class="sig-name descname"><span class="pre">step_when</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'train'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'val'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'epoch'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ablator.modules.scheduler.SchedulerArgs.step_when" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.scheduler.</span></span><span class="sig-name descname"><span class="pre">SchedulerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#SchedulerConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.SchedulerConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>Class that defines a configuration for a learning rate scheduler.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerConfig.arguments">
+<span class="sig-name descname"><span class="pre">arguments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs" title="ablator.modules.scheduler.SchedulerArgs"><span class="pre">SchedulerArgs</span></a></em><a class="headerlink" href="#ablator.modules.scheduler.SchedulerConfig.arguments" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.scheduler.SchedulerConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.scheduler.SchedulerConfig" title="ablator.modules.scheduler.SchedulerConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchedulerConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerConfig.make_scheduler">
+<span class="sig-name descname"><span class="pre">make_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">_LRScheduler</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ReduceLROnPlateau</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#SchedulerConfig.make_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.SchedulerConfig.make_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a new scheduler for an optimizer, based on the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model</strong></dt><dd><p>The model.</p>
+</dd>
+<dt><strong>optimizer</strong></dt><dd><p>The optimizer used to update the model parameters, whose learning rate we want to monitor.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>Scheduler</dt><dd><p>The scheduler.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.SchedulerConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.modules.scheduler.SchedulerConfig.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.StepLRConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.scheduler.</span></span><span class="sig-name descname"><span class="pre">StepLRConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#StepLRConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.StepLRConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ablator.modules.scheduler.SchedulerArgs" title="ablator.modules.scheduler.SchedulerArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">SchedulerArgs</span></code></a></p>
+<p>Configuration class for StepLR scheduler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>step_size</strong><span class="classifier">int</span></dt><dd><p>Period of learning rate decay, by default 1.</p>
+</dd>
+<dt><strong>gamma</strong><span class="classifier">float</span></dt><dd><p>Multiplicative factor of learning rate decay, by default 0.99.</p>
+</dd>
+<dt><strong>step_when</strong><span class="classifier">StepType</span></dt><dd><p>The step type at which the scheduler should be invoked: ‘train’, ‘val’, or ‘epoch’.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.StepLRConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.scheduler.StepLRConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.scheduler.StepLRConfig" title="ablator.modules.scheduler.StepLRConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepLRConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.StepLRConfig.gamma">
+<span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.99</span></em><a class="headerlink" href="#ablator.modules.scheduler.StepLRConfig.gamma" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.StepLRConfig.init_scheduler">
+<span class="sig-name descname"><span class="pre">init_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/scheduler.html#StepLRConfig.init_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.scheduler.StepLRConfig.init_scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the StepLR scheduler for a given model and optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model</strong><span class="classifier">nn.Module</span></dt><dd><p>The model to apply the scheduler.</p>
+</dd>
+<dt><strong>optimizer</strong><span class="classifier">nn.Module</span></dt><dd><p>The optimizer used to update the model parameters, whose learning
+rate we want to monitor.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>StepLR</dt><dd><p>The StepLR scheduler, initialized with arguments defined as
+attributes of this class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">StepLRConfig</span><span class="p">(</span><span class="n">step_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span><span class="o">.</span><span class="n">init_scheduler</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.StepLRConfig.step_size">
+<span class="sig-name descname"><span class="pre">step_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#ablator.modules.scheduler.StepLRConfig.step_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.scheduler.StepLRConfig.step_when">
+<span class="sig-name descname"><span class="pre">step_when</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'train'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'val'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'epoch'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'epoch'</span></em><a class="headerlink" href="#ablator.modules.scheduler.StepLRConfig.step_when" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.modules" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.main.model.html" class="btn btn-neutral float-left" title="ablator.main.model package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.modules.loggers.html" class="btn btn-neutral float-right" title="ablator.modules.loggers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules.storage package &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ablator.utils package" href="ablator.utils.html" />
+    <link rel="prev" title="ablator.modules.metrics package" href="ablator.modules.metrics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ablator.modules.html">ablator.modules package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ablator.modules.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.loggers.html">ablator.modules.loggers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ablator.modules.metrics.html">ablator.modules.metrics package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ablator.modules.storage package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.storage.cloud">ablator.modules.storage.cloud module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.storage.remote">ablator.modules.storage.remote module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ablator.modules.storage">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules.optimizer">ablator.modules.optimizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules.scheduler">ablator.modules.scheduler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ablator.modules.html#module-ablator.modules">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="ablator.modules.html">ablator.modules package</a> &raquo;</li>
+      <li>ablator.modules.storage package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ablator.modules.storage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ablator-modules-storage-package">
+<h1>ablator.modules.storage package<a class="headerlink" href="#ablator-modules-storage-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-ablator.modules.storage.cloud">
+<span id="ablator-modules-storage-cloud-module"></span><h2>ablator.modules.storage.cloud module<a class="headerlink" href="#module-ablator.modules.storage.cloud" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.storage.cloud.</span></span><span class="sig-name descname"><span class="pre">GcpConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/cloud.html#GcpConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>Configuration for Google Cloud Storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>bucket</strong><span class="classifier">str</span></dt><dd><p>The bucket to use.</p>
+</dd>
+<dt><strong>exclude_glob</strong><span class="classifier">Optional[str]</span></dt><dd><p>A glob to exclude from the rsync.</p>
+</dd>
+<dt><strong>exclude_chkpts</strong><span class="classifier">bool</span></dt><dd><p>Whether to exclude checkpoints from the rsync.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.bucket">
+<span class="sig-name descname"><span class="pre">bucket</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.bucket" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.storage.cloud.GcpConfig" title="ablator.modules.storage.cloud.GcpConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">GcpConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.exclude_chkpts">
+<span class="sig-name descname"><span class="pre">exclude_chkpts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.exclude_chkpts" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.exclude_glob">
+<span class="sig-name descname"><span class="pre">exclude_glob</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.exclude_glob" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.list_bucket">
+<span class="sig-name descname"><span class="pre">list_bucket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/cloud.html#GcpConfig.list_bucket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.list_bucket" title="Permalink to this definition"></a></dt>
+<dd><p>List the contents of a bucket. If destination is None, list the bucket itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>destination</strong><span class="classifier">str | None</span></dt><dd><p>Bucket path.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>list[str]</dt><dd><p>List of files in the bucket.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.rsync_down">
+<span class="sig-name descname"><span class="pre">rsync_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger" title="ablator.modules.loggers.file.FileLogger"><span class="pre">FileLogger</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/cloud.html#GcpConfig.rsync_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.rsync_down" title="Permalink to this definition"></a></dt>
+<dd><p>Rsync files from the bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>remote_path</strong><span class="classifier">str</span></dt><dd><p>The source path in the bucket.</p>
+</dd>
+<dt><strong>local_path</strong><span class="classifier">Path</span></dt><dd><p>The local path to download to.</p>
+</dd>
+<dt><strong>logger</strong><span class="classifier">FileLogger | None</span></dt><dd><p>The logger to use.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool</span></dt><dd><p>Whether to print the output.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.rsync_down_nodes">
+<span class="sig-name descname"><span class="pre">rsync_down_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger" title="ablator.modules.loggers.file.FileLogger"><span class="pre">FileLogger</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/cloud.html#GcpConfig.rsync_down_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.rsync_down_nodes" title="Permalink to this definition"></a></dt>
+<dd><p>Rsync files from the bucket to all nodes with the given hostname.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>node_hostname</strong><span class="classifier">str</span></dt><dd><p>The hostname of the nodes to rsync to.</p>
+</dd>
+<dt><strong>remote_path</strong><span class="classifier">str</span></dt><dd><p>The source path in the bucket.</p>
+</dd>
+<dt><strong>local_path</strong><span class="classifier">Path</span></dt><dd><p>The local path to download to.</p>
+</dd>
+<dt><strong>logger</strong><span class="classifier">FileLogger | None</span></dt><dd><p>The logger to use.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool</span></dt><dd><p>Whether to print the output.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.storage.cloud.GcpConfig.rsync_up">
+<span class="sig-name descname"><span class="pre">rsync_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="ablator.modules.loggers.html#ablator.modules.loggers.file.FileLogger" title="ablator.modules.loggers.file.FileLogger"><span class="pre">FileLogger</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/cloud.html#GcpConfig.rsync_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.cloud.GcpConfig.rsync_up" title="Permalink to this definition"></a></dt>
+<dd><p>Rsync files to the bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>local_path</strong><span class="classifier">Path</span></dt><dd><p>The local path to upload.</p>
+</dd>
+<dt><strong>remote_path</strong><span class="classifier">str</span></dt><dd><p>The destination path in the bucket.</p>
+</dd>
+<dt><strong>logger</strong><span class="classifier">FileLogger | None</span></dt><dd><p>The logger to use.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><dl class="simple">
+<dt>AssertionError</dt><dd><p>If the rsync fails.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.storage.remote">
+<span id="ablator-modules-storage-remote-module"></span><h2>ablator.modules.storage.remote module<a class="headerlink" href="#module-ablator.modules.storage.remote" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ablator.modules.storage.remote.</span></span><span class="sig-name descname"><span class="pre">RemoteConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/remote.html#RemoteConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ablator.config.html#ablator.config.main.ConfigBase" title="ablator.config.main.ConfigBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigBase</span></code></a></p>
+<p>Configuration for a remote storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>remote_path</strong><span class="classifier">str</span></dt><dd><p>The path to the remote storage.</p>
+</dd>
+<dt><strong>username</strong><span class="classifier">str</span></dt><dd><p>The username to use for the remote storage.</p>
+</dd>
+<dt><strong>hostname</strong><span class="classifier">str</span></dt><dd><p>The hostname of the remote storage.</p>
+</dd>
+<dt><strong>port</strong><span class="classifier">None | int</span></dt><dd><p>The port to use for the remote storage.</p>
+</dd>
+<dt><strong>exclude_glob</strong><span class="classifier">None | str</span></dt><dd><p>A glob to exclude from the rsync.</p>
+</dd>
+<dt><strong>exclude_chkpts</strong><span class="classifier">bool</span></dt><dd><p>Whether to exclude checkpoints from the rsync.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.config_class">
+<span class="sig-name descname"><span class="pre">config_class</span></span><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.config_class" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#ablator.modules.storage.remote.RemoteConfig" title="ablator.modules.storage.remote.RemoteConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoteConfig</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.exclude_chkpts">
+<span class="sig-name descname"><span class="pre">exclude_chkpts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.exclude_chkpts" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.exclude_glob">
+<span class="sig-name descname"><span class="pre">exclude_glob</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.exclude_glob" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.hostname">
+<span class="sig-name descname"><span class="pre">hostname</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.hostname" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.port">
+<span class="sig-name descname"><span class="pre">port</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.port" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.remote_path">
+<span class="sig-name descname"><span class="pre">remote_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.remote_path" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.rsync_down">
+<span class="sig-name descname"><span class="pre">rsync_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_async</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/remote.html#RemoteConfig.rsync_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.rsync_down" title="Permalink to this definition"></a></dt>
+<dd><p>start a new process and download files from the remote storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>local_path</strong><span class="classifier">Path</span></dt><dd><p>The local path to download to.</p>
+</dd>
+<dt><strong>destination</strong><span class="classifier">str</span></dt><dd><p>The destination path in the remote storage.</p>
+</dd>
+<dt><strong>timeout_s</strong><span class="classifier">int | None</span></dt><dd><p>The timeout in seconds.</p>
+</dd>
+<dt><strong>run_async</strong><span class="classifier">bool</span></dt><dd><p>Whether to run the command asynchronously.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.rsync_up">
+<span class="sig-name descname"><span class="pre">rsync_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_async</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ablator/modules/storage/remote.html#RemoteConfig.rsync_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.rsync_up" title="Permalink to this definition"></a></dt>
+<dd><p>start a new process and upload files to the remote storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>local_path</strong><span class="classifier">Path</span></dt><dd><p>The local path to upload.</p>
+</dd>
+<dt><strong>destination</strong><span class="classifier">str</span></dt><dd><p>The destination path in the remote storage.</p>
+</dd>
+<dt><strong>timeout_s</strong><span class="classifier">int | None</span></dt><dd><p>The timeout in seconds.</p>
+</dd>
+<dt><strong>run_async</strong><span class="classifier">bool</span></dt><dd><p>Whether to run the command asynchronously.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.RemoteConfig.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#ablator.modules.storage.remote.RemoteConfig.username" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ablator.modules.storage.remote.run_cmd_wait">
+<span class="sig-prename descclassname"><span class="pre">ablator.modules.storage.remote.</span></span><span class="sig-name descname"><span class="pre">run_cmd_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_errors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="reference internal" href="_modules/ablator/modules/storage/remote.html#run_cmd_wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ablator.modules.storage.remote.run_cmd_wait" title="Permalink to this definition"></a></dt>
+<dd><p>Run a command and wait for it to finish.
+If the command takes longer than <cite>timeout</cite> seconds, kill it.
+If <cite>raise_errors</cite> is True, raise a TimeoutExpired exception.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>cmd</strong><span class="classifier">str</span></dt><dd><p>The command to run.</p>
+</dd>
+<dt><strong>timeout</strong><span class="classifier">int</span></dt><dd><p>The timeout in seconds.</p>
+</dd>
+<dt><strong>raise_errors</strong><span class="classifier">bool</span></dt><dd><p>Whether to raise errors.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>str</dt><dd><p>The output of the command.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ablator.modules.storage">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ablator.modules.storage" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ablator.modules.metrics.html" class="btn btn-neutral float-left" title="ablator.modules.metrics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ablator.utils.html" class="btn btn-neutral float-right" title="ablator.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

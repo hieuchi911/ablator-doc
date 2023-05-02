@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.modules.loggers.main &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../loggers.html">ablator.modules.loggers</a> &raquo;</li>
+      <li>ablator.modules.loggers.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.modules.loggers.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">import</span> <span class="nn">ablator.utils.file</span> <span class="k">as</span> <span class="nn">futils</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="n">RunConfig</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.loggers</span> <span class="kn">import</span> <span class="n">LoggerBase</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.loggers.file</span> <span class="kn">import</span> <span class="n">FileLogger</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.loggers.tensor</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.metrics.main</span> <span class="kn">import</span> <span class="n">TrainMetrics</span>
+<span class="kn">from</span> <span class="nn">ablator.modules.metrics.stores</span> <span class="kn">import</span> <span class="n">MovingAverage</span>
+
+
+<div class="viewcode-block" id="DuplicateRunError"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.DuplicateRunError">[docs]</a><span class="k">class</span> <span class="nc">DuplicateRunError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SummaryLogger"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger">[docs]</a><span class="k">class</span> <span class="nc">SummaryLogger</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A logger for training and evaluation summary.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SUMMARY_DIR_NAME : str</span>
+<span class="sd">        Name of the summary directory.</span>
+<span class="sd">    RESULTS_JSON_NAME : str</span>
+<span class="sd">        Name of the results JSON file.</span>
+<span class="sd">    LOG_FILE_NAME : str</span>
+<span class="sd">        Name of the log file.</span>
+<span class="sd">    CONFIG_FILE_NAME : str</span>
+<span class="sd">        Name of the configuration file.</span>
+<span class="sd">    METADATA_JSON : str</span>
+<span class="sd">        Name of the metadata JSON file.</span>
+<span class="sd">    CHKPT_DIR_NAMES : list[str]</span>
+<span class="sd">        List of checkpoint directory names.</span>
+<span class="sd">    CHKPT_DIR_VALUES : list[str]</span>
+<span class="sd">        List of checkpoint directory values.</span>
+<span class="sd">    CHKPT_DIRS : dict[str, Path]</span>
+<span class="sd">        Dictionary containing checkpoint directories.</span>
+<span class="sd">    keep_n_checkpoints : int</span>
+<span class="sd">        Number of checkpoints to keep.</span>
+<span class="sd">    log_iteration : int</span>
+<span class="sd">        Current log iteration.</span>
+<span class="sd">    checkpoint_iteration : dict[str, dict[str, int]]</span>
+<span class="sd">        checkpoint_iteration is a dictionary that keeps track of the checkpoint iterations for each directory. </span>
+<span class="sd">        It is used in the checkpoint() method to determine the appropriate iteration number for the saved checkpoint.</span>
+<span class="sd">    log_file_path : Path | None</span>
+<span class="sd">        Path to the log file.</span>
+<span class="sd">    dashboard : LoggerBase | None</span>
+<span class="sd">        Dashboard logger.</span>
+<span class="sd">    model_dir : Path | None</span>
+<span class="sd">        the model directory.</span>
+<span class="sd">    result_json_path : Path | None</span>
+<span class="sd">        Path to the results JSON file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SUMMARY_DIR_NAME</span> <span class="o">=</span> <span class="s2">&quot;dashboard&quot;</span>
+    <span class="n">RESULTS_JSON_NAME</span> <span class="o">=</span> <span class="s2">&quot;results.json&quot;</span>
+    <span class="n">LOG_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;train.log&quot;</span>
+    <span class="n">CONFIG_FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;config.yaml&quot;</span>
+    <span class="n">METADATA_JSON</span> <span class="o">=</span> <span class="s2">&quot;metadata.json&quot;</span>
+    <span class="n">CHKPT_DIR_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="s2">&quot;recent&quot;</span><span class="p">]</span>
+    <span class="n">CHKPT_DIR_VALUES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;best_checkpoints&quot;</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">]</span>
+    <span class="n">CHKPT_DIRS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">,</span>
+        <span class="n">model_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">keep_n_checkpoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a SummaryLogger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_config : RunConfig</span>
+<span class="sd">            The run configuration.</span>
+<span class="sd">        model_dir : str | None | Path, optional</span>
+<span class="sd">            Path to the model directory, by default None.</span>
+<span class="sd">        resume : bool, optional</span>
+<span class="sd">            Whether to resume from an existing model directory, by default False.</span>
+<span class="sd">        keep_n_checkpoints : int | None, optional</span>
+<span class="sd">            Number of checkpoints to keep, by default None.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Whether to print messages to the console, by default True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">run_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">run_config</span><span class="o">.</span><span class="n">uid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_n_checkpoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">keep_n_checkpoints</span> <span class="k">if</span> <span class="n">keep_n_checkpoints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="p">:</span> <span class="n">LoggerBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_json_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CHKPT_DIRS</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">model_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resume</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">DuplicateRunError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;SummaryLogger: Resume is set to </span><span class="si">{</span><span class="n">resume</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="si">}</span><span class="s2"> exists.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">resume</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">_run_config</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_FILE_NAME</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">run_config</span><span class="o">.</span><span class="n">train_config</span> <span class="o">==</span> <span class="n">_run_config</span><span class="o">.</span><span class="n">train_config</span>
+                    <span class="ow">and</span> <span class="n">run_config</span><span class="o">.</span><span class="n">model_config</span> <span class="o">==</span> <span class="n">_run_config</span><span class="o">.</span><span class="n">model_config</span>
+                <span class="p">),</span> <span class="p">(</span>
+                    <span class="s2">&quot;Different supplied run_config than&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; existing run_config </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="si">}</span><span class="s2">. </span><span class="se">\n</span><span class="si">{</span><span class="n">run_config</span><span class="si">}</span><span class="s2">----</span><span class="se">\n</span><span class="si">{</span><span class="n">_run_config</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">METADATA_JSON</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span>
+                        <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;checkpoint_iteration&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;log_iteration&quot;</span><span class="p">]</span>
+
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">summary_dir</span><span class="p">,</span> <span class="o">*</span><span class="n">chkpt_dirs</span><span class="p">)</span> <span class="o">=</span> <span class="n">futils</span><span class="o">.</span><span class="n">make_sub_dirs</span><span class="p">(</span>
+                <span class="n">model_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUMMARY_DIR_NAME</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">CHKPT_DIR_VALUES</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CHKPT_DIR_NAMES</span><span class="p">,</span> <span class="n">chkpt_dirs</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">CHKPT_DIRS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_json_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">RESULTS_JSON_NAME</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LOG_FILE_NAME</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_dashboard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">summary_dir</span><span class="p">,</span> <span class="n">run_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">FileLogger</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the metadata file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">metadata_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">METADATA_JSON</span><span class="p">)</span>
+        <span class="n">metadata_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;log_iteration&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span><span class="p">,</span>
+                    <span class="s2">&quot;checkpoint_iteration&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_dashboard</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">summary_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoggerBase</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make a dashboard logger.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        summary_dir : Path</span>
+<span class="sd">            Path to the summary directory.</span>
+<span class="sd">        run_config : RunConfig | None, optional</span>
+<span class="sd">            The run configuration, by default None.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        LoggerBase | None</span>
+<span class="sd">            A TensorboardLogger.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">run_config</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">run_config</span><span class="o">.</span><span class="n">tensorboard</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">summary_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;tensorboard&quot;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_write_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_config</span><span class="p">:</span> <span class="n">RunConfig</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the run configuration to the model directory and to the dashboard.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_config : RunConfig</span>
+<span class="sd">            The run configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CONFIG_FILE_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">run_config</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">write_config</span><span class="p">(</span><span class="n">run_config</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">itr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a metric to the dashboard.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        k : str</span>
+<span class="sd">            The metric name.</span>
+<span class="sd">        v : Any</span>
+<span class="sd">            The metric value.</span>
+<span class="sd">        itr : int</span>
+<span class="sd">            The iteration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">}:</span>
+                <span class="n">v_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="n">_v</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">)}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_scalars</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v_dict</span><span class="p">,</span> <span class="n">itr</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">itr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">sub_k</span><span class="p">,</span> <span class="n">sub_v</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">sub_k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sub_v</span><span class="p">,</span> <span class="n">itr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">MovingAverage</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">itr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">itr</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span>
+                <span class="n">k</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">itr</span><span class="p">,</span> <span class="n">dataformats</span><span class="o">=</span><span class="s2">&quot;CHW&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">itr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dashboard</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">itr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported dashboard value </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">. Must be &quot;</span>
+                <span class="s2">&quot;[int,float, pd.DataFrame, Image.Image, str, &quot;</span>
+                <span class="s2">&quot;MovingAverage, dict[str,float|int], list[float,int], np.ndarray] &quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_append_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot; Append metrics to the result json file.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metrics : dict[str, float]</span>
+<span class="sd">            The metrics to append.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_json_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_json_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">futils</span><span class="o">.</span><span class="n">dict_to_json</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SummaryLogger.update"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TrainMetrics</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+        <span class="n">itr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dashboard with the given metrics.</span>
+<span class="sd">        write some metrics to json files and update the current metadata(log_iteration)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metrics : Union[TrainMetrics, dict]</span>
+<span class="sd">            The metrics to update.</span>
+<span class="sd">        itr : Optional[int], optional  </span>
+<span class="sd">            The iteration, by default None.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If the iteration is not greater than the current iteration.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        self.log_iteration is increased by 1 every time update() is called while training models.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">itr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">itr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">itr</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Current iteration &gt; </span><span class="si">{</span><span class="n">itr</span><span class="si">}</span><span class="s2">. Can not add metrics.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_iteration</span> <span class="o">=</span> <span class="n">itr</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">TrainMetrics</span><span class="p">):</span>
+            <span class="n">dict_metrics</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_metric</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">itr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_append_metrics</span><span class="p">(</span><span class="n">dict_metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SummaryLogger.checkpoint"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">checkpoint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">save_dict</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">itr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_best</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save a checkpoint and update the checkpoint iteration</span>
+
+<span class="sd">        Saves the model checkpoint in the appropriate directory based on the `is_best` parameter.</span>
+<span class="sd">        If `is_best` is True, the checkpoint is saved in the &quot;best&quot; directory, indicating the best</span>
+<span class="sd">        performing model so far. Otherwise, the checkpoint is saved in the &quot;recent&quot; directory,</span>
+<span class="sd">        representing the most recent checkpoint.</span>
+
+<span class="sd">        The file path for the checkpoint is constructed using the selected directory name (&quot;best&quot; or</span>
+<span class="sd">        &quot;recent&quot;), and the file name with the format &quot;{file_name}_{itr:010}.pt&quot;, where `itr` is the</span>
+<span class="sd">        iteration number.</span>
+
+<span class="sd">        The `checkpoint_iteration` dictionary is updated with the current iteration number for each</span>
+<span class="sd">        directory. If `itr` is not provided, the iteration number is increased by 1 each time a</span>
+<span class="sd">        checkpoint is saved. Otherwise, the iteration number is set to the provided `itr`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        save_dict : object</span>
+<span class="sd">            The object to save.</span>
+
+<span class="sd">        file_name : str</span>
+<span class="sd">            The file name.</span>
+
+<span class="sd">        itr : int | None, optional</span>
+<span class="sd">            The iteration, by default None. If not provided, the current iteration is incremented by 1.</span>
+
+<span class="sd">        is_best : bool, optional</span>
+<span class="sd">            Whether this is the best checkpoint, by default False.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If the provided `itr` is not larger than the current iteration associated with the checkpoint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">dir_name</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span> <span class="k">if</span> <span class="n">is_best</span> <span class="k">else</span> <span class="s2">&quot;recent&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_n_checkpoints</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dir_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">file_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">][</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="n">itr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">][</span><span class="n">file_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">itr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">][</span><span class="n">file_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cur_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">][</span><span class="n">file_name</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">itr</span> <span class="o">&gt;</span> <span class="n">cur_iter</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Checkpoint iteration </span><span class="si">{</span><span class="n">cur_iter</span><span class="si">}</span><span class="s2"> &gt; training iteration </span><span class="si">{</span><span class="n">itr</span><span class="si">}</span><span class="s2">. Can not save checkpoint.&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_iteration</span><span class="p">[</span><span class="n">dir_name</span><span class="p">][</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">itr</span>
+
+            <span class="n">dir_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CHKPT_DIRS</span><span class="p">[</span><span class="n">dir_name</span><span class="p">])</span>
+
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">dir_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">itr</span><span class="si">:</span><span class="s2">010</span><span class="si">}</span><span class="s2">.pt&quot;</span><span class="p">)</span>
+
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Checkpoint exists: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">futils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">save_dict</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+            <span class="n">futils</span><span class="o">.</span><span class="n">clean_checkpoints</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_n_checkpoints</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SummaryLogger.clean_checkpoints"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.clean_checkpoints">[docs]</a>    <span class="k">def</span> <span class="nf">clean_checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_n_checkpoints</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up checkpoints and keep only the specified number of checkpoints.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        keep_n_checkpoints : int</span>
+<span class="sd">            Number of checkpoints to keep.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">chkpt_dir</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHKPT_DIR_VALUES</span><span class="p">:</span>
+            <span class="n">dir_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">chkpt_dir</span><span class="p">)</span>
+            <span class="n">futils</span><span class="o">.</span><span class="n">clean_checkpoints</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">keep_n_checkpoints</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SummaryLogger.info"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log an info to files and to console message using the logger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args</span>
+<span class="sd">            Positional arguments passed to the logger&#39;s info method.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Keyword arguments passed to the logger&#39;s info method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SummaryLogger.warn"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.warn">[docs]</a>    <span class="k">def</span> <span class="nf">warn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log a warning message to files and to console using the logger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args</span>
+<span class="sd">            Positional arguments passed to the logger&#39;s warn method.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Keyword arguments passed to the logger&#39;s warn method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SummaryLogger.error"><a class="viewcode-back" href="../../../../ablator.modules.loggers.html#ablator.modules.loggers.main.SummaryLogger.error">[docs]</a>    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log an error message to files and to console using the logger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args</span>
+<span class="sd">            Positional arguments passed to the logger&#39;s error method.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Keyword arguments passed to the logger&#39;s error method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

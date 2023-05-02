@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ablator.analysis.plot.main &mdash; ablator  documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> ablator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.analysis.html">ablator.analysis package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.config.html">ablator.config package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.main.html">ablator.main package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.modules.html">ablator.modules package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ablator.utils.html">ablator.utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">ablator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../plot.html">ablator.analysis.plot</a> &raquo;</li>
+      <li>ablator.analysis.plot.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ablator.analysis.plot.main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span> <span class="nn">ablator.analysis.main</span> <span class="kn">import</span> <span class="n">Analysis</span>
+<span class="kn">from</span> <span class="nn">ablator.analysis.plot</span> <span class="kn">import</span> <span class="n">Plot</span>
+<span class="kn">from</span> <span class="nn">ablator.analysis.plot.cat_plot</span> <span class="kn">import</span> <span class="n">ViolinPlot</span>
+<span class="kn">from</span> <span class="nn">ablator.analysis.plot.num_plot</span> <span class="kn">import</span> <span class="n">LinearPlot</span>
+<span class="kn">from</span> <span class="nn">ablator.main.configs</span> <span class="kn">import</span> <span class="n">Optim</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PlotAnalysis"><a class="viewcode-back" href="../../../../ablator.analysis.plot.html#ablator.analysis.plot.main.PlotAnalysis">[docs]</a><span class="k">class</span> <span class="nc">PlotAnalysis</span><span class="p">(</span><span class="n">Analysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    class for analyzing plotting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_write_images</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">fig_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Axes</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">]],</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">file_format</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;jpg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write images to a directory based on fig types,</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        fig_map: dict[str, ty.Union[Axes, Figure, Image.Image]]</span>
+<span class="sd">            A dictionary mapping names to matplotlib objects.</span>
+<span class="sd">        path: Path</span>
+<span class="sd">            Path to save the images to.</span>
+<span class="sd">        file_format: ty.Literal[&quot;png&quot;, &quot;pdf&quot;, &quot;jpg&quot;] </span>
+<span class="sd">            the file format to save the images as.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        &gt;&gt;&gt; fig_map = {&quot;figure1&quot;: plt.subplots()[0]}</span>
+<span class="sd">        &gt;&gt;&gt; path = Path(&quot;output_dir&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; PlotAnalysis._write_images(fig_map, path, &quot;png&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">fig_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">img_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">Axes</span><span class="p">):</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">Figure</span><span class="p">):</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
+                <span class="n">fig</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_make_metric_plots</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">plot_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Plot</span><span class="p">],</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">metric_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optim</span><span class="p">],</span>
+        <span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric_name_remap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">attribute_name_remap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method level docstring goes here.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        path: Path | None </span>
+<span class="sd">            A pathlib.Path object representing the directory to write images to.</span>
+<span class="sd">        plot_cls: type[Plot]</span>
+<span class="sd">            A subclass of Plot representing the type of plot to make.</span>
+<span class="sd">        metrics: pd.DataFrame </span>
+<span class="sd">            A pandas DataFrame containing metric values.</span>
+<span class="sd">        results: pd.DataFrame </span>
+<span class="sd">            A pandas DataFrame containing attribute values.</span>
+<span class="sd">        metric_map: dict[str, Optim] </span>
+<span class="sd">            A dictionary mapping metric names to optimization functions.</span>
+<span class="sd">        append: bool</span>
+<span class="sd">            A boolean indicating whether to append plots to an existing axes object.</span>
+<span class="sd">        ax: Axes | None</span>
+<span class="sd">            A matplotlib.axes.Axes object representing the axis to plot on.</span>
+<span class="sd">        metric_name_remap: </span>
+<span class="sd">            A dictionary mapping metric names to new metric names.</span>
+<span class="sd">        attribute_name_remap: </span>
+<span class="sd">            A dictionary mapping attribute names to new attribute names.</span>
+<span class="sd">        kwargs: Additional keyword arguments to pass to the plot method.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">        &gt;&gt;&gt; metrics = pd.DataFrame({&quot;metric1&quot;: [1, 2, 3], &quot;metric2&quot;: [4, 5, 6]})</span>
+<span class="sd">        &gt;&gt;&gt; results = pd.DataFrame({&quot;attr1&quot;: [7, 8, 9], &quot;attr2&quot;: [10, 11, 12]})</span>
+<span class="sd">        &gt;&gt;&gt; metric_map = {&quot;metric1&quot;: Optim.max, &quot;metric2&quot;: Optim.min}</span>
+<span class="sd">        &gt;&gt;&gt; PlotAnalysis._make_metric_plots(None, LinearPlot, metrics, results, metric_map, False, None, None, None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">metric_map</span><span class="p">)</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_remap_results</span><span class="p">(</span>
+            <span class="n">results</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">metric_map</span><span class="p">,</span> <span class="n">metric_name_remap</span><span class="p">,</span> <span class="n">attribute_name_remap</span>
+        <span class="p">)</span>
+        <span class="n">inv_metric_name_remap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">metric_name_remap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">inv_metric_name_remap</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metric_name_remap</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">inv_attribute_name_remap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">attribute_name_remap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">inv_attribute_name_remap</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attribute_name_remap</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">metric_values</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+            <span class="n">metric_obj_fn</span> <span class="o">=</span> <span class="n">metric_map</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+            <span class="n">axes_map</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_make_plot</span><span class="p">(</span>
+                <span class="n">plot_cls</span><span class="o">=</span><span class="n">plot_cls</span><span class="p">,</span>
+                <span class="n">metric_values</span><span class="o">=</span><span class="n">metric_values</span><span class="p">,</span>
+                <span class="n">metric_obj_fn</span><span class="o">=</span><span class="n">metric_obj_fn</span><span class="p">,</span>
+                <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+                <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">,</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                <span class="n">inv_attribute_name_map</span><span class="o">=</span><span class="n">inv_attribute_name_remap</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">inv_metric_name_remap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">original_metric_name</span> <span class="o">=</span> <span class="n">inv_metric_name_remap</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">original_metric_name</span> <span class="o">=</span> <span class="n">metric_name</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">original_metric_name</span><span class="p">)</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="n">_write_images</span><span class="p">(</span><span class="n">axes_map</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes_map</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes_map</span>
+        <span class="k">return</span> <span class="n">axes</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_make_plot</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">metric_values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">plot_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Plot</span><span class="p">],</span>
+        <span class="n">metric_obj_fn</span><span class="p">:</span> <span class="n">Optim</span><span class="p">,</span>
+        <span class="n">append</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inv_attribute_name_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Axes</span><span class="p">]:</span>
+        <span class="n">axes_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attribute_name</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">attribute_values</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plot_cls</span><span class="p">(</span>
+                <span class="n">metric</span><span class="o">=</span><span class="n">metric_values</span><span class="p">,</span>
+                <span class="n">attributes</span><span class="o">=</span><span class="n">attribute_values</span><span class="p">,</span>
+                <span class="n">metric_obj_fn</span><span class="o">=</span><span class="n">metric_obj_fn</span><span class="p">,</span>
+                <span class="n">y_axis</span><span class="o">=</span><span class="n">metric_values</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">x_axis</span><span class="o">=</span><span class="n">attribute_name</span><span class="p">,</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inv_attribute_name_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">original_attribute_name</span> <span class="o">=</span> <span class="n">inv_attribute_name_map</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">original_attribute_name</span> <span class="o">=</span> <span class="n">attribute_name</span>
+            <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axes_map</span><span class="p">[</span><span class="n">original_attribute_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">append</span><span class="p">:</span>
+            <span class="n">axes_map</span><span class="p">[</span><span class="s2">&quot;combined_attribute&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">axes</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">axes_map</span>
+
+<div class="viewcode-block" id="PlotAnalysis.make_violinplot"><a class="viewcode-back" href="../../../../ablator.analysis.plot.html#ablator.analysis.plot.main.PlotAnalysis.make_violinplot">[docs]</a>    <span class="k">def</span> <span class="nf">make_violinplot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attribute_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;violinplot&quot;</span><span class="p">)</span>
+        <span class="n">metric_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_metric_plots</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">save_path</span><span class="p">,</span>
+            <span class="n">plot_cls</span><span class="o">=</span><span class="n">ViolinPlot</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">metrics</span><span class="p">],</span>
+            <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">attribute_names</span><span class="p">],</span>
+            <span class="n">metric_map</span><span class="o">=</span><span class="n">metric_map</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotAnalysis.make_linearplot"><a class="viewcode-back" href="../../../../ablator.analysis.plot.html#ablator.analysis.plot.main.PlotAnalysis.make_linearplot">[docs]</a>    <span class="k">def</span> <span class="nf">make_linearplot</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">attribute_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;linearplot&quot;</span><span class="p">)</span>
+        <span class="n">metric_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optim_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_metric_plots</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">save_path</span><span class="p">,</span>
+            <span class="n">plot_cls</span><span class="o">=</span><span class="n">LinearPlot</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">metrics</span><span class="p">],</span>
+            <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">attribute_names</span><span class="p">],</span>
+            <span class="n">metric_map</span><span class="o">=</span><span class="n">metric_map</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotAnalysis.make_figures"><a class="viewcode-back" href="../../../../ablator.analysis.plot.html#ablator.analysis.plot.main.PlotAnalysis.make_figures">[docs]</a>    <span class="k">def</span> <span class="nf">make_figures</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_name_remap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">attribute_name_remap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">cat_attrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">categorical_attributes</span><span class="p">)</span>
+        <span class="n">num_attrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numerical_attributes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">attribute_name_remap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cat_attrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attribute_name_remap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">cat_attrs</span><span class="p">))</span>
+            <span class="n">num_attrs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attribute_name_remap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">num_attrs</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cat_attrs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">plot_fn</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;make_violinplot&quot;</span><span class="p">):</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_fn</span><span class="p">)(</span>
+                    <span class="n">cat_attrs</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metric_names</span><span class="p">,</span>
+                    <span class="n">metric_name_remap</span><span class="o">=</span><span class="n">metric_name_remap</span><span class="p">,</span>
+                    <span class="n">attribute_name_remap</span><span class="o">=</span><span class="n">attribute_name_remap</span><span class="p">,</span>
+                    <span class="n">save_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">num_attrs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">plot_fn</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;make_linearplot&quot;</span><span class="p">):</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_fn</span><span class="p">)(</span>
+                    <span class="n">num_attrs</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">metric_names</span><span class="p">,</span>
+                    <span class="n">metric_name_remap</span><span class="o">=</span><span class="n">metric_name_remap</span><span class="p">,</span>
+                    <span class="n">attribute_name_remap</span><span class="o">=</span><span class="n">attribute_name_remap</span><span class="p">,</span>
+                    <span class="n">save_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">plt_kwargs</span><span class="p">,</span>
+                <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 1.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
